@@ -16,11 +16,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;                          // Hashes passwords using BCrypt
     private final JwtTokenProvider jwtProvider;
 
     @Transactional
-    public AuthResponse register(AuthRequest request) {
+    public AuthResponse register(AuthRequest request) {                     //Creates a new user with hashed password and returns a JWT token
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -32,12 +32,12 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
-        String token = jwtProvider.generateToken(user);
+        String token = jwtProvider.generateToken(user);                     //Builds a signed JWT with email + role info
 
         return new AuthResponse(token);
     }
 
-    public AuthResponse authenticate(AuthRequest request) {
+    public AuthResponse authenticate(AuthRequest request) {                 //Verifies email + password, returns token if correct
         User user  = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
