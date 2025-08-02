@@ -30,7 +30,7 @@ public class JwtTokenProvider {
 
     public String generateToken(User user) {                //Generates a signed JWT with email and role
         return Jwts.builder()
-                .setSubjects(user.getEmail())
+                .setSubject(user.getEmail())
                 .claim("role", user.getRole().name())
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + expiration))
