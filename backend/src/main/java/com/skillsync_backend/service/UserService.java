@@ -8,19 +8,22 @@ import com.skillsync_backend.repository.UserRepository;
 import com.skillsync_backend.security.JwtTokenProvider;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;                          // Hashes passwords using BCrypt
+    private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtProvider;
 
     @Transactional
-    public AuthResponse register(AuthRequest request) {                     //Creates a new user with hashed password and returns a JWT token
+    public AuthResponse register(AuthRequest request) {                         // Creates a new user with hashed password and returns a JWT token
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("Email already exists");
         }
@@ -32,13 +35,14 @@ public class UserService {
                 .build();
 
         userRepository.save(user);
-        String token = jwtProvider.generateToken(user);                     //Builds a signed JWT with email + role info
+        String token = jwtProvider.generateToken(user);                         // Builds a signed JWT with email + role info
 
         return new AuthResponse(token);
     }
 
-    public AuthResponse authenticate(AuthRequest request) {                 //Verifies email + password, returns token if correct
-        User user  = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("User not found"));
+    public AuthResponse authenticate(AuthRequest request) {                     // Verifies email + password, returns token if correct
+        User user = userRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Wrong password");
@@ -46,5 +50,11 @@ public class UserService {
 
         String token = jwtProvider.generateToken(user);
         return new AuthResponse(token);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 }
