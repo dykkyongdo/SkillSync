@@ -4,6 +4,7 @@ import com.skillsync_backend.model.User;
 import com.skillsync_backend.model.Group;
 import com.skillsync_backend.repository.GroupRepository;
 import com.skillsync_backend.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -28,4 +29,16 @@ public class GroupService {
                 .build();
         return groupRepository.save(group);
     }
+
+    @Transactional
+    public void joinGroup(UUID groupId, String userEmail) {
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+
+        group.getMembers().add(user);
+        groupRepository.save(group);
+    }
 }
+
+

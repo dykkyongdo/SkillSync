@@ -3,6 +3,8 @@ package com.skillsync_backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.time.Instant;
 
@@ -28,4 +30,11 @@ public class Group {
     @ManyToOne
     @JoinColumn(name = "created_by")        // creator user id
     private User createdBy;
+
+    @ManyToMany
+    private Set<User> members = new HashSet<>();
+
+    public Set<User> getMembers() {
+        return members;
+    }
 }

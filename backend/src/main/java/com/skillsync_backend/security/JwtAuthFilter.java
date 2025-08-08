@@ -40,6 +40,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+
+        System.out.println("=== JwtAuthFilter START ===");
+        System.out.println("Request URI: " + request.getRequestURI());
+        System.out.println("Request Method: " + request.getMethod());
         String header = request.getHeader("Authorization");             //Read the "Authorization" header from the incoming HTTP request
         System.out.println("Authorization header: " + header);  // Debug log
 
@@ -74,6 +78,8 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         } else {
             System.out.println("No Bearer token found in Authorization header");
         }
+
+        System.out.println("=== JwtAuthFilter END ===");
         filterChain.doFilter(request, response);
     }
 }
