@@ -2,6 +2,7 @@ package com.skillsync_backend.controller;
 
 import com.skillsync_backend.dto.GroupRequest;
 import com.skillsync_backend.model.Group;
+import com.skillsync_backend.repository.GroupRepository;
 import com.skillsync_backend.service.GroupService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.repository.support.Repositories;
@@ -45,5 +46,11 @@ public class GroupController {
         String email = authentication.getName();
         groupService.leaveGroup(groupId, email);
         return  ResponseEntity.ok("Left group successfully");
+    }
+
+    @GetMapping("/{groupId}")
+    public ResponseEntity<Group> getGroupDetails(@PathVariable UUID groupId) {
+        Group group = groupService.getGroupByDetails(groupId);
+        return ResponseEntity.ok(group);
     }
 }

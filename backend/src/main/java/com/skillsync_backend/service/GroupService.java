@@ -57,6 +57,10 @@ public class GroupService {
         group.getMembers().remove(user);
         groupRepository.save(group);
     }
+
+    public Group getGroupByDetails(UUID groupId) {
+        return groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+    }
 }
 
 
