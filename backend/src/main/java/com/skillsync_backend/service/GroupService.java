@@ -46,6 +46,17 @@ public class GroupService {
 
         return groupRepository.findAllByMembersContaining(user);
     }
+
+    @Transactional
+    public void leaveGroup(UUID groupId, String userEmail) {
+
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+
+        group.getMembers().remove(user);
+        groupRepository.save(group);
+    }
 }
 
 

@@ -39,4 +39,11 @@ public class GroupController {
         List<Group> groups = groupService.getGroupsForUser(email);
         return ResponseEntity.ok(groups);
     }
+
+    @DeleteMapping("/leave/{groupId}")
+    public ResponseEntity<String> leaveGroup(@PathVariable UUID groupId, Authentication authentication) {
+        String email = authentication.getName();
+        groupService.leaveGroup(groupId, email);
+        return  ResponseEntity.ok("Left group successfully");
+    }
 }
