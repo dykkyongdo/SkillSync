@@ -8,6 +8,8 @@ import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 import java.util.UUID;
 
 
@@ -29,7 +31,12 @@ public class GroupController {
         String email = authentication.getName();
         groupService.joinGroup(groupID, email);
         return ResponseEntity.ok("Joined group successfully");
+    }
 
-
+    @GetMapping("/my-groups")
+    public ResponseEntity<List<Group>> getMyGroups(Authentication authentication) {
+        String email = authentication.getName();
+        List<Group> groups = groupService.getGroupsForUser(email);
+        return ResponseEntity.ok(groups);
     }
 }

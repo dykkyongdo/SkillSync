@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 import java.time.Instant;
 
@@ -38,6 +39,12 @@ public class GroupService {
 
         group.getMembers().add(user);
         groupRepository.save(group);
+    }
+
+    public List<Group> getGroupsForUser(String userEmail) {
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+
+        return groupRepository.findAllByMembersContaining(user);
     }
 }
 
