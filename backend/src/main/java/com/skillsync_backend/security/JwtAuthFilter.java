@@ -2,6 +2,7 @@ package com.skillsync_backend.security;
 
 import com.skillsync_backend.service.UserService;
 import com.skillsync_backend.security.JwtTokenProvider;
+import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,23 +31,49 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
 
+    @PostConstruct
+    public void init() {
+        System.out.println("JwtAuthFilter bean created");
+        System.out.println("JwtTokenProvider injected: " + (jwtTokenProvider != null));
+        System.out.println("UserService injected: " + (userService != null));
+    }
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String header = request.getHeader("Authorization");             //Read the "Authorization" header from the incoming HTTP request
+        System.out.println("Authorization header: " + header);  // Debug log
 
         if (header != null && header.startsWith("Bearer ")) {               //Check if it starts with "Bearer", indicating a JWT is present
             String token = header.substring(7);                   //Extract token by removing "Bearer " prefix 7 chars
-            if (jwtTokenProvider.validateToken(token)) {
-                String email = jwtTokenProvider.getEmailFromToken(token);
-                if (email != null) {                // if token is valid and email is found
-                    UserDetails userDetails = userService.loadUserByUsername(email);
-                    UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+            System.out.println("Token extracted: " + (token.length() > 20 ? token.substring(0, 20) + "..." : token));
 
-                    SecurityContextHolder.getContext().setAuthentication(authToken);
+            try {
+                if (jwtTokenProvider.validateToken(token)) {
+                    System.out.println("Token is valid");
+
+                    String email = jwtTokenProvider.getEmailFromToken(token);
+                    System.out.println("Email from token: " + email);
+
+                    if (email != null) {
+                        UserDetails userDetails = userService.loadUserByUsername(email);
+                        System.out.println("User loaded: " + userDetails.getUsername());
+
+                        UsernamePasswordAuthenticationToken authToken =
+                                new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+
+                        SecurityContextHolder.getContext().setAuthentication(authToken);
+                        System.out.println("Authentication set in SecurityContext");
+                    }
+                } else {
+                    System.out.println("Token validation failed");
                 }
+            } catch (Exception e) {
+                System.out.println("Error processing token: " + e.getMessage());
+                e.printStackTrace();
             }
+        } else {
+            System.out.println("No Bearer token found in Authorization header");
         }
-
-        filterChain.doFilter(request, response);    //Continue the filter chain (eventually reaching controller)n
+        filterChain.doFilter(request, response);
     }
 }

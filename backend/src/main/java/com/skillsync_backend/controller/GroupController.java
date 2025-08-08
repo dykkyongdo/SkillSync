@@ -16,7 +16,7 @@ public class GroupController {
 
     @PostMapping("/create")
     public Group createGroup(@RequestBody GroupRequest request, Authentication authentication) {
-        String username = authentication.getName();
+        String userEmail = authentication.getName();
         return groupService.createGroup(request.getName(), request.getDescription(), userEmail);
     }
 }

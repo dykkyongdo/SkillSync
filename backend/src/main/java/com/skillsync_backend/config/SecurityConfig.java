@@ -1,6 +1,7 @@
 package com.skillsync_backend.config;
 
 import com.skillsync_backend.security.JwtAuthFilter;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthFilter jwtAuthFilter;
+
+    @PostConstruct
+    public void init() {
+        System.out.println("SecurityConfig initialized");
+        System.out.println("JwtAuthFilter injected: " + (jwtAuthFilter != null));
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {  // FIXED: lowercase 's'

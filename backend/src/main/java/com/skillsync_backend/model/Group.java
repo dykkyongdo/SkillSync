@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.time.Instant;
 
 @Entity
+@Table(name = "user_groups")
 @Getter
 @Setter
 @Builder
