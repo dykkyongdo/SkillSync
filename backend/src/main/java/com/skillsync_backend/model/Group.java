@@ -2,11 +2,16 @@ package com.skillsync_backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.skillsync_backend.model.Flashcard;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.time.Instant;
+import java.util.List;
+
+
 
 @Entity
 @Table(name = "user_groups")
@@ -37,4 +42,7 @@ public class Group {
     public Set<User> getMembers() {
         return members;
     }
+
+    @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Flashcard> flashcards = new ArrayList<>();
 }
