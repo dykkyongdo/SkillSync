@@ -1,5 +1,7 @@
 package com.skillsync_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 import com.skillsync_backend.model.Flashcard;
@@ -41,14 +43,17 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonIgnore
     private Set<User> members = new HashSet<>();
 
     // Flashcards (direct-to-group)
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Flashcard> flashcards = new ArrayList<>();
 
     // Flashcard sets (decks)
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<FlashcardSet> sets = new ArrayList<>();
 }
 

@@ -1,5 +1,6 @@
 package com.skillsync_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.Instant;
@@ -22,8 +23,10 @@ public class FlashcardSet {
 
     @ManyToOne
     @JoinColumn(name = "group_id", referencedColumnName = "id")
+    @JsonIgnore
     private Group group;
 
     @OneToMany(mappedBy = "set", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Flashcard> flashcards = new ArrayList<>();
 }
