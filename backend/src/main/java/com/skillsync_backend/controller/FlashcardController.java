@@ -21,6 +21,7 @@ public class FlashcardController {
     private final FlashcardService flashcardService;
 
     // Create a flashcard inside the set
+    @PostMapping
     public ResponseEntity<Flashcard> create(@Valid @RequestBody FlashcardRequest request, Authentication auth) {
 
         return ResponseEntity.ok(flashcardService.create(request));
