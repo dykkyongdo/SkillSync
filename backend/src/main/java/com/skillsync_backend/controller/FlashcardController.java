@@ -33,7 +33,7 @@ public class FlashcardController {
     }
 
     // delete a flashcard
-    @DeleteMapping("/{flashcardId")
+    @DeleteMapping("/{flashcardId}")
     public ResponseEntity<List<Flashcard>> delete(@PathVariable UUID flashcardId, Authentication auth) {
         flashcardService.delete(flashcardId);
         return ResponseEntity.notFound().build();
