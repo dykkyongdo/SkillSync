@@ -33,13 +33,7 @@ public class FlashcardService {
     }
 
     public List<Flashcard> listBySet(UUID setId) {
-        FlashcardSet set = setRepo .findById(setId)
-                .orElseThrow(() -> new RuntimeException("Flashcard set not found"));
-
-        return flashcardRepo.findByGroup(set.getGroup())
-                .stream()
-                .filter(c -> c.getSet() != null && c.getSet().getId().equals(setId))
-                .toList();
+        return flashcardRepo.findBySetId(setId);
     }
 
     public void delete(UUID flashcardId) {
