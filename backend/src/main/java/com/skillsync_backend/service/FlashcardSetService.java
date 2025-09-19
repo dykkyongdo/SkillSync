@@ -1,5 +1,6 @@
 package com.skillsync_backend.service;
 
+import com.skillsync_backend.dto.FlashcardSetDto;
 import com.skillsync_backend.dto.FlashcardSetRequest;
 import com.skillsync_backend.model.FlashcardSet;
 import com.skillsync_backend.model.Group;
@@ -23,15 +24,10 @@ public class FlashcardSetService {
     private final GroupRepository groupRepo;
     private final AccessGuard access;
 
-    /**
-     * Create a new flashcard set inside a group.
-     * Caller must be a member of the target group.
-     */
+    /** Create a new flashcard set inside a group. Caller must be a member. */
     @Transactional
-    public FlashcardSet createSet(FlashcardSetRequest req, String callerEmail) {
+    public FlashcardSetDto createSet(FlashcardSetRequest req, String callerEmail) {
         UUID groupId = UUID.fromString(req.getGroupId());
-
-        // Ensure the caller is a member of the group
         access.ensureMemberOfGroup(groupId, callerEmail);
 
         Group group = groupRepo.findById(groupId)
@@ -44,32 +40,36 @@ public class FlashcardSetService {
                 .group(group)
                 .build();
 
-        return setRepo.save(set);
+        FlashcardSet saved = setRepo.save(set);
+        return toDto(saved);
     }
 
-    /**
-     * List all sets in a group.
-     * Caller must be a member of the group.
-     */
+    /** List sets for a group. Caller must be a member. */
     @Transactional(readOnly = true)
-    public List<FlashcardSet> getSetsByGroup(UUID groupId, String callerEmail) {
+    public List<FlashcardSetDto> getSetsByGroup(UUID groupId, String callerEmail) {
         access.ensureMemberOfGroup(groupId, callerEmail);
 
         Group group = groupRepo.findById(groupId)
                 .orElseThrow(() -> new NotFoundException("Group not found"));
 
-        return setRepo.findByGroup(group);
+        return setRepo.findByGroup(group).stream().map(this::toDto).toList();
     }
 
-    /**
-     * Delete a flashcard set.
-     * Caller must be a member of the group that owns the set.
-     * (You can later tighten this to only allow owner/admins.)
-     */
+    /** Delete a set. Caller must be a member of the owning group. */
     @Transactional
     public void deleteSet(UUID setId, String callerEmail) {
-        // Validates membership and returns the set
         FlashcardSet set = access.ensureMemberOfSet(setId, callerEmail);
         setRepo.delete(set);
+    }
+
+    /** Map entity -> DTO (keeps API stable and avoids JPA internals). */
+    private FlashcardSetDto toDto(FlashcardSet s) {
+        return FlashcardSetDto.builder()
+                .id(s.getId())
+                .title(s.getTitle())
+                .description(s.getDescription())
+                .createdAt(s.getCreatedAt())
+                .groupId(s.getGroup().getId())
+                .build();
     }
 }
