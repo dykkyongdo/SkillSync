@@ -5,6 +5,10 @@ import com.skillsync_backend.dto.FlashcardSetRequest;
 import com.skillsync_backend.service.FlashcardSetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -17,28 +21,35 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class FlashcardSetController {
 
-    private final FlashcardSetService flashcardSetService;
+    private final FlashcardSetService service;
 
     /** Create a new flashcard set in a group (caller must be a member). */
     @PostMapping
     public ResponseEntity<FlashcardSetDto> create(@Valid @RequestBody FlashcardSetRequest request,
                                                   Authentication auth) {
-        FlashcardSetDto created = flashcardSetService.createSet(request, auth.getName());
-        return ResponseEntity.ok(created);
+        return ResponseEntity.ok(service.createSet(request, auth.getName()));
     }
 
     /** List all sets in a group (caller must be a member). */
     @GetMapping("/group/{groupId}")
-    public ResponseEntity<List<FlashcardSetDto>> getByGroup(@PathVariable UUID groupId,
+    public ResponseEntity<Page<FlashcardSetDto>> getByGroup(@PathVariable UUID groupId,
+                                                            @RequestParam(defaultValue = "0") int page,
+                                                            @RequestParam(defaultValue = "10") int size,
+                                                            @RequestParam(defaultValue = "createdAt") String sortBy,
+                                                            @RequestParam(defaultValue = "DESC") String direction,
                                                             Authentication auth) {
-        List<FlashcardSetDto> sets = flashcardSetService.getSetsByGroup(groupId, auth.getName());
-        return ResponseEntity.ok(sets);
+        Pageable pageable = PageRequest.of(
+                Math.max(page, 0),
+                Math.min(size, 100),
+                direction.equalsIgnoreCase("DESC") ? Sort.by(sortBy).descending() : Sort.by(sortBy).ascending()
+        );
+        return ResponseEntity.ok(service.getSetsByGroup(groupId, auth.getName(), pageable));
     }
 
     /** Delete a set (caller must be a member of the owning group). */
     @DeleteMapping("/{setId}")
     public ResponseEntity<Void> delete(@PathVariable UUID setId, Authentication auth) {
-        flashcardSetService.deleteSet(setId, auth.getName());
+        service.deleteSet(setId, auth.getName());
         return ResponseEntity.noContent().build();
     }
 }
