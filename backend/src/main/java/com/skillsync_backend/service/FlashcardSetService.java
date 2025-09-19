@@ -1,18 +1,19 @@
 package com.skillsync_backend.service;
 
+import com.skillsync_backend.dto.FlashcardSetRequest;
 import com.skillsync_backend.model.FlashcardSet;
 import com.skillsync_backend.model.Group;
-import com.skillsync_backend.dto.FlashcardSetRequest;
-import com.skillsync_backend.dto.FlashcardSetResponse;
 import com.skillsync_backend.repository.FlashcardSetRepository;
 import com.skillsync_backend.repository.GroupRepository;
+import com.skillsync_backend.security.AccessGuard;
+import com.skillsync_backend.security.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
-import java.time.Instant;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -20,10 +21,21 @@ public class FlashcardSetService {
 
     private final FlashcardSetRepository setRepo;
     private final GroupRepository groupRepo;
+    private final AccessGuard access;
 
-    public FlashcardSetResponse createSet(FlashcardSetRequest req) {
-        Group group = groupRepo.findById(UUID.fromString(req.getGroupId()))
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+    /**
+     * Create a new flashcard set inside a group.
+     * Caller must be a member of the target group.
+     */
+    @Transactional
+    public FlashcardSet createSet(FlashcardSetRequest req, String callerEmail) {
+        UUID groupId = UUID.fromString(req.getGroupId());
+
+        // Ensure the caller is a member of the group
+        access.ensureMemberOfGroup(groupId, callerEmail);
+
+        Group group = groupRepo.findById(groupId)
+                .orElseThrow(() -> new NotFoundException("Group not found"));
 
         FlashcardSet set = FlashcardSet.builder()
                 .title(req.getTitle())
@@ -32,42 +44,32 @@ public class FlashcardSetService {
                 .group(group)
                 .build();
 
-        FlashcardSet savedSet = setRepo.save(set);
-
-        // Convert to DTO
-        return FlashcardSetResponse.builder()
-                .id(savedSet.getId())
-                .title(savedSet.getTitle())
-                .description(savedSet.getDescription())
-                .createdAt(savedSet.getCreatedAt())
-                .group(FlashcardSetResponse.GroupInfo.builder()
-                        .id(group.getId())
-                        .name(group.getName())
-                        .description(group.getDescription())
-                        .build())
-                .build();
+        return setRepo.save(set);
     }
 
-    public List<FlashcardSetResponse> getSetsByGroup(UUID groupId) {
+    /**
+     * List all sets in a group.
+     * Caller must be a member of the group.
+     */
+    @Transactional(readOnly = true)
+    public List<FlashcardSet> getSetsByGroup(UUID groupId, String callerEmail) {
+        access.ensureMemberOfGroup(groupId, callerEmail);
+
         Group group = groupRepo.findById(groupId)
-                .orElseThrow(() -> new RuntimeException("Group not found"));
+                .orElseThrow(() -> new NotFoundException("Group not found"));
 
-        return setRepo.findByGroup(group).stream()
-                .map(set -> FlashcardSetResponse.builder()
-                        .id(set.getId())
-                        .title(set.getTitle())
-                        .description(set.getDescription())
-                        .createdAt(set.getCreatedAt())
-                        .group(FlashcardSetResponse.GroupInfo.builder()
-                                .id(group.getId())
-                                .name(group.getName())
-                                .description(group.getDescription())
-                                .build())
-                        .build())
-                .collect(Collectors.toList());
+        return setRepo.findByGroup(group);
     }
 
-    public void deleteSet(UUID id) {
-        setRepo.deleteById(id);
+    /**
+     * Delete a flashcard set.
+     * Caller must be a member of the group that owns the set.
+     * (You can later tighten this to only allow owner/admins.)
+     */
+    @Transactional
+    public void deleteSet(UUID setId, String callerEmail) {
+        // Validates membership and returns the set
+        FlashcardSet set = access.ensureMemberOfSet(setId, callerEmail);
+        setRepo.delete(set);
     }
 }
