@@ -22,24 +22,24 @@ public class AccessGuard {
 
     // Check user is member of a group
     public void ensureMemberOfGroup(UUID groupId, String email) {
-        boolean ok = groupRepo.existsByIdAndMembers_Email(groupId, email);
-        if (!ok) throw new ForbiddenException("You are not member of this group.");
+        boolean ok = membershipRepo.existsByGroup_IdAndUser_EmailAndStatus(
+                groupId, email, MembershipStatus.ACTIVE);
+        if (!ok) throw new ForbiddenException("You are not a member of this group.");
     }
 
     public void ensureAdminOrOwner(UUID groupId, String email) {
         var m = membershipRepo.findByGroup_IdAndUser_Email(groupId, email)
-                .orElseThrow(() -> new ForbiddenException("You are not member of this group."));
+                .orElseThrow(() -> new ForbiddenException("You are not a member of this group."));
         if (!(m.getRole() == GroupRole.OWNER || m.getRole() == GroupRole.ADMIN)) {
-            throw new ForbiddenException("Admin or Owner role required of this action.");
+            throw new ForbiddenException("Admin or Owner role required for this action.");
         }
     }
 
-    // Check user is member of a group that owns the set
     public FlashcardSet ensureMemberOfSet(UUID setId, String email) {
         var set = setRepo.findById(setId)
                 .orElseThrow(() -> new RuntimeException("Flashcard set not found"));
-
         ensureMemberOfGroup(set.getGroup().getId(), email);
         return set;
     }
 }
+

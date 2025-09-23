@@ -12,6 +12,8 @@ public interface GroupMembershipRepository extends JpaRepository<GroupMembership
 
     boolean existsByGroup_IdAndUser_Email(UUID groupId, String email);
 
+    boolean existsByGroup_IdAndUser_EmailAndStatus(UUID groupId, String email, MembershipStatus status);
+
     Optional<GroupMembership> findByGroup_IdAndUser_Email(UUID groupId, String email);
 
     List<GroupMembership> findByGroup_IdAndStatus(UUID groupId, MembershipStatus status);
