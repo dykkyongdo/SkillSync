@@ -99,4 +99,37 @@ public class GroupMembershipService {
         membershipRepo.delete(m);
     }
 
+    // Change a member role. Cannot demote the last OWNER
+    @Transactional
+    public MemberDto updateRole(UUID groupId, UUID membershipId, String callerEmail, GroupRole newRole) {
+        access.ensureMemberOfGroup(groupId, callerEmail);
+
+        var m = membershipRepo.findById(membershipId).orElseThrow(() -> new NotFoundException("Membership not found"));
+
+        if  (!m.getGroup().getId().equals(groupId)) {
+            throw new ForbiddenException("Membership does not belong to this group");
+        }
+
+        if (m.getRole() == GroupRole.OWNER && newRole != GroupRole.OWNER) {
+            long owners = membershipRepo.countByGroup_IdAndRole(groupId, GroupRole.OWNER);
+            if (owners <= 1) {
+                throw new ForbiddenException("Cannot demote last owner");
+            }
+        }
+        m.setRole(newRole);
+        return toDto(m);
+    }
+
+    // Utility to create the initial OWNER membership when creating a group
+    @Transactional
+    public void createOwnerMembership(Group group, User creator) {
+        if (membershipRepo.existsByGroup_IdAndUser_Email(group.getId(), creator.getEmail())) return;
+        var m = GroupMembership.builder()
+                .group(group)
+                .user(creator)
+                .role(GroupRole.OWNER)
+                .status(MembershipStatus.ACTIVE)
+                .build();
+        membershipRepo.save(m);
+    }
  }
