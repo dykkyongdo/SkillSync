@@ -37,11 +37,11 @@ public class GroupMembershipController {
     }
 
     @DeleteMapping("/{membershipId}")
-    public ResponseEntity<Void> remove(@PathVariable UUID groupId,
+    public ResponseEntity<Map<String, String>> remove(@PathVariable UUID groupId,
                                        @PathVariable UUID membershipId,
                                        Authentication auth) {
         service.remove(groupId, membershipId, auth.getName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("message", "Member removed successfully"));
     }
 
     @PatchMapping("/{membershipId}/role")
