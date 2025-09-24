@@ -20,3 +20,4 @@ jwt:
   secret: ${env.JWT_SECRET}
   expiration: ${env.JWT_EXPIRATION}
 
+

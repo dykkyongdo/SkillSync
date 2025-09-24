@@ -44,20 +44,17 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        // Allow preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                        //Public auth endpoints
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Swagger/OpenAI (public)
-                        .requestMatchers(
-                                "/v3/api-docs/**",
-                                "/swagger-ui/**",
-                                "/swagger-ui.html"
-                        ).permitAll()
+                        // Swagger / OpenAPI
+                        .requestMatchers("/v3/api-docs").permitAll()      // <-- root JSON (this is the one you’re missing)
+                        .requestMatchers("/v3/api-docs/**").permitAll()   // swagger-config & groups
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
 
-                        // Everything else requires auth
+                        // Everything else
                         .anyRequest().authenticated()
                 )
+
 
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)         // Add custom JWT filter
                 .build();
