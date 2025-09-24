@@ -34,16 +34,19 @@ public class GroupController {
     }
 
     @PostMapping("/join/{groupId}")
-    public ResponseEntity<Void> join(@PathVariable UUID groupId, Authentication auth) {
+    public ResponseEntity<String> join(@PathVariable UUID groupId, Authentication auth) {
         groupService.joinGroup(groupId, auth.getName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Joined group successfully");
     }
 
     @GetMapping("/my-groups")
-    public ResponseEntity<List<Group>> getMyGroups(Authentication authentication) {
+    public ResponseEntity<List<GroupResponse>> getMyGroups(Authentication authentication) {
         String email = authentication.getName();
         List<Group> groups = groupService.getGroupsForUser(email);
-        return ResponseEntity.ok(groups);
+        List<GroupResponse> out = groups.stream()
+                .map(g -> toResponse(g, email))
+                .toList();
+        return ResponseEntity.ok(out);
     }
 
     @DeleteMapping("/leave/{groupId}")
