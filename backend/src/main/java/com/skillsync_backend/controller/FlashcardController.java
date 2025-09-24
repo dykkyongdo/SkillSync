@@ -48,8 +48,8 @@ public class FlashcardController {
 
     /** Delete a flashcard (caller must be a member of the owning group). */
     @DeleteMapping("/{flashcardId}")
-    public ResponseEntity<Void> delete(@PathVariable UUID flashcardId, Authentication auth) {
+    public ResponseEntity<String> delete(@PathVariable UUID flashcardId, Authentication auth) {
         service.delete(flashcardId, auth.getName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Deleted flashcard successfully");
     }
 }

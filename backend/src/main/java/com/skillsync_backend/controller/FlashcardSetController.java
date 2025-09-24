@@ -48,8 +48,8 @@ public class FlashcardSetController {
 
     /** Delete a set (caller must be a member of the owning group). */
     @DeleteMapping("/{setId}")
-    public ResponseEntity<Void> delete(@PathVariable UUID setId, Authentication auth) {
+    public ResponseEntity<String> delete(@PathVariable UUID setId, Authentication auth) {
         service.deleteSet(setId, auth.getName());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok("Deleted flashcard set successfully");
     }
 }
