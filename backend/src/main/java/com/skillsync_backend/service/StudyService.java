@@ -25,7 +25,7 @@ public class StudyService {
     private final UsedCardProgressRepository progressRepo;
     private final AccessGuard access;
 
-    @Transactional(readOnly = true)
+    @Transactional
     public List<DueCardDto> listDue(UUID setId, String email, int limit) {
         // authz: must be a member of the set's group
         var set = access.ensureMemberOfSet(setId, email);
@@ -53,9 +53,10 @@ public class StudyService {
                                 .ease(2.5)                // default ease
                                 .repetitions(0)
                                 .intervalDays(0)
-                                .nextDueAt(now)           // due immediately
+                                .nextDueAt(now.minusSeconds(1))           // due immediately
                                 .build()));
             }
+            progressRepo.flush();
 
             // re-fetch after seeding
             dueProgress = progressRepo

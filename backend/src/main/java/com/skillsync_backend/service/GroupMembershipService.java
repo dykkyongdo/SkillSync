@@ -121,6 +121,9 @@ public class GroupMembershipService {
     // Utility to create the initial OWNER membership when creating a group.
     @Transactional
     public void createOwnerMembership(Group group, User creator) {
+        if (group.getId() == null) {
+            throw new IllegalStateException("Group must be persisted before creating membership");
+        }
         if (membershipRepo.existsByGroup_IdAndUser_Email(group.getId(), creator.getEmail())) return;
         var m = GroupMembership.builder()
                 .group(group)

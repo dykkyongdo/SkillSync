@@ -66,7 +66,7 @@ public class GroupController {
         var membership = membershipRepo.findByGroup_IdAndUser_Email(group.getId(), viewerEmail).orElse(null);
 
         return GroupResponse.builder()
-                .id(group.getId())
+                .groupId(group.getId())
                 .name(group.getName())
                 .description(group.getDescription())
                 .createdAt(group.getCreatedAt())

@@ -16,3 +16,4 @@ public interface UsedCardProgressRepository extends JpaRepository<UserCardProgre
     // Find due cards for a user within set
     List<UserCardProgress> findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(UUID userId, UUID setId, Instant dueBefore);
 }
+

@@ -35,11 +35,12 @@ public class GroupService {
                 .createdBy(creator)
                 .build();
 
-        var saved = groupRepository.save(group);
+        group = groupRepository.save(group);
+        groupRepository.flush();
 
-        membershipService.createOwnerMembership(saved, creator);
+        membershipService.createOwnerMembership(group, creator);
 
-        return saved;
+        return group;
     }
 
     @Transactional
@@ -77,7 +78,7 @@ public class GroupService {
         var membership = membershipRepo.findByGroup_IdAndUser_Email(group.getId(), viewerEmail).orElse(null);
 
         return GroupResponse.builder()
-                .id(group.getId())
+                .groupId(group.getId())
                 .name(group.getName())
                 .description(group.getDescription())
                 .createdAt(group.getCreatedAt())

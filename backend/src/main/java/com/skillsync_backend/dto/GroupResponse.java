@@ -10,7 +10,7 @@ import java.util.UUID;
 @Data
 @Builder
 public class GroupResponse {
-    private UUID id;
+    private UUID groupId;
     private String name;
     private String description;
     private Instant createdAt;
