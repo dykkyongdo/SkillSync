@@ -1,15 +1,12 @@
 package com.skillsync_backend.controller;
 
 import com.skillsync_backend.dto.CreateGroupRequest;
-import com.skillsync_backend.dto.GroupRequest;
 import com.skillsync_backend.dto.GroupResponse;
 import com.skillsync_backend.model.Group;
 import com.skillsync_backend.repository.GroupMembershipRepository;
-import com.skillsync_backend.repository.GroupRepository;
 import com.skillsync_backend.service.GroupService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.repository.support.Repositories;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;

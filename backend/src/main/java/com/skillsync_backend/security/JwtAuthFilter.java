@@ -1,7 +1,6 @@
 package com.skillsync_backend.security;
 
 import com.skillsync_backend.service.UserService;
-import com.skillsync_backend.security.JwtTokenProvider;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

@@ -1,10 +1,7 @@
 package com.skillsync_backend.repository;
 
 import com.skillsync_backend.model.UserCardProgress;
-import com.skillsync_backend.model.Flashcard;
-import com.skillsync_backend.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.*;
 import java.time.Instant;

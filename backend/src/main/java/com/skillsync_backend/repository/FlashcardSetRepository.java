@@ -1,7 +1,6 @@
 package com.skillsync_backend.repository;
 
 import com.skillsync_backend.model.FlashcardSet;
-import com.skillsync_backend.model.Group;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;

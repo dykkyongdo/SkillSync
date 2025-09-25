@@ -1,10 +1,8 @@
 package com.skillsync_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
-import com.skillsync_backend.model.Flashcard;
 
 import java.util.ArrayList;
 import java.util.HashSet;

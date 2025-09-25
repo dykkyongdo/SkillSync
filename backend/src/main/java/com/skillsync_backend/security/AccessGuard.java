@@ -5,8 +5,6 @@ import com.skillsync_backend.model.GroupRole;
 import com.skillsync_backend.model.MembershipStatus;
 import com.skillsync_backend.repository.FlashcardSetRepository;
 import com.skillsync_backend.repository.GroupMembershipRepository;
-import com.skillsync_backend.repository.GroupRepository;
-import com.skillsync_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
