@@ -26,7 +26,7 @@ export default function GroupSetPage() {
     async function createSet() {
         setErr(null);
         try {
-            const created = await api<SetItem>('//api/groups/${groupId}/sets', {
+            const created = await api<SetItem>('/api/groups/${groupId}/sets', {
                 method: "POST",
                 body: JSON.stringify({ title, description: desc}),
             });
