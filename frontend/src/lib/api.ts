@@ -1,21 +1,25 @@
-const BASE = process.env.NEXT_PUBLIC_API_BASE!;
 
-export function getToken() {
-    if (typeof window == "undefined") return null;
-    return localStorage.getItem("token");
-}
 
-export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
-    const token = getToken();
-    const headers = new Headers(init.headers);
-    headers.set("Content-Type", "application/json");
-    if (token) headers.set("Authorization", `Bearer ${token}`);
+export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
 
-    const res = await fetch(`${BASE}${path}`, { ...init, headers, cache: "no-store"});
+export async function api<T = any>(
+    path: string,
+    init: RequestInit = {}
+):  Promise <T> {
+    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
+    const res = await fetch(`${API_BASE}${path}`, {
+        ...init,
+        headers: {
+            "Content-Type": "application/json",
+            ...(token ? { Authorization: `Bearer ${token}` } : {}),
+            ...(init.headers || {}),
+        },
+        cache: "no-store",
+    });
     if (!res.ok) {
-        const text = await res.text().catch(() => "");
-        throw new Error(text || `HTTP ${res.status}`);
-    }
-
-    return res.json();
+        let msg = `HHTP ${res.status}`;
+        try { const j = await res.json(); msg = j.message || msg; } catch {}
+        throw new Error(msg);
+    } 
+    return res.status === 204 ? (undefined as T) : res.json();
 }
