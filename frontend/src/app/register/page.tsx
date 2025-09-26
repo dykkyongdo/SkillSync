@@ -15,7 +15,7 @@ export default function RegisterPage() {
     e.preventDefault();
     setErr(null);
     try { 
-      const res = await api<{ token: string }>("/api/auth/login", {
+      const res = await api<{ token: string }>("/api/auth/register", {
         method: "POST",
         body: JSON.stringify({email, password}),
       });
