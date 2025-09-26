@@ -37,7 +37,7 @@ export default function GroupPage() {
                 <h1 className="text-2xl font-semibold">My Groups</h1>
                 <div className="grid gap-2 md:grid-cols-3">
                     <input className="border p-2 rounded" placeholder="Group name" value={name} onChange={e=>setName(e.target.value)}/>
-                    <input className="border p-2 rounded md:col-span=2" placeholder="Description" value={desc} onChange={e=>setDesc(e.target.value)}/>
+                    <input className="border p-2 rounded md:col-span-2" placeholder="Description" value={desc} onChange={e=>setDesc(e.target.value)}/>
                     <button onClick={createGroup} className="p-2 rounded bg-black text-white md:col-span-3">Create</button>
                 </div>
 
