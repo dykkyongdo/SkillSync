@@ -3,6 +3,7 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import RequireAuth from "@/app/components/RequireAuth";
 import { api } from "@/lib/api";
+import Link from "next/link";
 
 type SetItem = { id: string; title: string; description: string; createdAt: string};
 type Page<T> = { content: T[] };
@@ -51,6 +52,10 @@ export default function GroupSetPage() {
                         <li key={s.id} className="p-4 rounded-xl border">
                             <div className="font-medium">{s.title}</div>
                             <div className="text-sm opacity-80">{s.description}</div>
+                            <div className="mt-3 flex gap-2">
+                                <Link className="underline text-sm" href={`/groups/${groupId}/sets/${s.id}`}>Manage Cards</Link>
+                                <Link className="underline text-sm" href={`/study/${s.id}`}>Study</Link>
+                            </div>
                         </li> 
                     ))}
                 </ul>
