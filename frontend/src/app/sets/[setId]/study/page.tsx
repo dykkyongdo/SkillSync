@@ -1,7 +1,7 @@
 "use client"
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import RequireAuth from "@/contexts/RequireAuth";
+import RequireAuth from "@/app/components/RequireAuth";
 import { api } from "@/lib/api";
 
 type DueCard = { flashcardId: string; question: string; answer: string};

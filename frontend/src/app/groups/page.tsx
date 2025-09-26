@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
-import RequireAuth from "@/contexts/RequireAuth";
+import RequireAuth from "@/app/components/RequireAuth";
 
 type Group = { id: string, name: string, description: string, createdAt: string };
 
