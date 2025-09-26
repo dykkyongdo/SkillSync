@@ -17,7 +17,7 @@ export default function GroupSetPage() {
 
     async function load() {
         try {
-            const page = await api<Page<SetItem>>('/api/groups/${groupId}/sets?page=0&size=20');
+            const page = await api<Page<SetItem>>(`/api/groups/${groupId}/sets?page=0&size=20`);
             setSets(page.content);
         } catch (e: any) { setErr(e.message); }
     }
@@ -26,7 +26,7 @@ export default function GroupSetPage() {
     async function createSet() {
         setErr(null);
         try {
-            const created = await api<SetItem>('/api/groups/${groupId}/sets', {
+            const created = await api<SetItem>(`/api/groups/${groupId}/sets`, {
                 method: "POST",
                 body: JSON.stringify({ title, description: desc}),
             });

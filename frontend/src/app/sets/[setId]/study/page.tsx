@@ -15,7 +15,7 @@ export default function StudyPage() {
     async function load() {
         setErr(null);
         try {
-            const cards = await api<DueCard[]>('/api/sets/${setId}/study/due?limit=10');
+            const cards = await api<DueCard[]>(`/api/sets/${setId}/study/due?limit=10`);
             setQueue(cards);
         } catch (e: any) { setErr(e.message); }
     }
@@ -24,7 +24,7 @@ export default function StudyPage() {
     async function gradeCard(cardId: string, grade: number) {
         setErr(null);
         try {
-            await api('/api/sets/${setId}/study/${cardId}/review', {
+            await api(`/api/sets/${setId}/study/${cardId}/review`, {
                 method: "POST",
                 body: JSON.stringify({ grade } satisfies ReviewReq),
             });
