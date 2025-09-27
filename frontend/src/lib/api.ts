@@ -1,13 +1,30 @@
+export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080").replace(/\/$/, "");
 
+async function getAuthToken(): Promise<string | null> {
+    if (typeof window === "undefined") {
+        // Server: read from cookies
+        const { cookies } = await import("next/headers");
+        return cookies().get("token")?.value ?? null;
+    }
+    // Client 
+    try {
+        return localStorage.getItem("token");
+    } catch {
+        return null;
+    }
+}
 
-export const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080";
+function toUrl(path: string) {
+    return /^https?:\/\//i.test(path) ? path : `${API_BASE}${path}`;
+}
+
 
 export async function api<T = any>(
     path: string,
     init: RequestInit = {}
 ):  Promise <T> {
-    const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
-    const res = await fetch(`${API_BASE}${path}`, {
+    const token = await getAuthToken();
+    const res = await fetch(toUrl(path), {
         ...init,
         headers: {
             "Content-Type": "application/json",
@@ -17,9 +34,24 @@ export async function api<T = any>(
         cache: "no-store",
     });
     if (!res.ok) {
-        let msg = `HHTP ${res.status}`;
-        try { const j = await res.json(); msg = j.message || msg; } catch {}
+        let msg = `HTTP ${res.status}`;
+        try { 
+            // Try Json error first
+            const ct = res.headers.get("content-type") || "";
+            if (ct.includes("application/json")) {
+                const j = await res.json(); 
+                msg = j.message || msg; 
+            } else {
+                // Fallback to text body
+                const text = await res.text();
+                if (text) msg = `${msg} - ${text}`;
+            }
+        } catch {}
         throw new Error(msg);
     } 
-    return res.status === 204 ? (undefined as T) : res.json();
+    if (res.status === 204) return undefined as T;
+
+    // Safely parse JSON 
+    const text = await res.text();
+    return (text ? JSON.parse(text) : undefined) as T;
 }
