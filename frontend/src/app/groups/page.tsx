@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import RequireAuth from "@/app/components/RequireAuth";
+import Link from "next/link";
 
 type Group = { id?: string, name: string, description: string, createdAt: string };
 
@@ -26,7 +27,7 @@ export default function GroupPage() {
                 method: "POST",
                 body: JSON.stringify({ name, description: desc }),
         });
-        setGroups(prev => [g, ...groups]);
+        setGroups(prev => [g, ...prev]);
         setName(""); setDesc("");
         }  catch (e: any) { setErr(e.message); }
     }
@@ -48,8 +49,8 @@ export default function GroupPage() {
             <main className="p-6 space-y-6 max-w-3xl mx-auto">
                 <h1 className="text-2xl font-semibold">My Groups</h1>
                 <div className="grid gap-2 md:grid-cols-3">
-                    <input className="border p-2 rounded" placeholder="Group name" value={name} onChange={e=>setName(e.target.value)}/>
-                    <input className="border p-2 rounded md:col-span-2" placeholder="Description" value={desc} onChange={e=>setDesc(e.target.value)}/>
+                    <input className="border p-2 rounded" placeholder="Group name" value={name} onChange={e=>{ setName(e.target.value); if (err) setErr(null);}}/>
+                    <input className="border p-2 rounded md:col-span-2" placeholder="Description" value={desc} onChange={e=>{ setDesc(e.target.value); if (err) setErr(null)}}/>
                     <button onClick={createGroup} className="p-2 rounded bg-black text-white md:col-span-3">Create</button>
                 </div>
 
@@ -60,6 +61,11 @@ export default function GroupPage() {
                         <li key={(g as any).__key} className="p-4 rounded-xl border">
                             <div className="font-medium">{g.name}</div>
                             <div className="text-sm opacity-80">{g.description}</div>
+                            {g.id && (
+                                <Link className="mt-2 inline-block text-sm underline" href={`/groups/${g.id}`}>
+                                    Open sets
+                                </Link>
+                            )}
                         </li>
                     ))}
                 </ul>
