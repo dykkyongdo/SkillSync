@@ -34,6 +34,8 @@ export async function api<T = any>(
         cache: "no-store",
     });
     if (!res.ok) {
+        if (res.status === 401 && typeof window !== "undefined") { localStorage.removeItem("token");
+        }
         let msg = `HTTP ${res.status}`;
         try { 
             // Try Json error first
