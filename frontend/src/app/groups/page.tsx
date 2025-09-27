@@ -1,9 +1,9 @@
 "use client"
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
 import RequireAuth from "@/app/components/RequireAuth";
 
-type Group = { id: string, name: string, description: string, createdAt: string };
+type Group = { id?: string, name: string, description: string, createdAt: string };
 
 export default function GroupPage() {
     const [groups, setGroups] = useState<Group[]>([]);
@@ -26,10 +26,22 @@ export default function GroupPage() {
                 method: "POST",
                 body: JSON.stringify({ name, description: desc }),
         });
-        setGroups([g, ...groups]);
+        setGroups(prev => [g, ...groups]);
         setName(""); setDesc("");
         }  catch (e: any) { setErr(e.message); }
     }
+
+    // Build a deduped list and a guaranteed unique key for each item
+    const displayGroups = useMemo(() => {
+        const seen = new Set<string>();
+        return (groups ?? []).map((g, idx) => {
+            // Prefer server id otherwise fall back to a composite jey that's stable
+            const fallback = `${g.name || "grp"}-${g.createdAt || ""}-${idx}`;
+            const key = (g.id && !seen.has(g.id)) ? g.id : fallback;
+            if (g.id) seen.add(g.id);
+            return { ...g, __key: key};
+        });
+    }, [groups]);
 
     return (
         <RequireAuth>
@@ -44,8 +56,8 @@ export default function GroupPage() {
                 {err && <p className="text-red-600 text-sm">{err}</p>}
 
                 <ul className="space-y-3">
-                    {groups.map(g => (
-                        <li key={g.id} className="p-4 rounded-xl border">
+                    {displayGroups.map((g) => (
+                        <li key={(g as any).__key} className="p-4 rounded-xl border">
                             <div className="font-medium">{g.name}</div>
                             <div className="text-sm opacity-80">{g.description}</div>
                         </li>
