@@ -1,48 +1,38 @@
 "use client"; 
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-type AuthState = {
+type AuthCtx = {
     token: string | null; 
-    email: string | null; 
-    login: (token: string) => void; 
+    login: (jwt: string) => void; 
     logout: () => void;
 };
 
-const Ctx = createContext<AuthState | null>(null);
+const Ctx = createContext<AuthCtx>({ token: null, login: () => {}, logout: () => {} });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<string | null>(null);
-    const [email, setEmail] = useState<string |null>(null);
+    const [token, setToken] = useState<string | null>(null); 
 
     useEffect(() => {
-        const t = localStorage.getItem("token");
-        const e = localStorage.getItem("email");
-        if (t) setToken(t);
-        if (e) setEmail(e);
-    }, []);
-
-    const login = (t: string) => {
-        setToken(t);
-        localStorage.setItem("token", t);
         try {
-            const payload = JSON.parse(atob(t.split(".")[1]));
-            setEmail(payload.sub ?? null);
+            const t = localStorage.getItem("token");
+            if (t) setToken(t);
         } catch {}
-    };
-
-    const logout = useCallback(() => {
-        setToken(null);
-        setEmail(null);
-        localStorage.removeItem("token");
-        localStorage.removeItem("email");
     }, []);
 
-    return <Ctx.Provider value={{ token, email, login, logout }}>{children}</Ctx.Provider>;
+    function login(jwt: string) {
+        localStorage.setItem("token", jwt);
+        setToken(jwt);
+    }
+
+    function logout() {
+        localStorage.removeItem("token");
+        setToken(null);
+    }
+
+    return <Ctx.Provider value={{ token , login, logout }}>{children}</Ctx.Provider>;
 }
 
 export function useAuth() {
-    const v = useContext(Ctx); 
-    if (!v) throw new Error("useAuth must be used within AuthProvider");
-    return v;
+    return useContext(Ctx);
 }
