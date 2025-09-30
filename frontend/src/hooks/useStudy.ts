@@ -1,5 +1,5 @@
 "use client"
-import { use, useCallback, useState } from "react";
+import { useCallback, useState } from "react";
 import { api } from "@/lib/api";
 
 export type DueCard = { flashcardId: string; question: string; answer: string };
