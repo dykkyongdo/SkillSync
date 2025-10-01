@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import RequireAuth from "@/app/components/RequireAuth";
+import RequireAuth from "@/components/RequireAuth";
 import { api } from "@/lib/api";
 import Link from "next/link";
 

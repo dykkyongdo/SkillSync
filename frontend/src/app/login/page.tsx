@@ -8,7 +8,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const router = useRouter();
   const [email, setEmail] = useState("owner@example.com");
-  const [password, setPassword] = useState("changeme");
+  const [password, setPassword] = useState("testpassword");
   const [err, setErr] = useState<string | null>(null);
 
   async function onSubmit(e: React.FormEvent) {

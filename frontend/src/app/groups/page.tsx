@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useMemo, useState } from "react";
 import { api } from "@/lib/api";
-import RequireAuth from "@/app/components/RequireAuth";
+import RequireAuth from "@/components/RequireAuth";
 import Link from "next/link";
 
 type Group = { id?: string, name: string, description: string, createdAt: string };
