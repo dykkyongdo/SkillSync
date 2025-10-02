@@ -41,7 +41,9 @@ export default function Navbar() {
     };
 
     return (
-        <header className="w-full border-b-[4px] border-border bg-secondary-background">
+        <header className="fixed inset-x-0 top-0 z-50 w-full
+        bg-secondary-background border-b-4 border-border
+        shadow-sm">
         <div
             className={[
             "mx-auto max-w-7xl px-3 sm:px-4 lg:px-6",
@@ -74,7 +76,9 @@ export default function Navbar() {
                 {NAV_ITEMS.map((it) => (
                     <Item key={it.href} {...it} />
                 ))}
-                <Button className="font-bold text-md">Get started</Button>
+                <Button className="font-bold text-md">
+                    <Link href="/register">Get Started</Link>
+                </Button>
             </nav>
         </div>
         </header>
