@@ -9,7 +9,7 @@ export default function HomePage() {
       {/* Background */}
       <div className="absolute inset-0 -z-10 bg-background" />
       <div
-        className="absolute inset-0 -z-10 opacity-30 dark:opacity-20 pointer-events-none
+        className="absolute inset-0 -z-10 opacity-70 dark:opacity-20 pointer-events-none
                     bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
                     bg-[size:48px_48px]"
       />
@@ -48,7 +48,7 @@ export default function HomePage() {
             size="lg"
             className="h-12 px-6 text-lg sm:text-xl font-medium [&>svg]:w-7 [&>svg]:h-7"
           >
-            <Link href="/register">
+            <Link href="/auth/register">
               Get Started
               <ArrowUpRight className="ml-2 [stroke-width:2]" />
             </Link>

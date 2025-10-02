@@ -1,4 +1,5 @@
 // app/not-found.tsx
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 
 export default function NotFound() {
@@ -9,12 +10,13 @@ export default function NotFound() {
             This page could not be found.
         </p>
         <div className="mt-8">
-            <Link
-            href="/"
-            className="inline-block px-4 py-2 rounded-base border-2 border-border bg-secondary-background shadow-shadow"
-            >
-            Back to home
-            </Link>
+            <Button variant="neutral">
+                <Link
+                href="/"
+                >
+                Back to home
+                </Link>
+            </Button>
         </div>
         </main>
     );

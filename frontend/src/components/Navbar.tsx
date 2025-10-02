@@ -10,8 +10,8 @@ type NavItem = { href: string; label: string; exact?: boolean };
 
 const NAV_ITEMS: NavItem[] = [
     { href: "/groups", label: "Groups" },
-    { href: "/login", label: "Login", exact: true },
-    { href: "/register", label: "Register", exact: true },
+    { href: "/auth/login", label: "Login", exact: true },
+    { href: "/auth/register", label: "Register", exact: true },
 ];
 
 function isActive(pathname: string, href: string, exact = false) {
@@ -21,6 +21,7 @@ function isActive(pathname: string, href: string, exact = false) {
 
 export default function Navbar() {
     const pathname = usePathname();
+    const onAuthPage = /^\/(login|register)$/.test(pathname);
 
     const Item = ({ href, label, exact }: NavItem) => {
         const active = isActive(pathname, href, exact);
