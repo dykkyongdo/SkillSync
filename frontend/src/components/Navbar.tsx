@@ -28,7 +28,7 @@ export default function Navbar() {
             aria-current={active ? "page" : undefined}
             className={[
                 // bigger text + base font family
-                "px-3 py-2 rounded-base font-base font-semibold text-2l sm:text-2l",
+                "px-3 py-2 rounded-base font-base font-medium text-2l sm:text-2l",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[--color-ring]",
                 active
                 ? "bg-secondary-background text-foreground border-2 border-border shadow-shadow"
@@ -45,7 +45,7 @@ export default function Navbar() {
         <div
             className={[
             "mx-auto max-w-7xl px-3 sm:px-4 lg:px-6",
-            "flex flex-wrap items-center gap-x-6 gap-y-3 py-4",
+            "flex flex-wrap items-center gap-x-6 gap-y-3 py-3",
             ].join(" ")}
         >
             <Link href="/" className="flex items-center gap-3 min-w-0">
@@ -60,7 +60,7 @@ export default function Navbar() {
                 />
             </span>
 
-            <span className="font-heading font-bold text-xl sm:text-2xl leading-none tracking-tight">
+            <span className="font-heading font-semibold text-xl sm:text-2xl leading-none tracking-tight">
                 SkillSync
             </span>
             </Link>

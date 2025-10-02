@@ -31,7 +31,7 @@ export default function HomePage() {
                 </span>
                 <Star9
                 aria-hidden
-                className="absolute -right-9 -bottom-10 h-20 w-20 text-main/80 drop-shadow-md"
+                className="absolute -right-9 -bottom-10 h-20 w-20"
                 />
             </span>{" "}
             Platform
