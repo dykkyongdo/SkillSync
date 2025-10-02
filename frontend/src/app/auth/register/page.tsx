@@ -68,7 +68,7 @@ export default function RegisterPage() {
         />
 
         <section className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 relative z-0">
-            <Card className="w-full max-w-sm">
+            <Card className="w-full max-w-sm bg-white">
             <CardHeader>
                 <CardTitle className="text-2xl font-semibold">Create your account</CardTitle>
                 <CardDescription className="font-medium">Join SkillSync</CardDescription>
