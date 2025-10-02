@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
+import Image from "next/image";
+import { Linkedin } from "lucide-react";
 
 type NavItem = { href: string; label: string; exact?: boolean };
 
@@ -76,9 +78,22 @@ export default function Navbar() {
                 {NAV_ITEMS.map((it) => (
                     <Item key={it.href} {...it} />
                 ))}
-                <Button className="font-bold text-md">
-                    <Link href="/register">Get Started</Link>
-                </Button>
+
+
+                <div className="flex items-center gap-5">
+                    <Button variant="neutral" size="icon">
+                        <a href="https://github.com/dykkyongdo/SkillSync" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <Image src="/github-mark.svg" alt="" width={20} height={20} />
+                        </a>
+                    </Button>
+                    <Button variant="neutral" size="icon">
+                        <a href="https://www.linkedin.com/in/dyk-kyong-do-46a0a4265/" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                            <Linkedin aria-hidden className="shrink-0"/>
+                        </a>
+                    </Button>
+
+
+                </div>
             </nav>
         </div>
         </header>
