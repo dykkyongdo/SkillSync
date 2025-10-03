@@ -16,7 +16,7 @@ export default function HomePage() {
 
       {/* Hero */}
       <section className="min-h-screen flex flex-col items-center justify-center px-3 sm:px-4 lg:px-6 text-center  relative z-0">
-        <h1 className="font-heading font-bold tracking-tight text-6xl sm:text-5xl md:text-4xl leading-[1.05] flex flex-wrap items-center justify-center gap-x-2 gap-y-2">
+        <h1 className="font-bold tracking-tight text-6xl sm:text-5xl md:text-4xl leading-[1.05] flex flex-wrap items-center justify-center gap-x-2 gap-y-2">
             Groups + Flashcards{" "}
             <span className="relative inline-flex items-center align-middle">
                 {/* top-left star */}

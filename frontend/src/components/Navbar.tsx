@@ -86,7 +86,9 @@ export default function Navbar() {
                 ))}
 
                 {isAuthed && (
-                    <Button variant="neutral" onClick={logout}>
+                    <Button 
+                    className="font-semibold"
+                    variant="neutral" onClick={logout}>
                         Logout
                     </Button>
                 )}
