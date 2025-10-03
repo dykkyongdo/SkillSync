@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -38,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
         System.out.println("=== JwtAuthFilter START ===");
         System.out.println("Request URI: " + request.getRequestURI());
@@ -68,11 +69,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                         System.out.println("Authentication set in SecurityContext");
                     }
                 } else {
-                    System.out.println("Token validation failed");
+                    System.out.println("Token validation failed - clearing authentication");
+                    SecurityContextHolder.clearContext();
                 }
             } catch (Exception e) {
                 System.out.println("Error processing token: " + e.getMessage());
                 e.printStackTrace();
+                SecurityContextHolder.clearContext();
             }
         } else {
             System.out.println("No Bearer token found in Authorization header");

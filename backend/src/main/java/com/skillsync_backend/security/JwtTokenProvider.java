@@ -25,7 +25,15 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void init() {
+        if (secret == null || secret.trim().isEmpty()) {
+            throw new IllegalStateException("JWT secret is not configured. Please set JWT_SECRET environment variable.");
+        }
+        if (expiration == null || expiration <= 0) {
+            throw new IllegalStateException("JWT expiration is not configured. Please set JWT_EXPIRATION environment variable.");
+        }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        System.out.println("JWT Token Provider initialized with secret length: " + secret.length());
+        System.out.println("JWT expiration: " + expiration + " ms");
     }
 
     public String generateToken(User user) {                //Generates a signed JWT with email and role
@@ -43,6 +51,7 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }  catch (JwtException | IllegalArgumentException e) {
+            System.out.println("JWT validation failed: " + e.getClass().getSimpleName() + " - " + e.getMessage());
             return false;
         }
     }
