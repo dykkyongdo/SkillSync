@@ -6,6 +6,9 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSearchParams } from "next/navigation";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
 import {
     Card,
     CardContent,
@@ -17,12 +20,14 @@ import {
 
 export default function RegisterPage() {
     const router = useRouter();
-    const [name, setName] = React.useState("");
+    const { login } = useAuth();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [confirm, setConfirm] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
+    const search = useSearchParams();
+    const next = search.get("next") || "/groups";
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -35,20 +40,12 @@ export default function RegisterPage() {
 
         setLoading(true);
         try {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/register`,
-            {
+        const data = await api<{ token: string }>("/api/auth/register", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, email, password }),
-            credentials: "include",
-            }
-        );
-        if (!res.ok) {
-            const msg = await res.text().catch(() => "");
-            throw new Error(msg || "Registration failed");
-        }
-        router.push("/groups");
+            body: JSON.stringify({ email, password }),
+        });
+        login(data.token);
+        router.push(next);
         router.refresh();
         } catch (err: any) {
         setError(err.message ?? "Something went wrong");
@@ -77,17 +74,6 @@ export default function RegisterPage() {
             <form id="register-form" onSubmit={onSubmit}>
                 <CardContent>
                 <div className="flex flex-col gap-4">
-                    <div className="grid gap-2">
-                    <Label htmlFor="name" className="font-semibold">Name</Label>
-                    <Input
-                        id="name"
-                        type="text"
-                        autoComplete="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    </div>
-
                     <div className="grid gap-2">
                     <Label htmlFor="email" className="font-semibold">Email</Label>
                     <Input
@@ -141,8 +127,8 @@ export default function RegisterPage() {
 
                 <div className="mt-4 text-center text-sm font-medium">
                     Already have an account?{" "}
-                    <Link href="/login" className="underline underline-offset-4 font-medium">
-                    Log in
+                    <Link href="/auth/login" className="underline underline-offset-4 font-medium">
+                        Log in
                     </Link>
                 </div>
                 </CardFooter>

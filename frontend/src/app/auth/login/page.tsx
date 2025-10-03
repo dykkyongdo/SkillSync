@@ -2,10 +2,13 @@
 
 import * as React from "react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useAuth } from "@/contexts/AuthContext";
+import { api } from "@/lib/api";
 import {
     Card,
     CardContent,
@@ -17,30 +20,25 @@ import {
 
 export default function LoginPage() {
     const router = useRouter();
+    const { login } = useAuth();
     const [email, setEmail] = React.useState("");
     const [password, setPassword] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
+    const search = useSearchParams();
+    const next = search.get("next") || "/groups";
 
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
         setLoading(true);
         try {
-        const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_BASE_URL}/api/auth/login`,
-            {
+        const data = await api<{ token: string }>("/api/auth/login", {
             method: "POST",
-            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password }),
-            credentials: "include",
-            }
-        );
-        if (!res.ok) {
-            const msg = await res.text().catch(() => "");
-            throw new Error(msg || "Login failed");
-        }
-        router.push("/groups");
+        });
+        login(data.token);
+        router.push(next);
         router.refresh();
         } catch (err: any) {
         setError(err.message ?? "Something went wrong");
@@ -122,7 +120,7 @@ export default function LoginPage() {
 
                 <div className="mt-4 text-center text-sm font-medium">
                     Don&apos;t have an account?{" "}
-                    <Link href="/register" className="underline underline-offset-4">
+                    <Link href="/auth/register" className="underline underline-offset-4">
                     Sign Up
                     </Link>
                 </div>

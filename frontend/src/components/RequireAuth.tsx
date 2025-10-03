@@ -4,13 +4,13 @@ import { useEffect } from "react";
 import { useRouter  } from "next/navigation";
 
 export default function RequireAuth({ children }: { children: React.ReactNode }) {
-    const { token } = useAuth();
+    const { isAuthenticated } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
-        if (!token) router.replace("/login");
-    }, [token, router]);
+        if (!isAuthenticated) router.replace("/auth/login");
+    }, [isAuthenticated, router]);
 
-    if (!token) return null;
+    if (!isAuthenticated) return null;
     return <>{children}</>;
 }

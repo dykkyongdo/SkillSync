@@ -10,6 +10,16 @@ async function getToken(): Promise<string | null> {
     try { return localStorage.getItem("token"); } catch { return null; }
 }
 
+export function clearExpiredToken(): void {
+    if (typeof window === "undefined") return;
+    try {
+        localStorage.removeItem("token");
+        console.log("Expired token cleared from localStorage");
+    } catch (error) {
+        console.error("Failed to clear token:", error);
+    }
+}
+
 export async function api<T = unknown>(
     path: string,
     init: RequestInit = {}
@@ -24,6 +34,18 @@ export async function api<T = unknown>(
     const res = await fetch(toUrl(path), { ...init, headers, cache: "no-store" });
 
     if (!res.ok) {
+        // Handle token expiration (401 Unauthorized or 403 Forbidden)
+        if ((res.status === 401 || res.status === 403) && token) {
+            // Clear expired token
+            clearExpiredToken();
+            
+            // Redirect to login if not already on auth pages
+            if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
+                window.location.href = "/auth/login";
+                return Promise.reject(new Error("Token expired. Redirecting to login..."));
+            }
+        }
+
         // Try to surface backend JSON error shape
         let message = `HTTP ${res.status}`;
         const ct = res.headers.get("content-type") || "";

@@ -4,12 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
+import { useAuth } from "@/contexts/AuthContext";
 import { Linkedin } from "lucide-react";
 
 type NavItem = { href: string; label: string; exact?: boolean };
 
-const NAV_ITEMS: NavItem[] = [
+const AUTH_NAV_ITEMS: NavItem[] = [
     { href: "/groups", label: "Groups" },
+];
+
+const UNAUTH_NAV_ITEMS: NavItem[] = [
     { href: "/auth/login", label: "Login", exact: true },
     { href: "/auth/register", label: "Register", exact: true },
 ];
@@ -21,7 +25,8 @@ function isActive(pathname: string, href: string, exact = false) {
 
 export default function Navbar() {
     const pathname = usePathname();
-    const onAuthPage = /^\/(login|register)$/.test(pathname);
+    const { token, logout } = useAuth();
+    const isAuthed = !!token;
 
     const Item = ({ href, label, exact }: NavItem) => {
         const active = isActive(pathname, href, exact);
@@ -76,9 +81,15 @@ export default function Navbar() {
                 className="flex items-center gap-4 sm:gap-6 flex-wrap min-w-0"
                 aria-label="Primary"
                 >
-                {NAV_ITEMS.map((it) => (
+                {(isAuthed ? AUTH_NAV_ITEMS : UNAUTH_NAV_ITEMS).map((it) => (
                     <Item key={it.href} {...it} />
                 ))}
+
+                {isAuthed && (
+                    <Button variant="neutral" onClick={logout}>
+                        Logout
+                    </Button>
+                )}
 
 
                 <div className="flex items-center gap-5">
