@@ -8,9 +8,19 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
     const router = useRouter();
 
     useEffect(() => {
-        if (!isAuthenticated) router.replace("/auth/login");
+        console.log("RequireAuth: isAuthenticated =", isAuthenticated);
+        if (!isAuthenticated) {
+            console.log("RequireAuth: Redirecting to login");
+            router.replace("/auth/login");
+        } else {
+            console.log("RequireAuth: User is authenticated, rendering children");
+        }
     }, [isAuthenticated, router]);
 
-    if (!isAuthenticated) return null;
+    if (!isAuthenticated) {
+        console.log("RequireAuth: Not authenticated, returning null");
+        return null;
+    }
+    console.log("RequireAuth: Rendering protected content");
     return <>{children}</>;
 }

@@ -25,11 +25,19 @@ export async function api<T = unknown>(
     init: RequestInit = {}
 ): Promise<T> {
     const token = await getToken();
+    console.log(`=== API Request Debug ===`);
+    console.log(`Request path: ${path}`);
+    console.log(`Token found: ${token ? 'YES' : 'NO'}`);
+    console.log(`Token preview: ${token ? (token.length > 20 ? token.substring(0, 20) + '...' : token) : 'null'}`);
+    
     const headers: Record<string,string> = {
         "Content-Type": "application/json",
         ...(init.headers as Record<string,string>),
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
+
+    console.log(`Headers being sent:`, headers);
+    console.log(`=== End API Debug ===`);
 
     const res = await fetch(toUrl(path), { ...init, headers, cache: "no-store" });
 
