@@ -34,6 +34,7 @@ public class StudyService {
     private final FlashcardRepository cardRepo;
     private final UsedCardProgressRepository progressRepo;
     private final AccessGuard access;
+    private final ValidationService validationService;
 
     // Optional dependency: only used if you added ReviewLog + its repository
     private final Optional<ReviewLogRepository> reviewLogRepo;
@@ -44,8 +45,9 @@ public class StudyService {
      */
     @Transactional // not read-only, because we may seed
     public List<DueCardDto> listDue(UUID setId, String email, int limit) {
+        validationService.validateStudyParameters(limit);
         // authz: user must be a member of the set's group
-        FlashcardSet set = access.ensureMemberOfSet(setId, email);
+        access.ensureMemberOfSet(setId, email);
 
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new NotFoundException("User with email " + email + " not found"));
@@ -97,7 +99,7 @@ public class StudyService {
      */
     @Transactional
     public ReviewResultDto review(UUID setId, UUID flashcardId, int grade, String email) {
-        if (grade < 0 || grade > 3) throw new IllegalArgumentException("grade must be between 0 and 3");
+        validationService.validateReviewGrade(grade);
 
         FlashcardSet set = access.ensureMemberOfSet(setId, email);
 
