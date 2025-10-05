@@ -3,6 +3,7 @@ package com.skillsync_backend.config;
 import com.skillsync_backend.security.JwtAuthFilter;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -19,6 +20,7 @@ import org.springframework.web.cors.CorsConfiguration;
 
 import java.util.List;
 
+@Slf4j
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -28,8 +30,8 @@ public class SecurityConfig {
 
     @PostConstruct
     public void init() {
-        System.out.println("SecurityConfig initialized");
-        System.out.println("JwtAuthFilter injected: " + (jwtAuthFilter != null));
+        log.info("SecurityConfig initialized");
+        log.debug("JwtAuthFilter injected: {}", jwtAuthFilter != null);
     }
 
     @Bean
