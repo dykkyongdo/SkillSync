@@ -7,6 +7,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.Instant;
 import java.util.UUID;
 import java.util.List;
 import java.util.Collection;
@@ -34,6 +35,17 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Role role;
+
+    @Column(nullable = false)
+    private int xp = 0;
+
+    @Column(nullable = false)
+    private int level = 1;
+
+    @Column(nullable = false)
+    private int streakCount = 0;
+
+    private Instant lasStudyDate;
 
     @Override
     @JsonIgnore
