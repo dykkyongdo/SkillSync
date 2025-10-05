@@ -1,6 +1,8 @@
 package com.skillsync_backend.service;
 
 import com.skillsync_backend.dto.GroupResponse;
+import com.skillsync_backend.exception.ResourceNotFoundException;
+import com.skillsync_backend.exception.UserNotFoundException;
 import com.skillsync_backend.model.User;
 import com.skillsync_backend.model.Group;
 import com.skillsync_backend.repository.GroupMembershipRepository;
@@ -26,7 +28,7 @@ public class GroupService {
     private GroupMembershipRepository membershipRepo;
 
     public Group createGroup(String name, String description, String creatorEmail) {
-        User creator = userRepository.findByEmail(creatorEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        User creator = userRepository.findByEmail(creatorEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         Group group = Group.builder()
                 .name(name)
@@ -45,16 +47,16 @@ public class GroupService {
 
     @Transactional
     public void joinGroup(UUID groupId, String userEmail) {
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         group.getMembers().add(user);
         groupRepository.save(group);
     }
 
     public List<Group> getGroupsForUser(String userEmail) {
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         return groupRepository.findAllByMembersContaining(user);
     }
@@ -62,16 +64,16 @@ public class GroupService {
     @Transactional
     public void leaveGroup(UUID groupId, String userEmail) {
 
-        Group group = groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+        Group group = groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
 
-        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
 
         group.getMembers().remove(user);
         groupRepository.save(group);
     }
 
     public Group getGroupByDetails(UUID groupId) {
-        return groupRepository.findById(groupId).orElseThrow(() -> new RuntimeException("Group not found"));
+        return groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
     }
 
     private GroupResponse toResponse(Group group, String viewerEmail) {
