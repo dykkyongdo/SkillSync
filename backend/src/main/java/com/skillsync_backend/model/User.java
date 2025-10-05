@@ -2,6 +2,8 @@ package com.skillsync_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -25,9 +27,12 @@ public class User implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)     // automatically generate a random UUID when a new User is saved
     private UUID id;
 
+    @Email(message = "Must be a valid email address")
+    @NotBlank(message = "Email is required")
     @Column(unique = true, nullable = false)
     private String email;
 
+    @NotBlank(message = "Password is required")
     @Column(nullable = false)
     @JsonIgnore
     private String password;
@@ -36,12 +41,15 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private Role role;
 
+    @Builder.Default
     @Column(nullable = false)
     private int xp = 0;
 
+    @Builder.Default
     @Column(nullable = false)
     private int level = 1;
 
+    @Builder.Default
     @Column(nullable = false)
     private int streakCount = 0;
 
