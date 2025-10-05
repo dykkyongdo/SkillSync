@@ -188,7 +188,7 @@ export default function GroupsPage() {
                     return (
                     <Card
                         key={group.id}
-                        className="transition-transform border-2 border-border shadow-shadow bg-white"
+                        className="transition-transform border-2 border-border shadow-shadow bg-main"
                     >
                         <CardHeader>
                         <CardTitle className="font-medium">{group.name}</CardTitle>
@@ -217,7 +217,7 @@ export default function GroupsPage() {
 
                         {/* View link (keep or remove as you like) */}
                         <div className="mt-4">
-                            <Button asChild className="w-full font-semibold">
+                            <Button asChild className="w-full font-semibold bg-white">
                             <Link href={`/groups/${group.id}`}>View Sets</Link>
                             </Button>
                         </div>
