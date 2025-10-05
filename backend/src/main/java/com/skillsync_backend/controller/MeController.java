@@ -1,6 +1,7 @@
 package com.skillsync_backend.controller;
 
 import com.skillsync_backend.dto.MyStatsDto;
+import com.skillsync_backend.exception.UserNotFoundException;
 import com.skillsync_backend.repository.UsedCardProgressRepository;
 import com.skillsync_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,7 @@ public class MeController {
 
     @GetMapping("/stats")
     public ResponseEntity<MyStatsDto> stats(Authentication auth) {
-        var user = userRepo.findByEmail(auth.getName()).orElseThrow(() -> new RuntimeException("User not found"));
+        var user = userRepo.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException("User not found"));
         int mastered = progressRepo.countByUser_IdAndMasteredTrue(user.getId());
         int dueToday = progressRepo.countDueByUserForToday(user.getId(), Instant.now());
 

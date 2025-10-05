@@ -41,15 +41,18 @@ public class Group {
             joinColumns = @JoinColumn(name = "group_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @Builder.Default
     @JsonIgnore
     private Set<User> members = new HashSet<>();
 
     // Flashcards (direct-to-group)
+    @Builder.Default
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Flashcard> flashcards = new ArrayList<>();
 
     // Flashcard sets (decks)
+    @Builder.Default
     @OneToMany(mappedBy = "group", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<FlashcardSet> sets = new ArrayList<>();
