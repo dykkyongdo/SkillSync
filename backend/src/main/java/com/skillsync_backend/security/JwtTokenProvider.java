@@ -5,6 +5,7 @@ import com.skillsync_backend.model.Role;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import java.nio.charset.StandardCharsets;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.security.Key;
 
+@Slf4j
 @Component
 public class JwtTokenProvider {
 
@@ -32,8 +34,8 @@ public class JwtTokenProvider {
             throw new IllegalStateException("JWT expiration is not configured. Please set JWT_EXPIRATION environment variable.");
         }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        System.out.println("JWT Token Provider initialized with secret length: " + secret.length());
-        System.out.println("JWT expiration: " + expiration + " ms");
+        log.info("JWT Token Provider initialized with secret length: {}", secret.length());
+        log.debug("JWT expiration: {} ms", expiration);
     }
 
     public String generateToken(User user) {                //Generates a signed JWT with email and role
@@ -51,7 +53,7 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }  catch (JwtException | IllegalArgumentException e) {
-            System.out.println("JWT validation failed: " + e.getClass().getSimpleName() + " - " + e.getMessage());
+            log.debug("JWT validation failed: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             return false;
         }
     }
