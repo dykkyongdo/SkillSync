@@ -15,8 +15,8 @@ import java.util.UUID;
 public class UserCardProgress {
 
     @Id
-    @GeneratedValue
-    private UUID Id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
@@ -41,9 +41,11 @@ public class UserCardProgress {
 
     private Instant lastReviewedAt;
 
+    @Builder.Default
     @Column(nullable = false)
     private int consecutiveCorrect = 0;
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean mastered = false;       // true when user "knows" the card
 }
