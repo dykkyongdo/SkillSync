@@ -45,7 +45,7 @@ public class User implements UserDetails {
     @Column(nullable = false)
     private int streakCount = 0;
 
-    private Instant lasStudyDate;
+    private Instant lastStudyDate;
 
     @Override
     @JsonIgnore
