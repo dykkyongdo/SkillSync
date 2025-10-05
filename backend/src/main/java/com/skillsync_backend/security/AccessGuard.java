@@ -1,5 +1,6 @@
 package com.skillsync_backend.security;
 
+import com.skillsync_backend.exception.ResourceNotFoundException;
 import com.skillsync_backend.model.FlashcardSet;
 import com.skillsync_backend.model.GroupRole;
 import com.skillsync_backend.model.MembershipStatus;
@@ -36,7 +37,7 @@ public class AccessGuard {
 
     public FlashcardSet ensureMemberOfSet(UUID setId, String email) {
         var set = setRepo.findById(setId)
-                .orElseThrow(() -> new RuntimeException("Flashcard set not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Flashcard set not found"));
         ensureMemberOfGroup(set.getGroup().getId(), email);
         return set;
     }
