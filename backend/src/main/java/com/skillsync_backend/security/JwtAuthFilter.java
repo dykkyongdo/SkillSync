@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,6 +25,7 @@ import java.io.IOException;
  * - Sets authentication in the security context
  */
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
@@ -33,55 +35,52 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
     @PostConstruct
     public void init() {
-        System.out.println("JwtAuthFilter bean created");
-        System.out.println("JwtTokenProvider injected: " + (jwtTokenProvider != null));
-        System.out.println("UserService injected: " + (userService != null));
+        log.info("JwtAuthFilter initialized");
+        log.debug("JwtTokenProvider injected: {}", jwtTokenProvider != null);
+        log.debug("UserService injected: {}", userService != null);
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        System.out.println("=== JwtAuthFilter START ===");
-        System.out.println("Request URI: " + request.getRequestURI());
-        System.out.println("Request Method: " + request.getMethod());
+        log.debug("Processing JWT authentication for URI: {} {}", request.getMethod(), request.getRequestURI());
         String header = request.getHeader("Authorization");             //Read the "Authorization" header from the incoming HTTP request
-        System.out.println("Authorization header: " + header);  // Debug log
+        log.debug("Authorization header present: {}", header != null);
 
         if (header != null && header.startsWith("Bearer ")) {               //Check if it starts with "Bearer", indicating a JWT is present
             String token = header.substring(7);                   //Extract token by removing "Bearer " prefix 7 chars
-            System.out.println("Token extracted: " + (token.length() > 20 ? token.substring(0, 20) + "..." : token));
+            log.debug("Token extracted, length: {}", token.length());
 
             try {
                 if (jwtTokenProvider.validateToken(token)) {
-                    System.out.println("Token is valid");
+                    log.debug("Token validation successful");
 
                     String email = jwtTokenProvider.getEmailFromToken(token);
-                    System.out.println("Email from token: " + email);
+                    log.debug("Email extracted from token: {}", email);
 
                     if (email != null) {
                         UserDetails userDetails = userService.loadUserByUsername(email);
-                        System.out.println("User loaded: " + userDetails.getUsername());
+                        log.debug("User loaded successfully: {}", userDetails.getUsername());
 
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                        System.out.println("Authentication set in SecurityContext");
+                        log.debug("Authentication set in SecurityContext");
                     }
                 } else {
-                    System.out.println("Token validation failed - clearing authentication");
+                    log.warn("Token validation failed - clearing authentication");
                     SecurityContextHolder.clearContext();
                 }
             } catch (Exception e) {
-                System.out.println("Error processing token: " + e.getMessage());
-                e.printStackTrace();
+                log.error("Error processing token: {}", e.getMessage(), e);
                 SecurityContextHolder.clearContext();
             }
         } else {
-            System.out.println("No Bearer token found in Authorization header");
+            log.debug("No Bearer token found in Authorization header");
         }
 
-        System.out.println("=== JwtAuthFilter END ===");
+        log.debug("JWT authentication filter completed");
         filterChain.doFilter(request, response);
     }
 }
