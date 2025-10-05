@@ -31,6 +31,6 @@ public class MeController {
                 .streakCount(user.getStreakCount())
                 .masteredCards(mastered)
                 .dueToday(dueToday)
-                .build();
+                .build());
     }
 }
