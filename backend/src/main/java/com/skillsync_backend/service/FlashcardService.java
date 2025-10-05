@@ -22,11 +22,15 @@ public class FlashcardService {
     private final FlashcardRepository flashcardRepo;
     private final FlashcardSetRepository setRepo;
     private final AccessGuard access;
+    private final ValidationService validationService;
 
     /** Create a flashcard in a set. Caller must be a member of the owning group. */
     public FlashcardDto create(FlashcardRequest req, String email) {
         UUID setId = UUID.fromString(req.getSetId());
         FlashcardSet set = access.ensureMemberOfSet(setId, email); // validates membership and loads the set
+        
+        // Validate content quality
+        validationService.validateFlashcardContent(req.getQuestion(), req.getAnswer());
 
         Flashcard card = Flashcard.builder()
                 .question(req.getQuestion())

@@ -26,6 +26,7 @@ public class FlashcardSet {
     @JsonIgnore
     private Group group;
 
+    @Builder.Default
     @OneToMany(mappedBy = "set", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Flashcard> flashcards = new ArrayList<>();
