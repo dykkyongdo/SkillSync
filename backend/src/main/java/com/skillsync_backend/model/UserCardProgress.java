@@ -40,4 +40,10 @@ public class UserCardProgress {
     private Instant nextDueAt;      // due time
 
     private Instant lastReviewedAt;
+
+    @Column(nullable = false)
+    private int consecutiveCorrect = 0;
+
+    @Column(nullable = false)
+    private boolean mastered = false;       // true when user "knows" the card
 }
