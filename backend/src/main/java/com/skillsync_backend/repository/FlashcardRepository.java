@@ -10,6 +10,7 @@ import java.util.UUID;
 
 public interface FlashcardRepository extends JpaRepository<Flashcard, UUID> {
     Page<Flashcard> findBySetId(UUID setId, Pageable pageable);
+    long countBySetId(UUID setId);
 }
 
 
