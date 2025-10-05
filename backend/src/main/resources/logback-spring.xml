@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+    <include resource="org/springframework/boot/logging/logback/console-appender.xml"/>
+
+    <!-- Application specific logging -->
+    <logger name="com.skillsync_backend" level="INFO"/>
+    
+    <!-- Security logging -->
+    <logger name="com.skillsync_backend.security" level="DEBUG"/>
+    
+    <!-- JPA/Hibernate logging -->
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+    
+    <!-- Spring Security logging -->
+    <logger name="org.springframework.security" level="DEBUG"/>
+    
+    <!-- Root logger -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    
+    <!-- Profile-specific configurations -->
+    <springProfile name="!prod">
+        <logger name="com.skillsync_backend" level="DEBUG"/>
+    </springProfile>
+    
+    <springProfile name="prod">
+        <logger name="com.skillsync_backend" level="WARN"/>
+        <logger name="org.springframework.security" level="WARN"/>
+        <logger name="org.hibernate.SQL" level="WARN"/>
+    </springProfile>
+</configuration>
