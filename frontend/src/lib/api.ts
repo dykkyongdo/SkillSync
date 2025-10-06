@@ -60,7 +60,18 @@ export async function api<T = unknown>(
         try {
         if (ct.includes("application/json")) {
             const j = await res.json() as any;
-            message = j.message || j.error || message;
+            
+            // Handle validation errors from backend
+            if (j.fields && Array.isArray(j.fields)) {
+                const fieldErrors = j.fields.map((field: any) => `${field.field}: ${field.message}`).join(', ');
+                message = fieldErrors;
+            }
+            // Handle other error formats
+            else if (j.message) {
+                message = j.message;
+            } else if (j.error) {
+                message = j.error;
+            }
         } else {
             const text = await res.text();
             if (text) message = `${message} - ${text}`;

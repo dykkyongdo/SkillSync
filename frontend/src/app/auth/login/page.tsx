@@ -31,6 +31,18 @@ export default function LoginPage() {
     async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
         setError(null);
+        
+        // Client-side validation
+        if (!email.trim()) {
+            setError("Email is required");
+            return;
+        }
+        
+        if (!password.trim()) {
+            setError("Password is required");
+            return;
+        }
+        
         setLoading(true);
         try {
         const data = await api<{ token: string }>("/api/auth/login", {

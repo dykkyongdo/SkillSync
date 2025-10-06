@@ -33,6 +33,22 @@ export default function RegisterPage() {
         e.preventDefault();
         setError(null);
 
+        // Client-side validation
+        if (!email.trim()) {
+            setError("Email is required");
+            return;
+        }
+        
+        if (!email.includes("@") || !email.includes(".")) {
+            setError("Please enter a valid email address");
+            return;
+        }
+
+        if (password.length < 6) {
+            setError("Password must be at least 6 characters long");
+            return;
+        }
+
         if (password !== confirm) {
         setError("Passwords do not match.");
         return;
@@ -97,6 +113,7 @@ export default function RegisterPage() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                    <p className="text-xs text-muted-foreground">Password must be at least 6 characters long</p>
                     </div>
 
                     <div className="grid gap-2">
