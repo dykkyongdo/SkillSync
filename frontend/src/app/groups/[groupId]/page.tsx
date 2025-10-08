@@ -14,7 +14,9 @@ import { ArrowLeft, Plus, Trash2 } from "lucide-react";
 export default function GroupPage() {
     const params = useParams();
     const groupId = params.groupId as string;
-    const { items: sets, loading, error, create, remove } = useSets(groupId);
+    
+    // Don't make API calls if groupId is undefined
+    const { items: sets, loading, error, create, remove } = useSets(groupId || "");
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
@@ -22,6 +24,11 @@ export default function GroupPage() {
     const handleCreateSet = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!title.trim()) return;
+        
+        if (!groupId || groupId === "undefined") {
+            alert("Error: Invalid group ID. Please go back to the groups page and try again.");
+            return;
+        }
         
         try {
             await create(title, description);
@@ -68,6 +75,19 @@ export default function GroupPage() {
                                 <p className="text-muted-foreground">Create and manage your flashcard sets</p>
                             </div>
                         </div>
+
+                        {/* Error State for Invalid Group ID */}
+                        {(!groupId || groupId === "undefined") && (
+                            <div className="mb-8 p-4 bg-red-50 border border-red-200 rounded-lg">
+                                <h3 className="text-red-800 font-medium">Invalid Group</h3>
+                                <p className="text-red-600 mt-1">
+                                    The group ID is invalid or missing. Please go back to the groups page and click on a valid group.
+                                </p>
+                                <Button asChild className="mt-3">
+                                    <Link href="/groups">Go to Groups</Link>
+                                </Button>
+                            </div>
+                        )}
 
                         {/* Create Set Form */}
                         {showCreateForm && (

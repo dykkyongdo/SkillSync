@@ -5,7 +5,7 @@ export type User = {
 };
 
 export type Group = {
-    id: string; 
+    groupId: string; // Backend returns 'groupId', not 'id'
     name: string; 
     description: string;
     createdAt: string; 

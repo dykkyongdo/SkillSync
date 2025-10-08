@@ -187,7 +187,7 @@ export default function GroupsPage() {
 
                     return (
                     <Card
-                        key={group.id}
+                        key={group.groupId}
                         className="transition-transform border-2 border-border shadow-shadow bg-main"
                     >
                         <CardHeader>
@@ -217,9 +217,15 @@ export default function GroupsPage() {
 
                         {/* View link (keep or remove as you like) */}
                         <div className="mt-4">
-                            <Button asChild className="w-full font-semibold bg-white">
-                            <Link href={`/groups/${group.id}`}>View Sets</Link>
-                            </Button>
+                            {group.groupId ? (
+                                <Button asChild className="w-full font-semibold bg-white">
+                                    <Link href={`/groups/${group.groupId}`}>View Sets</Link>
+                                </Button>
+                            ) : (
+                                <Button disabled className="w-full font-semibold bg-gray-300">
+                                    View Sets (Invalid ID)
+                                </Button>
+                            )}
                         </div>
                         </CardContent>
                     </Card>
