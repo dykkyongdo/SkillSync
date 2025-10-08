@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import RequireAuth from "@/components/RequireAuth";
 import { useSets } from "@/hooks/useSets";
+import { useGroups } from "@/hooks/useGroups";
 
 import { useState } from "react";
 import { ArrowLeft, Plus, Trash2 } from "lucide-react";
@@ -12,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 
 import {
     AlertDialog,
@@ -32,7 +34,12 @@ export default function GroupPage() {
     const groupId = params.groupId as string;
 
   // If groupId might be undefined, pass a safe fallback to the hook
-    const { items: sets, loading, error, create, remove } = useSets(groupId || "");
+    const { items: sets, error, create, remove } = useSets(groupId || "");
+    const { items: groups } = useGroups();
+    
+    // Find the current group to get its name
+    const currentGroup = groups.find(group => group.groupId === groupId);
+    const groupName = currentGroup?.name || "Group";
 
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [title, setTitle] = useState("");
@@ -89,14 +96,13 @@ export default function GroupPage() {
 
             <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
             <div className="max-w-4xl mx-auto">
+                {/* Breadcrumb Navigation */}
+                <div className="mb-6">
+                    <DynamicBreadcrumb />
+                </div>
+
                 {/* Header */}
                 <div className="flex items-center gap-4 mb-8">
-                <Button variant="neutral" size="sm" asChild className="border-2 border-border shadow-shadow">
-                    <Link href="/groups">
-                    <ArrowLeft className="w-4 h-4 mr-2" />
-                    Back to Groups
-                    </Link>
-                </Button>
                 <div className="flex-1">
                     <h1 className="text-3xl font-bold">Flashcard Sets</h1>
                     <p className="text-foreground/70 font-medium">Create and manage your flashcard sets</p>
@@ -177,11 +183,10 @@ export default function GroupPage() {
                 )}
 
                 {/* Loading / Error */}
-                {loading && <p>Loading sets...</p>}
                 {error && <p className="text-red-600">Error: {error}</p>}
 
                 {/* Empty */}
-                {!loading && !error && sets.length === 0 && (
+                {!error && sets.length === 0 && (
                 <Card className="bg-main text-main-foreground border-2 border-border shadow-shadow">
                     <CardHeader>
                     <CardTitle>No sets yet</CardTitle>

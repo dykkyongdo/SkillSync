@@ -4,12 +4,15 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import RequireAuth from "@/components/RequireAuth";
 import { useCards } from "@/hooks/useCards";
+import { useSets } from "@/hooks/useSets";
+import { useGroups } from "@/hooks/useGroups";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { ArrowLeft, Plus, Trash2, Edit } from "lucide-react";
+import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -25,7 +28,28 @@ import {
 export default function SetPage() {
     const params = useParams();
     const setId = params.setId as string;
-    const { items: cards, loading, error, create, remove, deletingIds } = useCards(setId);
+    const { items: cards, error, create, remove, deletingIds } = useCards(setId);
+    const { items: groups } = useGroups();
+    
+    // Find the set and its group by searching through all groups
+    let currentSet = null;
+    let currentGroup = null;
+    let setTitle = "Flashcard Set";
+    let groupName = "Group";
+    
+    for (const group of groups) {
+        // We need to load sets for each group to find our set
+        // For now, we'll use a simple approach and get the groupId from the first card
+        if (cards.length > 0) {
+            const cardGroupId = cards[0]?.groupId;
+            if (group.groupId === cardGroupId) {
+                currentGroup = group;
+                groupName = group.name;
+                break;
+            }
+        }
+    }
+    
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
@@ -69,14 +93,13 @@ export default function SetPage() {
 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="max-w-4xl mx-auto">
+                        {/* Breadcrumb Navigation */}
+                        <div className="mb-6">
+                            <DynamicBreadcrumb />
+                        </div>
+
                         {/* Header */}
                         <div className="flex items-center gap-4 mb-8">
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href="/groups">
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Back to Groups
-                                </Link>
-                            </Button>
                             <div className="flex-1">
                                 <h1 className="text-3xl font-bold">Flashcards</h1>
                                 <p className="text-muted-foreground">Manage your flashcards</p>
@@ -116,7 +139,7 @@ export default function SetPage() {
                                             <Button type="submit">Add Card</Button>
                                             <Button 
                                                 type="button" 
-                                                variant="outline" 
+                                                variant="default" 
                                                 onClick={() => setShowCreateForm(false)}
                                             >
                                                 Cancel
@@ -134,7 +157,7 @@ export default function SetPage() {
                                     <Plus className="w-4 h-4 mr-2" />
                                     Add Card
                                 </Button>
-                                <Button asChild variant="outline">
+                                <Button asChild variant="default">
                                     <Link href={`/study/${setId}`}>
                                         Start Studying
                                     </Link>
@@ -143,11 +166,10 @@ export default function SetPage() {
                         )}
 
                         {/* Loading and Error States */}
-                        {loading && <p>Loading cards...</p>}
                         {error && <p className="text-red-600">Error: {error}</p>}
                         
                         {/* Empty State */}
-                        {!loading && !error && cards.length === 0 && (
+                        {!error && cards.length === 0 && (
                             <Card>
                                 <CardHeader>
                                     <CardTitle>No cards yet</CardTitle>
@@ -168,7 +190,7 @@ export default function SetPage() {
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
                                                     <Button
-                                                        variant="ghost"
+                                                        variant="default"
                                                         size="sm"
                                                         disabled={deletingIds.has(card.id)}
                                                         className="text-red-600 hover:text-red-700 disabled:opacity-50"

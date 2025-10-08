@@ -9,6 +9,7 @@ export default function RequireAuth({ children }: { children: React.ReactNode })
 
     useEffect(() => {
         console.log("RequireAuth: isAuthenticated =", isAuthenticated);
+        console.log("RequireAuth: Current URL =", window.location.pathname);
         if (!isAuthenticated) {
             console.log("RequireAuth: Redirecting to login");
             router.replace("/auth/login");

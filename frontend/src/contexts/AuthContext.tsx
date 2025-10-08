@@ -17,7 +17,17 @@ const Ctx = createContext<AuthCtx>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    const [token, setToken] = useState<string | null>(null); 
+    // Initialize with token from localStorage if available
+    const [token, setToken] = useState<string | null>(() => {
+        if (typeof window !== "undefined") {
+            try {
+                return localStorage.getItem("token");
+            } catch {
+                return null;
+            }
+        }
+        return null;
+    }); 
 
     useEffect(() => {
         try {
@@ -27,6 +37,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             if (t) {
                 console.log("AuthContext: Setting token from localStorage");
                 setToken(t);
+                
+                // Also set the cookie if it's not already set
+                const existingCookie = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+                if (!existingCookie) {
+                    document.cookie = `auth_token=${t}; path=/; max-age=86400; SameSite=Lax`;
+                    console.log("AuthContext: Set cookie from localStorage token");
+                }
             }
         } catch (error) {
             console.error("AuthContext: Error reading from localStorage:", error);
@@ -40,6 +57,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             localStorage.setItem("token", jwt);
             console.log("AuthContext: Token stored in localStorage");
+            
+            // Also set a cookie for middleware access
+            document.cookie = `auth_token=${jwt}; path=/; max-age=86400; SameSite=Lax`;
+            console.log("AuthContext: Token stored in cookie");
             
             setToken(jwt);
             console.log("AuthContext: setToken() called");
@@ -57,6 +78,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const logout = useCallback(() => {
         try {
             localStorage.removeItem("token");
+            // Also clear the cookie
+            document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             setToken(null);
         } catch (error) {
             console.error("Failed to remove token:", error);

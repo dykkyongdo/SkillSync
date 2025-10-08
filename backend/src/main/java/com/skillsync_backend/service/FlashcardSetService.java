@@ -46,6 +46,13 @@ public class FlashcardSetService {
         return toDto(saved);
     }
 
+    /** Get a single set by ID. Caller must be a member of the owning group. */
+    @Transactional(readOnly = true)
+    public FlashcardSetDto getSetById(UUID setId, String callerEmail) {
+        FlashcardSet set = access.ensureMemberOfSet(setId, callerEmail);
+        return toDto(set);
+    }
+
     /** List sets for a group. Caller must be a member. */
     @Transactional(readOnly = true)
     public Page<FlashcardSetDto> getSetsByGroup(UUID groupId, String callerEmail, Pageable pageable) {

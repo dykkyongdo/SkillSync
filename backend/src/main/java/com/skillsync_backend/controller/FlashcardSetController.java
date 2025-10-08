@@ -30,6 +30,12 @@ public class FlashcardSetController {
         return ResponseEntity.ok(service.createSet(request, auth.getName()));
     }
 
+    /** Get a single flashcard set by ID (caller must be a member). */
+    @GetMapping("/{setId}")
+    public ResponseEntity<FlashcardSetDto> getById(@PathVariable UUID setId, Authentication auth) {
+        return ResponseEntity.ok(service.getSetById(setId, auth.getName()));
+    }
+
     /** List all sets in a group (caller must be a member). */
     @GetMapping("/group/{groupId}")
     public ResponseEntity<Page<FlashcardSetDto>> getByGroup(@PathVariable UUID groupId,

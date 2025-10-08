@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { ArrowLeft, RotateCcw, CheckCircle, XCircle, Clock, Zap } from "lucide-react";
+import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 
 type DueCard = {
     flashcardId: string;
@@ -114,13 +115,9 @@ export default function StudyPage() {
 
                     <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                         <div className="max-w-2xl mx-auto">
-                            <div className="flex items-center gap-4 mb-8">
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href="/groups">
-                                        <ArrowLeft className="w-4 h-4 mr-2" />
-                                        Back to Groups
-                                    </Link>
-                                </Button>
+                            {/* Breadcrumb Navigation */}
+                            <div className="mb-6">
+                                <DynamicBreadcrumb />
                             </div>
 
                             <Card className="text-center">
@@ -156,13 +153,9 @@ export default function StudyPage() {
 
                     <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                         <div className="max-w-2xl mx-auto">
-                            <div className="flex items-center gap-4 mb-8">
-                                <Button variant="outline" size="sm" asChild>
-                                    <Link href="/groups">
-                                        <ArrowLeft className="w-4 h-4 mr-2" />
-                                        Back to Groups
-                                    </Link>
-                                </Button>
+                            {/* Breadcrumb Navigation */}
+                            <div className="mb-6">
+                                <DynamicBreadcrumb />
                             </div>
 
                             <Card className="text-center">
@@ -204,14 +197,13 @@ export default function StudyPage() {
 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="max-w-2xl mx-auto">
+                        {/* Breadcrumb Navigation */}
+                        <div className="mb-6">
+                            <DynamicBreadcrumb />
+                        </div>
+
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">
-                            <Button variant="outline" size="sm" asChild>
-                                <Link href="/groups">
-                                    <ArrowLeft className="w-4 h-4 mr-2" />
-                                    Back to Groups
-                                </Link>
-                            </Button>
                             <div className="text-sm text-muted-foreground">
                                 {currentCardIndex + 1} of {cards.length}
                             </div>
