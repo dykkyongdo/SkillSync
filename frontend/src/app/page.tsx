@@ -1,9 +1,24 @@
+"use client";
+
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowUpRight, Users, BookOpen, BarChart3, TrendingUp, Award, Target, Zap } from "lucide-react";
+import {
+  ArrowUpRight, Users, BookOpen, TrendingUp, Award, Target, Zap,
+} from "lucide-react";
 import Star9 from "@/components/icons/Star9";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Progress } from "@/components/ui/progress";
+import VerticalMarquee from "@/components/VerticalMarquee";
+import WeeklyProgressChart from "@/components/WeeklyProgressChart";
+
+/* Progress bar: blue fill, white track, black border */
+function BrutalProgress({ value }: { value: number }) {
+  const v = Math.max(0, Math.min(100, value));
+  return (
+    <div className="w-full h-3 rounded-full overflow-hidden border-2 border-black bg-secondary-background">
+      <div className="h-full bg-main" style={{ width: `${v}%` }} />
+    </div>
+  );
+}
 
 export default function HomePage() {
   return (
@@ -14,18 +29,18 @@ export default function HomePage() {
                       bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
                       bg-[size:48px_48px]" />
 
-      {/* Left column (continuous up) */}
-      <aside className="fixed left-[-72px] top-0 h-screen w-80 xl:w-96 pointer-events-none z-10">
-        <MarqueeColumn duration="6s">
+      {/* Left column (up) */}
+      <aside className="fixed left-[-72px] top-0 h-screen w-80 xl:w-96 pointer-events-none z-10 overflow-visible">
+        <VerticalMarquee speed={60} gap={24}>
           <LeftItems />
-        </MarqueeColumn>
+        </VerticalMarquee>
       </aside>
 
-      {/* Right column (continuous down) */}
-      <aside className="fixed right-[-72px] top-0 h-screen w-80 xl:w-96 pointer-events-none z-10">
-        <MarqueeColumn duration="6s" reverse>
+      {/* Right column (down) */}
+      <aside className="fixed right-[-80px] top-0 h-screen w-80 xl:w-[22rem] pointer-events-none z-10 overflow-visible">
+        <VerticalMarquee reverse speed={60} gap={24}>
           <RightItems />
-        </MarqueeColumn>
+        </VerticalMarquee>
       </aside>
 
       {/* Hero */}
@@ -43,7 +58,8 @@ export default function HomePage() {
         </h1>
 
         <p className="mt-6 text-foreground/80 text-lg sm:text-xl font-medium max-w-3xl mx-auto">
-          Organize your study materials in groups, create flashcard sets, and master your knowledge with spaced repetition.
+          Organize your study materials in groups, create flashcard sets, and
+          master your knowledge with spaced repetition.
         </p>
 
         <div className="mt-12 flex justify-center">
@@ -59,192 +75,195 @@ export default function HomePage() {
   );
 }
 
-/* ---------- Seamless vertical marquee helper (2-copy) ---------- */
-function MarqueeColumn({
-  children,
-  reverse = false,
-  duration = "8s",
-}: {
-  children: React.ReactNode;
-  reverse?: boolean;
-  duration?: string;
-}) {
-  return (
-    <div className="vmarquee-col">
-      <div
-        className={["vmarquee-track", reverse ? "reverse" : ""].join(" ")}
-        style={{ ["--marquee-duration" as any]: duration }}
-      >
-        {/* Two identical 50%-height stacks. The track animates by ±50%. */}
-        <div className="vmarquee-stack">{children}</div>
-        <div className="vmarquee-stack">{children}</div>
-      </div>
-    </div>
-  );
-}
-
 /* -------------------- Left stack items -------------------- */
 function LeftItems() {
   return (
-    <>
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+    <div className="flex flex-col gap-6">
+      {/* Study Group */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Users className="h-4 w-4" /> Study Group
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
+            <Users className="h-4 w-4" /> Study Group — React Pro
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <CardDescription className="text-xs">Advanced React Concepts</CardDescription>
-          <div className="mt-2 text-xs">
-            <span className="bg-main text-main-foreground px-2 py-1 rounded font-medium">12 members</span>
+        <CardContent className="space-y-3">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-foreground shadow-shadow">
+              <div className="text-xs">Cards</div>
+              <div className="text-lg font-bold">132</div>
+            </div>
+            <div className="rounded-base border-2 border-border bg-secondary-background px-3 py-2 text-foreground shadow-shadow">
+              <div className="text-xs">Due</div>
+              <div className="text-lg font-bold">23</div>
+            </div>
+          </div>
+          <div className="text-sm font-semibold text-foreground">
+            Next review: Today, 6:00 PM
           </div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* Spanish Verbs */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <BookOpen className="h-4 w-4" /> Spanish Verbs
-          </CardTitle>
+          <CardTitle className="text-base font-semibold">Spanish verbs — A1/A2</CardTitle>
+          <CardDescription className="text-foreground/90 font-medium">
+            Conjugations with examples
+          </CardDescription>
         </CardHeader>
-        <CardContent>
-          <CardDescription className="text-xs">Essential verb conjugations</CardDescription>
-          <div className="mt-2 text-xs text-foreground/70">45 cards</div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <Zap className="h-4 w-4" /> XP Progress
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="text-lg font-bold">1,247 XP</div>
-          <Progress value={65} className="mt-2" />
-          <div className="text-xs text-foreground/70 mt-1">Level 8</div>
-        </CardContent>
-      </Card>
-
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
-        <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
-            <BarChart3 className="h-4 w-4" /> Weekly Progress
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-1 h-20 items-end">
-            {[40, 65, 30, 80, 45, 70, 55].map((h, i) => (
-              <div key={i} className="bg-main flex-1 rounded-t" style={{ height: `${h}%` }} />
-            ))}
+        <CardContent className="space-y-3">
+          <div className="text-sm">45 cards • 6 sets</div>
+          <BrutalProgress value={72} />
+          <div className="text-sm font-semibold">Mastery: 72%</div>
+          <div className="text-sm flex flex-col gap-1">
+            <span>ir✅ &nbsp; Preterite vs. Imperfect</span>
+            <span>ser✅ &nbsp; Present tense</span>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* XP */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-2xl font-extrabold tracking-tight">1,247 XP</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-3">
+          <BrutalProgress value={64} />
+          <div className="text-sm flex items-center justify-between">
+            <span>Streak: <strong>8 days</strong></span>
+            <span>Level <strong>8</strong></span>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Weekly Progress (white bars with grid) */}
+      <WeeklyProgressChart />
+
+      {/* Level Up */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
+        <CardHeader className="pb-2">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Award className="h-4 w-4" /> Level Up
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-main">Level 12</div>
-          <div className="text-xs text-foreground/70">Next: 2,000 XP</div>
+        <CardContent className="space-y-1">
+          <div className="text-xl font-extrabold">Level 12</div>
+          <div className="text-sm">Next: 2,000 XP</div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* Daily Goal */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Target className="h-4 w-4" /> Daily Goal
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-lg font-bold">85%</div>
-          <Progress value={85} className="mt-2" />
+        <CardContent className="space-y-2">
+          <div className="text-lg font-extrabold">85%</div>
+          <BrutalProgress value={85} />
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }
 
 /* -------------------- Right stack items -------------------- */
 function RightItems() {
   return (
-    <>
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+    <div className="flex flex-col gap-6">
+      {/* Flashcard */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold">Flashcard</CardTitle>
+          <CardTitle className="text-base font-semibold">Flashcard</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-sm font-medium">What is React?</div>
-          <div className="text-xs text-foreground/70 mt-2">A JavaScript library for building user interfaces</div>
+        <CardContent className="space-y-2">
+          <div className="text-sm font-semibold">What is React?</div>
+          <div className="text-xs">A JavaScript library for building user interfaces</div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* Streak */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
             <TrendingUp className="h-4 w-4" /> Streak
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold text-main">7 days</div>
-          <div className="text-xs text-foreground/70">Keep it up!</div>
+        <CardContent className="space-y-1">
+          <div className="text-xl font-extrabold">7 days</div>
+          <div className="text-xs">Keep it up!</div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* Group */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Users className="h-4 w-4" /> Math Study Group
           </CardTitle>
         </CardHeader>
-        <CardContent>
-          <CardDescription className="text-xs">Calculus &amp; Algebra</CardDescription>
-          <div className="mt-2 text-xs">
-            <span className="bg-main text-main-foreground px-2 py-1 rounded font-medium">8 members</span>
+        <CardContent className="space-y-2">
+          <CardDescription className="text-foreground/90 font-medium">
+            Calculus &amp; Algebra practice
+          </CardDescription>
+          <div className="text-xs">
+            <span className="inline-block rounded-base border-2 border-border bg-secondary-background px-2 py-1 text-foreground shadow-shadow">
+              8 members
+            </span>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* Today’s XP */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold">Today&apos;s XP</CardTitle>
+          <CardTitle className="text-base font-semibold">Today&apos;s XP</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="flex items-center gap-2">
-            <div className="flex-1 bg-foreground/10 rounded-full h-3">
-              <div className="bg-main h-3 rounded-full" style={{ width: "73%" }} />
-            </div>
-            <span className="text-sm font-medium">73 XP</span>
-          </div>
+        <CardContent className="space-y-3">
+          <BrutalProgress value={73} />
+          <ul className="space-y-2 text-sm">
+            <li className="flex items-center gap-2">
+              <span className="inline-grid place-items-center size-5 rounded-full border-2 border-border bg-secondary-background text-foreground shadow-shadow">✓</span>
+              <span>+30 XP — React Hooks set</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="inline-grid place-items-center size-5 rounded-full border-2 border-border bg-secondary-background text-foreground shadow-shadow">✓</span>
+              <span>+20 XP — Spanish verbs A1</span>
+            </li>
+            <li className="flex items-center gap-2">
+              <span className="inline-grid place-items-center size-5 rounded-full border-2 border-border bg-secondary-background text-foreground shadow-shadow">✓</span>
+              <span>+23 XP — Math integrals</span>
+            </li>
+          </ul>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* History Facts */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
             <BookOpen className="h-4 w-4" /> History Facts
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <CardDescription className="text-xs">World War II</CardDescription>
-          <div className="mt-2 text-xs text-foreground/70">32 cards</div>
+          <CardDescription className="text-foreground/90 font-medium">World War II</CardDescription>
+          <div className="mt-2 text-xs">32 cards</div>
         </CardContent>
       </Card>
 
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background w-72 xl:w-80">
+      {/* Achievement */}
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground w-72 xl:w-80">
         <CardHeader className="pb-2">
-          <CardTitle className="text-sm font-semibold flex items-center gap-2">
+          <CardTitle className="text-base font-semibold flex items-center gap-2">
             <Award className="h-4 w-4" /> Achievement
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-sm font-medium">Study Master</div>
-          <div className="text-xs text-foreground/70 mt-1">Completed 100 cards</div>
+          <div className="text-xs">Completed 100 cards</div>
         </CardContent>
       </Card>
-    </>
+    </div>
   );
 }

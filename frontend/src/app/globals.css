@@ -100,45 +100,58 @@
   }
 }
 
-/* ===== Seamless vertical marquee (2-copy, 50% translate) ===== */
 @layer utilities {
-  /* speed: change --marquee-duration per instance */
-  @keyframes vmarquee-up {
-    0%   { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(0, -50%, 0); }
-  }
-  @keyframes vmarquee-down {
-    0%   { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(0, 50%, 0); }
+  
+  .vmq-spacer { height: var(--vmq-gap); flex: 0 0 auto; }
+
+  /* runtime distance + timing */
+  .vmq {
+    --vmq-distance: 0px;   /* set in JS */
+    --vmq-duration: 8s;    /* override per instance if you want */
+    --vmq-gap: 24px;       /* space between items */
   }
 
-  .vmarquee-col { position: relative; height: 100%; width: 100%; overflow: hidden; }
+  .vmq-viewport {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    overflow: hidden; /* clip to the column */
+  }
 
-  /* The moving track fills the column and animates by exactly one stack (50%) */
-  .vmarquee-track {
+  /* IMPORTANT: NO gap/padding/margins on the track */
+  .vmq-track {
     position: absolute;
     inset: 0;
     display: flex;
     flex-direction: column;
     will-change: transform;
-    animation: vmarquee-up var(--marquee-duration, 8s) linear infinite;
+    animation: vmq-scroll var(--vmq-duration) linear infinite;
   }
-  .vmarquee-track.reverse {
-    animation-name: vmarquee-down;
+  .vmq-track.vmq-reverse {
+    animation-direction: reverse;
   }
 
-  /* Each stack is exactly half the column height. Put your cards *inside* these. */
-  .vmarquee-stack {
-    flex: 0 0 50%;
+  /* all spacing lives inside the stack, not between stacks */
+  .vmq-stack {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;     /* 20px; adjust if you like */
-    padding: 1.25rem 0;
-    /* No margins on cards; use gap instead to keep math exact */
+    gap: var(--vmq-gap);
+    margin: 0;
+    padding: 0;
   }
 
-  /* (Optional) reduce motion accessibility */
+  /* Nuke stray margins that some components ship with */
+  .vmq-stack > * {
+    margin: 0 !important;
+  }
+
+  @keyframes vmq-scroll {
+    from { transform: translate3d(0, 0, 0); }
+    to   { transform: translate3d(0, calc(-1 * var(--vmq-distance)), 0); }
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .vmarquee-track { animation: none; transform: none !important; }
+    .vmq-track { animation: none; }
   }
 }
+
