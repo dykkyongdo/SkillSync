@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2, Edit } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Edit, Loader2 } from "lucide-react";
 import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import {
     AlertDialog,
@@ -50,21 +50,35 @@ export default function SetPage() {
         }
     }
     
-    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [open, setOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
 
-    const handleCreateCard = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!question.trim() || !answer.trim()) return;
+    const handleCreateCard = async () => {
+        setFormError(null);
         
+        if (!question.trim()) {
+            setFormError("Please enter a question.");
+            return;
+        }
+        
+        if (!answer.trim()) {
+            setFormError("Please enter an answer.");
+            return;
+        }
+        
+        setSubmitting(true);
         try {
-            await create(question, answer);
+            await create(question.trim(), answer.trim());
             setQuestion("");
             setAnswer("");
-            setShowCreateForm(false);
+            setOpen(false);
         } catch (err) {
-            alert("Failed to create card: " + (err as Error).message);
+            setFormError("Failed to create card: " + (err as Error).message);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -99,71 +113,98 @@ export default function SetPage() {
                         </div>
 
                         {/* Header */}
-                        <div className="flex items-center gap-4 mb-8">
+                        <div className="flex items-center justify-between mb-8">
                             <div className="flex-1">
                                 <h1 className="text-3xl font-bold">Flashcards</h1>
                                 <p className="text-muted-foreground">Manage your flashcards</p>
                             </div>
-                        </div>
 
-                        {/* Create Card Form */}
-                        {showCreateForm && (
-                            <Card className="mb-8">
-                                <CardHeader>
-                                    <CardTitle>Add New Card</CardTitle>
-                                    <CardDescription>Create a new flashcard</CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <form onSubmit={handleCreateCard} className="space-y-4">
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button className="font-semibold bg-white">
+                                        <Plus className="mr-2 h-5 w-5" />
+                                        Add Card
+                                    </Button>
+                                </AlertDialogTrigger>
+
+                                <AlertDialogContent className="rounded-base border-2 border-border shadow-shadow">
+                                    <AlertDialogHeader className="gap-1">
+                                        <AlertDialogTitle className="font-medium text-2xl">
+                                            New Flashcard
+                                        </AlertDialogTitle>
+                                        <AlertDialogDescription className="font-medium">
+                                            Add a question and answer to create a new flashcard.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+
+                                    <div className="grid gap-5">
                                         <div className="grid gap-2">
-                                            <Label htmlFor="question">Question</Label>
+                                            <Label className="font-medium">Question</Label>
                                             <Input
                                                 id="question"
+                                                placeholder="e.g. What is the capital of France?"
                                                 value={question}
                                                 onChange={(e) => setQuestion(e.target.value)}
-                                                placeholder="Enter the question"
+                                                autoFocus
                                                 required
                                             />
                                         </div>
+
                                         <div className="grid gap-2">
-                                            <Label htmlFor="answer">Answer</Label>
+                                            <Label className="font-medium">Answer</Label>
                                             <Input
                                                 id="answer"
+                                                placeholder="e.g. Paris"
                                                 value={answer}
                                                 onChange={(e) => setAnswer(e.target.value)}
-                                                placeholder="Enter the answer"
                                                 required
                                             />
                                         </div>
-                                        <div className="flex gap-2">
-                                            <Button type="submit">Add Card</Button>
-                                            <Button 
-                                                type="button" 
-                                                variant="default" 
-                                                onClick={() => setShowCreateForm(false)}
-                                            >
-                                                Cancel
-                                            </Button>
-                                        </div>
-                                    </form>
-                                </CardContent>
-                            </Card>
-                        )}
 
-                        {/* Create Card Button */}
-                        {!showCreateForm && (
-                            <div className="mb-8 flex gap-4">
-                                <Button onClick={() => setShowCreateForm(true)}>
-                                    <Plus className="w-4 h-4 mr-2" />
-                                    Add Card
-                                </Button>
-                                <Button asChild variant="default">
-                                    <Link href={`/study/${setId}`}>
-                                        Start Studying
-                                    </Link>
-                                </Button>
-                            </div>
-                        )}
+                                        {formError && (
+                                            <p className="text-sm font-medium text-red-600">{formError}</p>
+                                        )}
+                                    </div>
+
+                                    <AlertDialogFooter className="mt-2">
+                                        <AlertDialogCancel 
+                                            className="border-2 border-border shadow-shadow font-medium"
+                                            onClick={() => {
+                                                setFormError(null);
+                                                setQuestion("");
+                                                setAnswer("");
+                                            }}
+                                            disabled={submitting}
+                                        >
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={handleCreateCard}
+                                            disabled={submitting}
+                                            className="bg-main border-2 border-border shadow-shadow font-semibold"
+                                        >
+                                            {submitting ? (
+                                                <>
+                                                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                                    Creating...
+                                                </>
+                                            ) : (
+                                                "Create"
+                                            )}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
+
+                        {/* Study Button */}
+                        <div className="mb-8">
+                            <Button asChild variant="default" className="font-semibold">
+                                <Link href={`/study/${setId}`}>
+                                    Start Studying
+                                </Link>
+                            </Button>
+                        </div>
 
                         {/* Loading and Error States */}
                         {error && <p className="text-red-600">Error: {error}</p>}
@@ -183,35 +224,38 @@ export default function SetPage() {
                         {/* Cards Grid */}
                         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                             {cards.map((card) => (
-                                <Card key={card.id} className="hover:shadow-lg transition-shadow">
+                                <Card key={card.id} className="transition-transform border-2 border-border shadow-shadow bg-main">
                                     <CardHeader>
                                         <div className="flex justify-between items-start">
                                             <CardTitle className="text-lg line-clamp-2">{card.question}</CardTitle>
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
                                                     <Button
-                                                        variant="default"
-                                                        size="sm"
+                                                        size="icon"
+                                                        aria-label="Delete flashcard"
                                                         disabled={deletingIds.has(card.id)}
-                                                        className="text-red-600 hover:text-red-700 disabled:opacity-50"
+                                                        className="border-2 border-border shadow-shadow bg-white hover:bg-red-500 disabled:opacity-50"
                                                     >
-                                                        <Trash2 className={`w-4 h-4 ${deletingIds.has(card.id) ? 'animate-pulse' : ''}`} />
+                                                        <Trash2 className="w-4 h-4" />
                                                     </Button>
                                                 </AlertDialogTrigger>
                                                 <AlertDialogContent>
                                                     <AlertDialogHeader>
-                                                        <AlertDialogTitle>Delete Flashcard</AlertDialogTitle>
+                                                        <AlertDialogTitle>Delete this flashcard?</AlertDialogTitle>
                                                         <AlertDialogDescription>
-                                                            Are you sure you want to delete this flashcard? This action cannot be undone.
+                                                            This will permanently delete the flashcard. This action cannot be undone.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
                                                     <AlertDialogFooter>
-                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogCancel className="border-2 border-border shadow-shadow font-medium">
+                                                            Cancel
+                                                        </AlertDialogCancel>
                                                         <AlertDialogAction
                                                             onClick={() => handleDeleteCard(card.id)}
-                                                            className="bg-red-600 hover:bg-red-700"
+                                                            disabled={deletingIds.has(card.id)}
+                                                            className="bg-red-500 hover:brightness-95 text-white border-2 border-border shadow-shadow font-semibold"
                                                         >
-                                                            Delete
+                                                            {deletingIds.has(card.id) ? "Deleting..." : "Delete"}
                                                         </AlertDialogAction>
                                                     </AlertDialogFooter>
                                                 </AlertDialogContent>

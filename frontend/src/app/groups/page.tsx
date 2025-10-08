@@ -4,7 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import RequireAuth from "@/components/RequireAuth";
 import { useGroups } from "@/hooks/useGroups";
-
+import { Calendar as CalendarIcon } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -199,7 +199,7 @@ export default function GroupsPage() {
 
                         <CardContent>
                         <p className="text-sm text-foreground/70 font-medium">
-                            Created: {new Date(group.createdAt).toLocaleDateString()}
+                            <CalendarIcon /> {new Date(group.createdAt).toLocaleDateString()}
                         </p>
 
                         {/* Progress row */}

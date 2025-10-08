@@ -5,7 +5,7 @@ import { useParams } from "next/navigation";
 import RequireAuth from "@/components/RequireAuth";
 import { useSets } from "@/hooks/useSets";
 import { useGroups } from "@/hooks/useGroups";
-
+import { Calendar as CalendarIcon } from "lucide-react"
 import { useState } from "react";
 import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react";
 
@@ -291,7 +291,7 @@ export default function GroupPage() {
 
                     <CardContent>
                         <p className="text-sm text-foreground/70 mb-4">
-                        Created: {new Date(set.createdAt).toLocaleDateString()}
+                        <CalendarIcon/> {new Date(set.createdAt).toLocaleDateString()}
                         </p>
                         <div className="flex gap-2">
                         <Button asChild className="flex-1 font-semibold">
