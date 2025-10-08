@@ -128,7 +128,7 @@ export default function GroupPage() {
 
                 {/* Create Set Form */}
                 {showCreateForm && (
-                <Card className="mb-8 border-2 border-border shadow-shadow bg-secondary-background">
+                <Card className="mb-8 border-2 border-border shadow-shadow bg-main">
                     <CardHeader>
                     <CardTitle>Create New Set</CardTitle>
                     <CardDescription>Add a new flashcard set to this group</CardDescription>
@@ -175,7 +175,7 @@ export default function GroupPage() {
                 {/* Create Set Button */}
                 {!showCreateForm && (
                 <div className="mb-8">
-                    <Button onClick={() => setShowCreateForm(true)} className="font-semibold">
+                    <Button onClick={() => setShowCreateForm(true)} className="font-semibold bg-white">
                     <Plus className="w-4 h-4 mr-2" />
                     Create New Set
                     </Button>
@@ -200,7 +200,7 @@ export default function GroupPage() {
                 {/* Sets Grid */}
                 <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {sets.map((set) => (
-                    <Card key={set.id} className="transition-transform border-2 border-border shadow-shadow bg-secondary-background">
+                    <Card key={set.id} className="transition-transform border-2 border-border shadow-shadow bg-main">
                     <CardHeader>
                         <div className="flex justify-between items-start">
                         <div className="flex-1">
@@ -212,13 +212,12 @@ export default function GroupPage() {
                         <AlertDialog>
                             <AlertDialogTrigger asChild>
                             <Button
-                                variant="noShadow"
                                 size="icon"
                                 aria-label="Delete set"
-                                className="border-2 border-border"
+                                className="border-2 border-border shadow-shadow bg-white hover:bg-red-500"
                                 onClick={() => setPendingDeleteId(set.id)}
                             >
-                                <Trash2 className="w-4 h-4 text-red-600" />
+                                <Trash2 className="w-4 h-4" />
                             </Button>
                             </AlertDialogTrigger>
 
