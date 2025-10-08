@@ -7,7 +7,7 @@ import { useSets } from "@/hooks/useSets";
 import { useGroups } from "@/hooks/useGroups";
 
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +28,15 @@ import {
     AlertDialogAction,
     AlertDialogCancel,
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
 
 export default function GroupPage() {
     const params = useParams();
@@ -41,9 +50,11 @@ export default function GroupPage() {
     const currentGroup = groups.find(group => group.groupId === groupId);
     const groupName = currentGroup?.name || "Group";
 
-    const [showCreateForm, setShowCreateForm] = useState(false);
+    const [open, setOpen] = useState(false);
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
+    const [submitting, setSubmitting] = useState(false);
+    const [formError, setFormError] = useState<string | null>(null);
 
     // Delete dialog state
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -51,21 +62,29 @@ export default function GroupPage() {
     const [deleting, setDeleting] = useState(false);
 
     const handleCreateSet = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim()) return;
+        e.preventDefault();
+        setFormError(null);
+        
+        if (!title.trim()) {
+            setFormError("Please enter a set title.");
+            return;
+        }
 
-    if (!groupId || groupId === "undefined") {
-        alert("Error: Invalid group ID. Please go back to the groups page and try again.");
-        return;
-    }
+        if (!groupId || groupId === "undefined") {
+            setFormError("Error: Invalid group ID. Please go back to the groups page and try again.");
+            return;
+        }
 
-    try {
-        await create(title.trim(), description.trim());
-        setTitle("");
-        setDescription("");
-        setShowCreateForm(false);
+        setSubmitting(true);
+        try {
+            await create(title.trim(), description.trim());
+            setTitle("");
+            setDescription("");
+            setOpen(false);
         } catch (err) {
-        alert("Failed to create set: " + (err as Error).message);
+            setFormError("Failed to create set: " + (err as Error).message);
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -102,11 +121,84 @@ export default function GroupPage() {
                 </div>
 
                 {/* Header */}
-                <div className="flex items-center gap-4 mb-8">
+                <div className="flex items-center justify-between mb-8">
                 <div className="flex-1">
                     <h1 className="text-3xl font-bold">Flashcard Sets</h1>
                     <p className="text-foreground/70 font-medium">Create and manage your flashcard sets</p>
                 </div>
+
+                <Dialog open={open} onOpenChange={setOpen}>
+                    <DialogTrigger asChild>
+                        <Button className="font-semibold bg-white">
+                            <Plus className="mr-2 h-5 w-5" />
+                            Create Set
+                        </Button>
+                    </DialogTrigger>
+
+                    <DialogContent className="rounded-base border-2 border-border shadow-shadow">
+                        <DialogHeader className="gap-1">
+                            <DialogTitle className="font-medium text-2xl">
+                                New Flashcard Set
+                            </DialogTitle>
+                            <DialogDescription className="font-medium">
+                                Give your flashcard set a title and (optionally) a description.
+                            </DialogDescription>
+                        </DialogHeader>
+
+                        <form onSubmit={handleCreateSet} className="grid gap-5">
+                            <div className="grid gap-2">
+                                <Label className="font-medium">Set title</Label>
+                                <Input
+                                    id="title"
+                                    placeholder="e.g. Python Basics"
+                                    value={title}
+                                    onChange={(e) => setTitle(e.target.value)}
+                                    autoFocus
+                                    required
+                                />
+                            </div>
+
+                            <div className="grid gap-2">
+                                <Label htmlFor="description" className="font-medium">
+                                    Description{" "}
+                                    <span className="text-foreground/50">(optional)</span>
+                                </Label>
+                                <Input
+                                    id="description"
+                                    placeholder="Short description about this set..."
+                                    value={description}
+                                    onChange={(e) => setDescription(e.target.value)}
+                                />
+                            </div>
+
+                            {formError && (
+                                <p className="text-sm font-medium text-red-600">{formError}</p>
+                            )}
+
+                            <DialogFooter className="mt-2">
+                                <Button
+                                    className="font-medium"
+                                    type="button"
+                                    variant="neutral"
+                                    onClick={() => setOpen(false)}
+                                    disabled={submitting}
+                                >
+                                    Cancel
+                                </Button>
+                                <Button className="font-medium" type="submit" disabled={submitting}>
+                                    {submitting ? (
+                                        <>
+                                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                            Creating...
+                                        </>
+                                    ) : (
+                                        "Create"
+                                    )}
+                                </Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
                 </div>
 
                 {/* Invalid group ID message */}
@@ -126,61 +218,6 @@ export default function GroupPage() {
                 </Card>
                 )}
 
-                {/* Create Set Form */}
-                {showCreateForm && (
-                <Card className="mb-8 border-2 border-border shadow-shadow bg-main">
-                    <CardHeader>
-                    <CardTitle>Create New Set</CardTitle>
-                    <CardDescription>Add a new flashcard set to this group</CardDescription>
-                    </CardHeader>
-                    <CardContent>
-                    <form onSubmit={handleCreateSet} className="space-y-4">
-                        <div className="grid gap-2">
-                        <Label htmlFor="title">Title</Label>
-                        <Input
-                            id="title"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                            placeholder="Enter set title"
-                            required
-                        />
-                        </div>
-                        <div className="grid gap-2">
-                        <Label htmlFor="description">Description</Label>
-                        <Input
-                            id="description"
-                            value={description}
-                            onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Enter set description (optional)"
-                        />
-                        </div>
-                        <div className="flex gap-2">
-                        <Button type="submit" className="font-semibold">
-                            Create Set
-                        </Button>
-                        <Button
-                            type="button"
-                            variant="neutral"
-                            onClick={() => setShowCreateForm(false)}
-                            className="border-2 border-border shadow-shadow font-medium"
-                        >
-                            Cancel
-                        </Button>
-                        </div>
-                    </form>
-                    </CardContent>
-                </Card>
-                )}
-
-                {/* Create Set Button */}
-                {!showCreateForm && (
-                <div className="mb-8">
-                    <Button onClick={() => setShowCreateForm(true)} className="font-semibold bg-white">
-                    <Plus className="w-4 h-4 mr-2" />
-                    Create New Set
-                    </Button>
-                </div>
-                )}
 
                 {/* Loading / Error */}
                 {error && <p className="text-red-600">Error: {error}</p>}
