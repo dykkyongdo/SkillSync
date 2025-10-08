@@ -58,10 +58,10 @@ export default function DashboardPage() {
         <RequireAuth>
             <main className="relative isolate pt-14">
                 {/* Background */}
-                <div className="absolute inset-0 -z-10 bg-background"/>
-                <div className=" absolute inset-0 -z-10 pointer-events-none
-                    bg-[linear-gradient(to_right,var(--grid-line)_2px,transparent_2px),linear-gradient(to_bottom,var(--grid-line)_2px,transparent_2px)]
-                    [background-size:var(--grid-size)_var(--grid-size)]"/>
+                <div className="absolute inset-0 -z-10 bg-background" />
+                <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
+                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
+                        bg-[size:48px_48px]" />
                 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="mx-auto max-w-6xl">
@@ -103,7 +103,7 @@ export default function DashboardPage() {
                         {!loading && !error && stats && (
                             <>
                                 <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-                                    <StatCard label="XP" value={stats.xp} />
+                                    <StatCard label="XP" value={stats.xp}/>
                                     <StatCard label="Level" value={stats.level} />
                                     <StatCard label="Streak" value={`${stats.streakCount}`} />
                                     <StatCard label="Mastered Cards" value={stats.masteredCards} />

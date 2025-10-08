@@ -38,7 +38,7 @@ export default function Navbar() {
             aria-current={active ? "page" : undefined}
             className={[
                 // bigger text + base font family
-                "px-3 py-2 rounded-base font-base font-medium text-2l sm:text-2l",
+                "px-3 py-2 rounded-base font-medium text-2l sm:text-2l",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[--color-ring]",
                 active
                 ? "bg-secondary-background text-foreground border-2 border-border shadow-shadow"
@@ -72,7 +72,7 @@ export default function Navbar() {
                 />
             </span>
 
-            <span className="font-heading font-semibold text-xl sm:text-2xl leading-none tracking-tight">
+            <span className="font-semibold text-xl sm:text-2xl leading-none tracking-tight">
                 SkillSync
             </span>
             </Link>

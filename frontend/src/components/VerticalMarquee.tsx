@@ -4,7 +4,7 @@ import React from "react";
 
 type Props = {
   children: React.ReactNode;
-  /** pixels between items inside your column (should match gap-6 = 24px) */
+  /** pixels between items inside your column */
   gap?: number;
   /** px/sec if you prefer speed-based timing */
   speed?: number;
@@ -31,7 +31,7 @@ export default function VerticalMarquee({
     const el = stackRef.current;
     if (!el) return;
     const h = el.getBoundingClientRect().height;
-    const dist = h + gap; // IMPORTANT: include one extra gap so the seam matches other gaps
+    const dist = h + gap; 
     setDistance(dist);
   }, [gap]);
 
@@ -48,7 +48,6 @@ export default function VerticalMarquee({
     };
   }, [measure]);
 
-  // compute duration from speed if given
   const computedDuration =
     duration ?? (distance > 0 && speed ? Math.max(2, distance / speed) : 8);
 

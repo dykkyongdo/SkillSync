@@ -37,7 +37,7 @@ export default function HomePage() {
       </aside>
 
       {/* Right column (down) */}
-      <aside className="fixed right-[-80px] top-0 h-screen w-80 xl:w-[22rem] pointer-events-none z-10 overflow-visible">
+      <aside className="fixed right-[-80px] top-0 h-screen w-80 xl:w-[22rem] pointer-events-none z-10 overflow-visible">git
         <VerticalMarquee reverse speed={60} gap={24}>
           <RightItems />
         </VerticalMarquee>
