@@ -4,7 +4,7 @@ server:
 spring:
   datasource:
     url: jdbc:h2:mem:skillsync
-    username: sa
+    username:
     password: 
     driver-class-name: org.h2.Driver
 

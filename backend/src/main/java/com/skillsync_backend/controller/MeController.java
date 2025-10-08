@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/me")
@@ -19,6 +21,18 @@ import java.time.Instant;
 public class MeController {
     private final UserRepository userRepo;
     private final UsedCardProgressRepository progressRepo;
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> me(Authentication auth) {
+        var user = userRepo.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        Map<String, Object> response = new HashMap<>();
+        response.put("id", user.getId());
+        response.put("email", user.getEmail());
+        response.put("name", user.getEmail().split("@")[0]); // Use email prefix as name for now
+        
+        return ResponseEntity.ok(response);
+    }
 
     @GetMapping("/stats")
     public ResponseEntity<MyStatsDto> stats(Authentication auth) {
