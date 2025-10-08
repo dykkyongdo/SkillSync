@@ -10,11 +10,22 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { ArrowLeft, Plus, Trash2, Edit } from "lucide-react";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function SetPage() {
     const params = useParams();
     const setId = params.setId as string;
-    const { items: cards, loading, error, create, remove } = useCards(setId);
+    const { items: cards, loading, error, create, remove, deletingIds } = useCards(setId);
     const [showCreateForm, setShowCreateForm] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
@@ -34,12 +45,15 @@ export default function SetPage() {
     };
 
     const handleDeleteCard = async (cardId: string) => {
-        if (!confirm("Are you sure you want to delete this card?")) return;
-        
         try {
             await remove(cardId);
+            // Success - card is already removed from UI optimistically
         } catch (err) {
-            alert("Failed to delete card: " + (err as Error).message);
+            const error = err as Error;
+            // Only show error if it's not a "not found" error (which is actually success)
+            if (!error.message.includes("not found") && !error.message.includes("Flashcard not found")) {
+                alert("Failed to delete card: " + error.message);
+            }
         }
     };
 
@@ -151,14 +165,35 @@ export default function SetPage() {
                                     <CardHeader>
                                         <div className="flex justify-between items-start">
                                             <CardTitle className="text-lg line-clamp-2">{card.question}</CardTitle>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                onClick={() => handleDeleteCard(card.id)}
-                                                className="text-red-600 hover:text-red-700"
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
+                                            <AlertDialog>
+                                                <AlertDialogTrigger asChild>
+                                                    <Button
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        disabled={deletingIds.has(card.id)}
+                                                        className="text-red-600 hover:text-red-700 disabled:opacity-50"
+                                                    >
+                                                        <Trash2 className={`w-4 h-4 ${deletingIds.has(card.id) ? 'animate-pulse' : ''}`} />
+                                                    </Button>
+                                                </AlertDialogTrigger>
+                                                <AlertDialogContent>
+                                                    <AlertDialogHeader>
+                                                        <AlertDialogTitle>Delete Flashcard</AlertDialogTitle>
+                                                        <AlertDialogDescription>
+                                                            Are you sure you want to delete this flashcard? This action cannot be undone.
+                                                        </AlertDialogDescription>
+                                                    </AlertDialogHeader>
+                                                    <AlertDialogFooter>
+                                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                        <AlertDialogAction
+                                                            onClick={() => handleDeleteCard(card.id)}
+                                                            className="bg-red-600 hover:bg-red-700"
+                                                        >
+                                                            Delete
+                                                        </AlertDialogAction>
+                                                    </AlertDialogFooter>
+                                                </AlertDialogContent>
+                                            </AlertDialog>
                                         </div>
                                     </CardHeader>
                                     <CardContent>

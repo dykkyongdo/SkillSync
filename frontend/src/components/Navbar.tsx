@@ -60,7 +60,7 @@ export default function Navbar() {
             "flex flex-wrap items-center gap-x-6 gap-y-3 py-3",
             ].join(" ")}
         >
-            <Link href="/" className="flex items-center gap-3 min-w-0">
+            <Link href={isAuthed ? "/groups" : "/"} className="flex items-center gap-3 min-w-0">
             <span
                 className="grid place-items-center size-10 sm:size-11 rounded-base border-2 border-border bg-main"
                 aria-hidden="true"

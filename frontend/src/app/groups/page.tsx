@@ -83,11 +83,11 @@ export default function GroupsPage() {
             <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
             <div className="mx-auto max-w-6xl">
                 <div className="mb-8 flex items-center justify-between">
-                <h1 className="font-heading text-3xl font-bold">My Groups</h1>
+                <h1 className="text-3xl font-bold">My Groups</h1>
 
                 <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
-                    <Button className="font-semibold">
+                    <Button className="font-semibold bg-white">
                         <Plus className="mr-2 h-5 w-5" />
                         Create Group
                     </Button>
@@ -164,7 +164,7 @@ export default function GroupsPage() {
                 {error && <p className="text-red-600">Error: {error}</p>}
 
                 {!loading && !error && groups.length === 0 && (
-                <Card className="bg-white dark:bg-white border-2 border-border shadow-shadow">
+                <Card className="bg-main dark:bg-white border-2 border-border shadow-shadow">
                     <CardHeader>
                     <CardTitle className="font-medium">No groups yet</CardTitle>
                     <CardDescription>
@@ -173,7 +173,7 @@ export default function GroupsPage() {
                     </CardDescription>
                     </CardHeader>
                     <CardContent>
-                    <Button onClick={() => setOpen(true)} className="font-semibold">
+                    <Button onClick={() => setOpen(true)} className="font-semibold bg-white">
                         <Plus className="mr-2 h-5 w-5" />
                         Create Group
                     </Button>

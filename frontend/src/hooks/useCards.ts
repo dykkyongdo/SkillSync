@@ -7,6 +7,7 @@ import { resolve } from "path";
 export function useCards(setId: string) {
     const [items, setItems] = useState<Flashcard[]>([]);
     const [error, setError] = useState<string|null>(null);
+    const [deletingIds, setDeletingIds] = useState<Set<string>>(new Set());
 
     const load = useCallback(async () => {
         setError(null);
@@ -28,9 +29,42 @@ export function useCards(setId: string) {
     }, [setId]);
     
     const remove = useCallback(async (cardId: string) => {
-        await api(`/api/flashcards/${cardId}`, { method: "DELETE" });
-        setItems(prev => prev.filter(c => c.id !== cardId));
-    }, []);
+        // Prevent multiple delete requests for the same card
+        if (deletingIds.has(cardId)) {
+            console.log("Card already being deleted, skipping duplicate request");
+            return;
+        }
 
-    return { items, error, reload: load, create, remove };
+        // Mark as being deleted
+        setDeletingIds(prev => new Set(prev).add(cardId));
+        
+        // Optimistically remove from UI immediately
+        setItems(prev => prev.filter(c => c.id !== cardId));
+
+        try {
+            await api(`/api/flashcards/${cardId}`, { method: "DELETE" });
+        } catch (err) {
+            // If the card was already deleted (404/not found), that's actually success
+            const error = err as Error;
+            if (error.message.includes("not found") || error.message.includes("Flashcard not found")) {
+                console.log("Card was already deleted, treating as success");
+                return; // Success - card is gone
+            }
+            
+            // For other errors, restore the card to the UI
+            console.error("Failed to delete card:", error);
+            // Reload the list to restore the card
+            load();
+            throw err;
+        } finally {
+            // Remove from deleting set
+            setDeletingIds(prev => {
+                const newSet = new Set(prev);
+                newSet.delete(cardId);
+                return newSet;
+            });
+        }
+    }, [deletingIds, load]);
+
+    return { items, error, reload: load, create, remove, deletingIds };
 }
