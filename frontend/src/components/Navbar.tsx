@@ -10,7 +10,9 @@ import { Linkedin } from "lucide-react";
 type NavItem = { href: string; label: string; exact?: boolean };
 
 const AUTH_NAV_ITEMS: NavItem[] = [
+    { href: "/dashboard", label: "Dashboard" },
     { href: "/groups", label: "Groups" },
+    { href: "/notifications", label: "Notifications" },
 ];
 
 const UNAUTH_NAV_ITEMS: NavItem[] = [
