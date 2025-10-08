@@ -52,14 +52,6 @@ export default function DynamicBreadcrumb() {
     // Determine the groupId - either from params or from set data
     const effectiveGroupId = groupId || currentSet?.groupId;
     
-    // Debug logging
-    console.log("DynamicBreadcrumb Debug:", {
-      pathname,
-      groupId,
-      setId,
-      currentSet: currentSet ? { id: currentSet.id, groupId: currentSet.groupId } : null,
-      effectiveGroupId
-    });
 
     // Only add Flashcard Sets if we have a valid groupId
     if ((pathname.startsWith("/groups/") || pathname.startsWith("/study/") || pathname.startsWith("/sets/")) && effectiveGroupId && effectiveGroupId !== "undefined") {
@@ -91,7 +83,6 @@ export default function DynamicBreadcrumb() {
       });
     }
 
-    console.log("DynamicBreadcrumb Items:", items);
     return items;
   };
 

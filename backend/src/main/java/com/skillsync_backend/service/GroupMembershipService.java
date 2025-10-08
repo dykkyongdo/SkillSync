@@ -125,6 +125,12 @@ public class GroupMembershipService {
             throw new IllegalStateException("Group must be persisted before creating membership");
         }
         if (membershipRepo.existsByGroup_IdAndUser_Email(group.getId(), creator.getEmail())) return;
+        
+        // Add user to the group's members collection
+        group.getMembers().add(creator);
+        groupRepo.save(group);
+        
+        // Create the membership record
         var m = GroupMembership.builder()
                 .group(group)
                 .user(creator)

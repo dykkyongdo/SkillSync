@@ -14,7 +14,9 @@ export function useCards(setId: string) {
         try {
             const page = await api<Page<Flashcard>>(`/api/flashcards/set/${setId}?page=0&size=50`);
             setItems(page.content);
-        } catch(e:any) { setError(e.message); }
+        } catch(e:any) { 
+            setError(e.message); 
+        }
     }, [setId]);
 
     useEffect(() => { if (setId) load(); }, [setId, load]);
