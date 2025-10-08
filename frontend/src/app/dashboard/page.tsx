@@ -3,6 +3,7 @@
 import * as React from "react";
 import Link from "next/link";
 import RequireAuth from "@/components/RequireAuth";
+import XpChart from "@/components/XpChart";
 import { api } from "@/lib/api"
 
 import { Button } from "@/components/ui/button";
@@ -72,7 +73,7 @@ export default function DashboardPage() {
                             </div>
 
                             <Button asChild className="font-semibold border-2 border-border shadow-shadow bg-main text-main-foreground">
-                                <Link href="/groups">View Group</Link>
+                                <Link href="/groups">View Groups</Link>
                             </Button>
                         </div> 
 
@@ -109,25 +110,35 @@ export default function DashboardPage() {
                                     <StatCard label="Due Today" value={stats.dueToday} highlight />
                                 </div>
 
-                                {/* Quick actions */}
+                                {/* XP Chart and Quick Actions */}
                                 <div className="mt-8 grid gap-5 lg:grid-cols-3">
-                                    <Card className="border-2 border-border shadow-shadow bg-secondary-background lg:col-span-1">
-                                        <CardHeader>
-                                            <CardTitle className="font-semibold">Quick Actions</CardTitle>
-                                            <CardDescription className="font-medium">Jump back into learning</CardDescription>
-                                        </CardHeader>
-                                        <CardContent>
-                                            <div className="flex flex-wrap gap-3">
-                                                <Button asChild className="font-semibold border-2 border-border shadow-shadow">
-                                                    <Link href="/groups">View Groups</Link>
-                                                </Button>
-                                                {/* Add more quick actions later*/}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
+                                    <div className="lg:col-span-2">
+                                        <XpChart />
+                                    </div>
+                                    <div className="lg:col-span-1">
+                                        <Card className="border-2 border-border shadow-shadow bg-secondary-background h-full">
+                                            <CardHeader>
+                                                <CardTitle className="font-semibold">Quick Actions</CardTitle>
+                                                <CardDescription className="font-medium">Jump back into learning</CardDescription>
+                                            </CardHeader>
+                                            <CardContent>
+                                                <div className="flex flex-col gap-3">
+                                                    <Button asChild className="font-semibold border-2 border-border shadow-shadow">
+                                                        <Link href="/groups">View Groups</Link>
+                                                    </Button>
+                                                    <Button asChild className="font-semibold border-2 border-border shadow-shadow">
+                                                        <Link href="/notifications">Notifications</Link>
+                                                    </Button>
+                                                    {/* Add more quick actions later*/}
+                                                </div>
+                                            </CardContent>
+                                        </Card>
+                                    </div>
+                                </div>
 
-                                    {/* Recent activity */}
-                                    <Card className="border-2 border-border shadow-shadow bg-secondary-background lg:col-span-2">
+                                {/* Recent activity */}
+                                <div className="mt-8">
+                                    <Card className="border-2 border-border shadow-shadow bg-secondary-background">
                                         <CardHeader>
                                             <CardTitle className="font-semibold">Recent Activity</CardTitle>
                                             <CardDescription className="font-medium">
