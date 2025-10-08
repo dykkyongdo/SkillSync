@@ -62,6 +62,33 @@
   --font-weight-base: 500;
   --font-weight-heading: 700;
 }
+
+/* Custom animations for moving elements */
+@keyframes scroll-up {
+  0% {
+    transform: translateY(100%);
+  }
+  100% {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes scroll-down {
+  0% {
+    transform: translateY(-100%);
+  }
+  100% {
+    transform: translateY(100%);
+  }
+}
+
+.animate-scroll-up {
+  animation: scroll-up 20s linear infinite;
+}
+
+.animate-scroll-down {
+  animation: scroll-down 25s linear infinite;
+}
   
 @layer base {
   body {
@@ -70,5 +97,48 @@
 
   h1, h2, h3, h4, h5, h6{
     @apply font-heading;
+  }
+}
+
+/* ===== Seamless vertical marquee (2-copy, 50% translate) ===== */
+@layer utilities {
+  /* speed: change --marquee-duration per instance */
+  @keyframes vmarquee-up {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(0, -50%, 0); }
+  }
+  @keyframes vmarquee-down {
+    0%   { transform: translate3d(0, 0, 0); }
+    100% { transform: translate3d(0, 50%, 0); }
+  }
+
+  .vmarquee-col { position: relative; height: 100%; width: 100%; overflow: hidden; }
+
+  /* The moving track fills the column and animates by exactly one stack (50%) */
+  .vmarquee-track {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    will-change: transform;
+    animation: vmarquee-up var(--marquee-duration, 8s) linear infinite;
+  }
+  .vmarquee-track.reverse {
+    animation-name: vmarquee-down;
+  }
+
+  /* Each stack is exactly half the column height. Put your cards *inside* these. */
+  .vmarquee-stack {
+    flex: 0 0 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;     /* 20px; adjust if you like */
+    padding: 1.25rem 0;
+    /* No margins on cards; use gap instead to keep math exact */
+  }
+
+  /* (Optional) reduce motion accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    .vmarquee-track { animation: none; transform: none !important; }
   }
 }

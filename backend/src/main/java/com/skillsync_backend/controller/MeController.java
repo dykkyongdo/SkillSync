@@ -12,8 +12,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.time.Instant;
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.List;
+import java.util.ArrayList;
 
 @RestController
 @RequestMapping("/api/me")
@@ -47,5 +51,25 @@ public class MeController {
                 .masteredCards(mastered)
                 .dueToday(dueToday)
                 .build());
+    }
+
+    @GetMapping("/daily-xp")
+    public ResponseEntity<List<Map<String, Object>>> dailyXp(Authentication auth) {
+        var user = userRepo.findByEmail(auth.getName()).orElseThrow(() -> new UserNotFoundException("User not found"));
+        
+        // Generate last 7 days of data (mock data for now)
+        List<Map<String, Object>> dailyXpData = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        
+        for (int i = 6; i >= 0; i--) {
+            LocalDate date = today.minusDays(i);
+            Map<String, Object> dayData = new HashMap<>();
+            dayData.put("date", date.toString());
+            dayData.put("xp", (int)(Math.random() * 50) + 10); // Mock XP data (10-60 XP per day)
+            dayData.put("day", date.getDayOfWeek().toString().substring(0, 3)); // Mon, Tue, etc.
+            dailyXpData.add(dayData);
+        }
+        
+        return ResponseEntity.ok(dailyXpData);
     }
 }
