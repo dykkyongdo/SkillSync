@@ -39,5 +39,17 @@ export function useGroups() {
         return g;
     }, []);
 
-    return { items, loading, error, reload: load, create};
+    const remove = useCallback(async (groupId: string) => {
+        console.log("useGroups remove: Starting deletion for groupId:", groupId);
+        try {
+            await api(`/api/groups/${groupId}`, { method: "DELETE" });
+            console.log("useGroups remove: API call successful, updating state");
+            setItems(prev => prev.filter(g => g.groupId !== groupId));
+        } catch (error) {
+            console.log("useGroups remove: API call failed:", error);
+            throw error; // Re-throw to let the calling code handle it
+        }
+    }, []);
+
+    return { items, loading, error, reload: load, create, remove};
 }

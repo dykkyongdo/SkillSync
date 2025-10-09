@@ -10,11 +10,30 @@ async function getToken(): Promise<string | null> {
     try { return localStorage.getItem("token"); } catch { return null; }
 }
 
+function isTokenExpired(token: string): boolean {
+    try {
+        // JWT tokens have 3 parts separated by dots
+        const parts = token.split('.');
+        if (parts.length !== 3) return true;
+        
+        // Decode the payload (second part)
+        const payload = JSON.parse(atob(parts[1]));
+        const now = Math.floor(Date.now() / 1000);
+        
+        // Check if token is expired (exp field is in seconds)
+        return payload.exp < now;
+    } catch {
+        return true; // If we can't parse it, consider it expired
+    }
+}
+
 export function clearExpiredToken(): void {
     if (typeof window === "undefined") return;
     try {
         localStorage.removeItem("token");
-        console.log("Expired token cleared from localStorage");
+        // Also clear the cookie
+        document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+        console.log("Expired token cleared from localStorage and cookies");
     } catch (error) {
         console.error("Failed to clear token:", error);
     }
@@ -25,10 +44,6 @@ export async function api<T = unknown>(
     init: RequestInit = {}
 ): Promise<T> {
     const token = await getToken();
-    console.log(`=== API Request Debug ===`);
-    console.log(`Request path: ${path}`);
-    console.log(`Token found: ${token ? 'YES' : 'NO'}`);
-    console.log(`Token preview: ${token ? (token.length > 20 ? token.substring(0, 20) + '...' : token) : 'null'}`);
     
     const headers: Record<string,string> = {
         "Content-Type": "application/json",
@@ -36,19 +51,21 @@ export async function api<T = unknown>(
         ...(token ? { Authorization: `Bearer ${token}` } : {}),
     };
 
-    console.log(`Headers being sent:`, headers);
-    console.log(`=== End API Debug ===`);
-
     const res = await fetch(toUrl(path), { ...init, headers, cache: "no-store" });
 
+    console.log(`API ${init.method || 'GET'} ${path}: Status ${res.status}`);
+
     if (!res.ok) {
+        console.log(`API ${init.method || 'GET'} ${path}: Error response`, res.status, res.statusText);
         // Handle token expiration (401 Unauthorized or 403 Forbidden)
         if ((res.status === 401 || res.status === 403) && token) {
+            console.log("API: Token expired or unauthorized, clearing token and redirecting");
             // Clear expired token
             clearExpiredToken();
             
             // Redirect to login if not already on auth pages
             if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
+                console.log("API: Redirecting to login page");
                 window.location.href = "/auth/login";
                 return Promise.reject(new Error("Token expired. Redirecting to login..."));
             }

@@ -20,7 +20,7 @@ const dmSans = DM_Sans({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${dmSans.variable} bg-background text-foreground`}>
-      <body className="min-h-screen">
+      <body className="min-h-screen" suppressHydrationWarning={true}>
         <Providers>
           <Navbar />
           {children}

@@ -25,5 +25,7 @@ public interface ReviewLogRepository extends JpaRepository<ReviewLog, UUID> {
       """)
     List<Object[]> leaderboardForGroup(UUID groupId, Instant from, Instant to);
 
+    void deleteAllByGroup_Id(UUID groupId);
+
 }
 

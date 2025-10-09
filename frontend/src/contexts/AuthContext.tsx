@@ -38,7 +38,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 // Also set the cookie if it's not already set
                 const existingCookie = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
                 if (!existingCookie) {
-                    document.cookie = `auth_token=${t}; path=/; max-age=86400; SameSite=Lax`;
+                    document.cookie = `auth_token=${t}; path=/; max-age=604800; SameSite=Lax`;
                 }
             }
         } catch (error) {
@@ -51,7 +51,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             localStorage.setItem("token", jwt);
             
             // Also set a cookie for middleware access
-            document.cookie = `auth_token=${jwt}; path=/; max-age=86400; SameSite=Lax`;
+            document.cookie = `auth_token=${jwt}; path=/; max-age=604800; SameSite=Lax`;
             
             setToken(jwt);
         } catch (error) {

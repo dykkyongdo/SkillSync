@@ -59,6 +59,12 @@ public class GroupController {
         return ResponseEntity.ok(toResponse(group, auth.getName()));
     }
 
+    @DeleteMapping("/{groupId}")
+    public ResponseEntity<String> deleteGroup(@PathVariable UUID groupId, Authentication auth) {
+        groupService.deleteGroup(groupId, auth.getName());
+        return ResponseEntity.ok("Group deleted successfully");
+    }
+
     private GroupResponse toResponse(Group group, String viewerEmail) {
         var membership = membershipRepo.findByGroup_IdAndUser_Email(group.getId(), viewerEmail).orElse(null);
 

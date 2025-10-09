@@ -16,6 +16,8 @@ public interface UsedCardProgressRepository extends JpaRepository<UserCardProgre
 
     int countByUser_IdAndMasteredTrue(UUID userId);
 
+    void deleteAllByFlashcard_Group_Id(UUID groupId);
+
     @Query("""
       select count(p)
       from UserCardProgress p

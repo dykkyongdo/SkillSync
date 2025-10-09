@@ -7,6 +7,8 @@ import com.skillsync_backend.model.User;
 import com.skillsync_backend.model.Group;
 import com.skillsync_backend.repository.GroupMembershipRepository;
 import com.skillsync_backend.repository.GroupRepository;
+import com.skillsync_backend.repository.ReviewLogRepository;
+import com.skillsync_backend.repository.UsedCardProgressRepository;
 import com.skillsync_backend.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,10 @@ public class GroupService {
     private final GroupMembershipService membershipService;
     @Autowired
     private GroupMembershipRepository membershipRepo;
+    @Autowired
+    private ReviewLogRepository reviewLogRepo;
+    @Autowired
+    private UsedCardProgressRepository progressRepo;
 
     public Group createGroup(String name, String description, String creatorEmail) {
         User creator = userRepository.findByEmail(creatorEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
@@ -74,6 +80,42 @@ public class GroupService {
 
     public Group getGroupByDetails(UUID groupId) {
         return groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+    }
+
+    @Transactional
+    public void deleteGroup(UUID groupId, String callerEmail) {
+        try {
+            Group group = groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
+            
+            // Check if the caller is the creator/owner of the group
+            if (!group.getCreatedBy().getEmail().equals(callerEmail)) {
+                throw new RuntimeException("Only the group creator can delete the group");
+            }
+            
+            // Clear the members collection first to avoid constraint issues
+            group.getMembers().clear();
+            groupRepository.save(group);
+            
+            // Delete all group memberships
+            membershipRepo.deleteAllByGroup_Id(groupId);
+            
+            // Delete all review logs for this group
+            reviewLogRepo.deleteAllByGroup_Id(groupId);
+            
+            // Delete all user card progress records for this group
+            progressRepo.deleteAllByFlashcard_Group_Id(groupId);
+            
+            // Let JPA handle the cascade deletion of flashcard sets and flashcards
+            // The Group entity has proper cascade settings (CascadeType.ALL, orphanRemoval = true)
+            // for both sets and flashcards, so we can simply delete the group
+            groupRepository.delete(group);
+            
+        } catch (Exception e) {
+            // Log the actual error for debugging
+            System.err.println("Error deleting group: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Failed to delete group: " + e.getMessage(), e);
+        }
     }
 
     private GroupResponse toResponse(Group group, String viewerEmail) {

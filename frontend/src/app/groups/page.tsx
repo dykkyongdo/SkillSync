@@ -4,7 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import RequireAuth from "@/components/RequireAuth";
 import { useGroups } from "@/hooks/useGroups";
-import { Calendar as CalendarIcon } from "lucide-react"
+import { Calendar as CalendarIcon, Trash2, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -22,22 +22,38 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 
 // NEW: progress
 import { Progress } from "@/components/ui/progress";
 
 export default function GroupsPage() {
-    const { items: groups, loading, error, create } = useGroups();
+    const { items: groups, loading, error, create, remove } = useGroups();
 
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
     const [description, setDescription] = React.useState(""); // fixed spacing typo
     const [submitting, setSubmitting] = React.useState(false);
     const [formError, setFormError] = React.useState<string | null>(null);
+
+    // Delete dialog state
+    const [deleteOpen, setDeleteOpen] = React.useState(false);
+    const [pendingDeleteId, setPendingDeleteId] = React.useState<string | null>(null);
+    const [deleting, setDeleting] = React.useState(false);
 
     async function handleCreateGroup(e: React.FormEvent<HTMLFormElement>) {
         e.preventDefault();
@@ -53,6 +69,32 @@ export default function GroupsPage() {
         setFormError(err?.message ?? "Failed to create group");
         } finally {
         setSubmitting(false);
+        }
+    }
+
+    async function confirmDelete() {
+        if (!pendingDeleteId) return;
+        setDeleting(true);
+        try {
+            console.log("Starting group deletion for ID:", pendingDeleteId);
+            await remove(pendingDeleteId);
+            console.log("Group deletion successful");
+            setDeleteOpen(false);
+            setPendingDeleteId(null);
+        } catch (err) {
+            const errorMessage = (err as Error).message;
+            console.log("Group deletion failed with error:", errorMessage);
+            // Don't show error alert for authentication issues - the user will be redirected
+            if (errorMessage.includes("Token expired") || errorMessage.includes("Redirecting to login")) {
+                console.log("Authentication issue during group deletion:", errorMessage);
+                // Reset the dialog state since we're redirecting
+                setDeleteOpen(false);
+                setPendingDeleteId(null);
+                return; // Let the redirect happen
+            }
+            alert("Failed to delete group: " + errorMessage);
+        } finally {
+            setDeleting(false);
         }
     }
 
@@ -191,10 +233,56 @@ export default function GroupsPage() {
                         className="transition-transform border-2 border-border shadow-shadow bg-main"
                     >
                         <CardHeader>
-                        <CardTitle className="font-medium">{group.name}</CardTitle>
-                        <CardDescription className="line-clamp-2">
-                            {group.description || "No description"}
-                        </CardDescription>
+                        <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                                <CardTitle className="font-medium">{group.name}</CardTitle>
+                                <CardDescription className="line-clamp-2">
+                                    {group.description || "No description"}
+                                </CardDescription>
+                            </div>
+
+                            {/* Delete trigger opens dialog */}
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <Button
+                                        size="icon"
+                                        aria-label="Delete group"
+                                        className="border-2 border-border shadow-shadow bg-white hover:bg-red-500"
+                                        onClick={() => setPendingDeleteId(group.groupId)}
+                                    >
+                                        <Trash2 className="w-4 h-4" />
+                                    </Button>
+                                </AlertDialogTrigger>
+
+                                {/* Dialog */}
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete this group?</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            This will permanently delete the group and all its flashcard sets. This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel
+                                            onClick={() => {
+                                                setDeleteOpen(false);
+                                                setPendingDeleteId(null);
+                                            }}
+                                            className="border-2 border-border shadow-shadow font-medium"
+                                        >
+                                            Cancel
+                                        </AlertDialogCancel>
+                                        <AlertDialogAction
+                                            onClick={confirmDelete}
+                                            disabled={deleting}
+                                            className="bg-red-500 hover:brightness-95 text-white border-2 border-border shadow-shadow font-semibold"
+                                        >
+                                            {deleting ? "Deleting..." : "Delete"}
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
+                        </div>
                         </CardHeader>
 
                         <CardContent>
