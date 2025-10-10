@@ -2,7 +2,8 @@
 
 import { useParams, usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
-import { api } from "@/lib/api";
+import React from "react";
+import { api, setNavigationState } from "@/lib/api";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -34,18 +35,25 @@ export default function DynamicBreadcrumb() {
   const groupId = params.groupId as string;
   const setId = params.setId as string;
 
+  // Reset navigation state when component mounts
+  useEffect(() => {
+    setNavigationState(false);
+  }, [pathname]);
+
   // Fetch groupId from flashcard set if we're on study page and don't have groupId
   useEffect(() => {
     const fetchGroupIdFromSet = async () => {
       if (pathname.startsWith("/study/") && setId && !groupId) {
+        console.log("Breadcrumb: Fetching groupId for study page");
         try {
           const flashcardSet = await api<{ groupId: string }>(`/api/sets/${setId}`, {
             skipAuthRedirect: true
           });
+          console.log("Breadcrumb: Successfully fetched groupId:", flashcardSet.groupId);
           setFetchedGroupId(flashcardSet.groupId);
         } catch (error) {
           // Silently fail - breadcrumb will work without groupId
-          console.warn("Could not fetch groupId for breadcrumb:", error);
+          console.warn("Breadcrumb: Could not fetch groupId:", error);
         }
       }
     };
@@ -110,16 +118,21 @@ export default function DynamicBreadcrumb() {
     if (!shouldUseEllipsis) {
       // Normal breadcrumb - show all items
       return breadcrumbItems.map((item, index) => (
-        <>
+        <React.Fragment key={index}>
           {index > 0 && <BreadcrumbSeparator />}
-          <BreadcrumbItem key={index}>
+          <BreadcrumbItem>
             {item.isCurrentPage ? (
               <BreadcrumbPage>{item.label}</BreadcrumbPage>
             ) : (
-              <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+              <BreadcrumbLink 
+                href={item.href}
+                onClick={() => setNavigationState(true)}
+              >
+                {item.label}
+              </BreadcrumbLink>
             )}
           </BreadcrumbItem>
-        </>
+        </React.Fragment>
       ));
     } else {
       // Use ellipsis for 4+ levels
@@ -131,7 +144,12 @@ export default function DynamicBreadcrumb() {
         <>
           {/* First item */}
           <BreadcrumbItem>
-            <BreadcrumbLink href={firstItem.href}>{firstItem.label}</BreadcrumbLink>
+            <BreadcrumbLink 
+              href={firstItem.href}
+              onClick={() => setNavigationState(true)}
+            >
+              {firstItem.label}
+            </BreadcrumbLink>
           </BreadcrumbItem>
           
           <BreadcrumbSeparator />
@@ -146,7 +164,12 @@ export default function DynamicBreadcrumb() {
               <DropdownMenuContent align="start">
                 {middleItems.map((item, index) => (
                   <DropdownMenuItem key={index} asChild>
-                    <BreadcrumbLink href={item.href}>{item.label}</BreadcrumbLink>
+                    <BreadcrumbLink 
+                      href={item.href}
+                      onClick={() => setNavigationState(true)}
+                    >
+                      {item.label}
+                    </BreadcrumbLink>
                   </DropdownMenuItem>
                 ))}
               </DropdownMenuContent>
@@ -160,7 +183,12 @@ export default function DynamicBreadcrumb() {
             {lastItem.isCurrentPage ? (
               <BreadcrumbPage>{lastItem.label}</BreadcrumbPage>
             ) : (
-              <BreadcrumbLink href={lastItem.href}>{lastItem.label}</BreadcrumbLink>
+              <BreadcrumbLink 
+                href={lastItem.href}
+                onClick={() => setNavigationState(true)}
+              >
+                {lastItem.label}
+              </BreadcrumbLink>
             )}
           </BreadcrumbItem>
         </>

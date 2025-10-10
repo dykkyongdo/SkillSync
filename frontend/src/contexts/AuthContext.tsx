@@ -1,6 +1,7 @@
 "use client"; 
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { isTokenExpired } from "@/lib/api";
 
 type AuthCtx = {
     token: string | null; 
@@ -26,14 +27,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setIsHydrated(true);
         try {
             const t = localStorage.getItem("token");
-            console.log("AuthContext: Loading token from localStorage:", t ? "found" : "not found");
             if (t) {
-                setToken(t);
+                // Check if token is expired
+                const isExpired = isTokenExpired(t);
                 
-                // Also set the cookie if it's not already set
-                const existingCookie = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
-                if (!existingCookie) {
-                    document.cookie = `auth_token=${t}; path=/; max-age=604800; SameSite=Lax`;
+                if (isExpired) {
+                    localStorage.removeItem("token");
+                    document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
+                    setToken(null);
+                } else {
+                    setToken(t);
+                    
+                    // Also set the cookie if it's not already set
+                    const existingCookie = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+                    if (!existingCookie) {
+                        document.cookie = `auth_token=${t}; path=/; max-age=604800; SameSite=Lax`;
+                    }
                 }
             }
         } catch (error) {
@@ -42,7 +51,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         
         // Listen for token cleared events from api.ts
         const handleTokenCleared = () => {
-            console.log("AuthContext: Token cleared event received, updating state");
             setToken(null);
         };
         
@@ -67,7 +75,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }, []);
 
     const logout = useCallback(() => {
-        console.log("AuthContext: Logout called");
         try {
             localStorage.removeItem("token");
             // Also clear the cookie

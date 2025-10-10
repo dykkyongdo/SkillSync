@@ -4,24 +4,43 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function RequireAuth({ children }: { children: React.ReactNode }) {
-    const { isAuthenticated, token } = useAuth();
+    const { isAuthenticated } = useAuth();
     const router = useRouter();
     const [hasRedirected, setHasRedirected] = useState(false);
+    const [isClient, setIsClient] = useState(false);
+
+    // Track when we're on client-side
+    useEffect(() => {
+        setIsClient(true);
+    }, []);
 
     useEffect(() => {
+        // Don't do anything on server-side
+        if (!isClient) return;
+        
+        // Reset redirect flag if user becomes authenticated
+        if (isAuthenticated && hasRedirected) {
+            setHasRedirected(false);
+            
+            // If we're on the login page but now authenticated, redirect to groups
+            if (window.location.pathname === "/auth/login") {
+                router.replace("/groups");
+            }
+            return;
+        }
+        
         // Only redirect if:
         // 1. We're on client-side
-        // 2. We have no token at all (not just temporarily false during hydration)
+        // 2. We're not authenticated 
         // 3. We haven't already redirected in this session
-        if (typeof window !== "undefined" && !token && !hasRedirected) {
-            console.log("RequireAuth: No token found, redirecting to login");
+        if (!isAuthenticated && !hasRedirected) {
             setHasRedirected(true);
             router.replace("/auth/login");
         }
-    }, [token, hasRedirected, router]);
+    }, [isAuthenticated, hasRedirected, router, isClient]);
 
-    // Show children if we have a token, or if we're still on server-side
-    if (typeof window === "undefined" || token) {
+    // Show children if we're authenticated, or if we're still on server-side
+    if (!isClient || isAuthenticated) {
         return <>{children}</>;
     }
 

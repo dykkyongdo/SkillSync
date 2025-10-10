@@ -10,7 +10,7 @@ async function getToken(): Promise<string | null> {
     try { return localStorage.getItem("token"); } catch { return null; }
 }
 
-function isTokenExpired(token: string): boolean {
+export function isTokenExpired(token: string): boolean {
     try {
         // JWT tokens have 3 parts separated by dots
         const parts = token.split('.');
@@ -33,7 +33,6 @@ export function clearExpiredToken(): void {
         localStorage.removeItem("token");
         // Also clear the cookie
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-        console.log("Expired token cleared from localStorage and cookies");
         
         // Dispatch a custom event to notify AuthContext
         window.dispatchEvent(new CustomEvent('token-cleared'));
@@ -42,11 +41,33 @@ export function clearExpiredToken(): void {
     }
 }
 
+// Track navigation state to prevent redirects during transitions
+let isNavigating = false;
+let navigationTimeout: NodeJS.Timeout | null = null;
+
+export function setNavigationState(navigating: boolean) {
+    isNavigating = navigating;
+    
+    // Clear any existing timeout
+    if (navigationTimeout) {
+        clearTimeout(navigationTimeout);
+        navigationTimeout = null;
+    }
+    
+    // Set a timeout to reset navigation state after 2 seconds
+    if (navigating) {
+        navigationTimeout = setTimeout(() => {
+            isNavigating = false;
+        }, 2000);
+    }
+}
+
 export async function api<T = unknown>(
     path: string,
     init: RequestInit & { skipAuthRedirect?: boolean } = {}
 ): Promise<T> {
     const token = await getToken();
+    
     
     const headers: Record<string,string> = {
         "Content-Type": "application/json",
@@ -59,23 +80,22 @@ export async function api<T = unknown>(
     if (!res.ok) {
         // Handle token expiration (401 Unauthorized or 403 Forbidden)
         if ((res.status === 401 || res.status === 403) && token && !init.skipAuthRedirect) {
-            console.log("API: Auth error detected", {
-                path,
-                method: init.method || 'GET',
-                status: res.status,
-                skipAuthRedirect: init.skipAuthRedirect,
-                currentPath: typeof window !== "undefined" ? window.location.pathname : 'server'
-            });
-            
-            // Clear expired token
-            clearExpiredToken();
-            
-            // Redirect to login if not already on auth pages
-            if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
-                console.log("API: Redirecting to login from:", window.location.pathname);
-                window.location.href = "/auth/login";
-                return Promise.reject(new Error("Token expired. Redirecting to login..."));
+            // Check if token is actually expired before redirecting
+            if (isTokenExpired(token)) {
+                // Don't redirect if we're currently navigating
+                if (!isNavigating) {
+                    // Clear expired token
+                    clearExpiredToken();
+                    
+                    // Redirect to login if not already on auth pages
+                    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
+                        window.location.href = "/auth/login";
+                        return Promise.reject(new Error("Token expired. Redirecting to login..."));
+                    }
+                }
             }
+            // If token is not expired but API returned 401/403, it might be a server issue
+            // Don't redirect in this case, just let the error bubble up
         }
 
         // Try to surface backend JSON error shape
