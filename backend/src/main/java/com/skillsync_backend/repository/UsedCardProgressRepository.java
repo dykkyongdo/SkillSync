@@ -18,6 +18,8 @@ public interface UsedCardProgressRepository extends JpaRepository<UserCardProgre
 
     void deleteAllByFlashcard_Group_Id(UUID groupId);
 
+    void deleteAllByFlashcard_Id(UUID flashcardId);
+
     @Query("""
       select count(p)
       from UserCardProgress p

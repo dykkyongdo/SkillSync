@@ -6,12 +6,14 @@ import com.skillsync_backend.model.Flashcard;
 import com.skillsync_backend.model.FlashcardSet;
 import com.skillsync_backend.repository.FlashcardRepository;
 import com.skillsync_backend.repository.FlashcardSetRepository;
+import com.skillsync_backend.repository.UsedCardProgressRepository;
 import com.skillsync_backend.security.AccessGuard;
 import com.skillsync_backend.security.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -21,6 +23,7 @@ public class FlashcardService {
 
     private final FlashcardRepository flashcardRepo;
     private final FlashcardSetRepository setRepo;
+    private final UsedCardProgressRepository progressRepo;
     private final AccessGuard access;
     private final ValidationService validationService;
 
@@ -49,11 +52,17 @@ public class FlashcardService {
     }
 
     /** Delete a flashcard. Caller must be a member of the owning group. */
+    @Transactional
     public void delete(UUID flashcardId, String email) {
         Flashcard card = flashcardRepo.findById(flashcardId)
                 .orElseThrow(() -> new NotFoundException("Flashcard not found"));
 
         access.ensureMemberOfGroup(card.getGroup().getId(), email);
+        
+        // Delete all user progress records for this flashcard first
+        progressRepo.deleteAllByFlashcard_Id(flashcardId);
+        
+        // Now delete the flashcard itself
         flashcardRepo.delete(card);
     }
 
