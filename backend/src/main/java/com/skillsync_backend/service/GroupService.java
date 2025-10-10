@@ -118,6 +118,7 @@ public class GroupService {
         }
     }
 
+
     private GroupResponse toResponse(Group group, String viewerEmail) {
         var membership = membershipRepo.findByGroup_IdAndUser_Email(group.getId(), viewerEmail).orElse(null);
 

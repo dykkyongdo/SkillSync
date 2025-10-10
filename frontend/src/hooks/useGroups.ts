@@ -11,12 +11,7 @@ export function useGroups() {
     const { isAuthenticated } = useAuth();
     
     const load = useCallback(async () => {
-        if (!isAuthenticated) {
-            console.log("useGroups: Not authenticated, skipping load");
-            return;
-        }
-        
-        console.log("useGroups: Authenticated, loading groups");
+        if (!isAuthenticated) return;
         setLoading(true), setError(null);
         try {
             const data = await api<Group[]>("/api/groups/my-groups");
@@ -25,10 +20,7 @@ export function useGroups() {
         finally { setLoading(false); }
     }, [isAuthenticated]);
 
-    useEffect(() => { 
-        console.log("useGroups: useEffect triggered, isAuthenticated:", isAuthenticated);
-        load(); 
-    }, [load]);
+    useEffect(() => { load(); }, [load]);
 
     const create = useCallback(async (name: string, description: string) => {
         const g = await api<Group>("/api/groups/create", {
@@ -40,15 +32,8 @@ export function useGroups() {
     }, []);
 
     const remove = useCallback(async (groupId: string) => {
-        console.log("useGroups remove: Starting deletion for groupId:", groupId);
-        try {
-            await api(`/api/groups/${groupId}`, { method: "DELETE" });
-            console.log("useGroups remove: API call successful, updating state");
-            setItems(prev => prev.filter(g => g.groupId !== groupId));
-        } catch (error) {
-            console.log("useGroups remove: API call failed:", error);
-            throw error; // Re-throw to let the calling code handle it
-        }
+        await api(`/api/groups/${groupId}`, { method: "DELETE" });
+        setItems(prev => prev.filter(g => g.groupId !== groupId));
     }, []);
 
     return { items, loading, error, reload: load, create, remove};

@@ -65,6 +65,7 @@ public class GroupController {
         return ResponseEntity.ok("Group deleted successfully");
     }
 
+
     private GroupResponse toResponse(Group group, String viewerEmail) {
         var membership = membershipRepo.findByGroup_IdAndUser_Email(group.getId(), viewerEmail).orElse(null);
 

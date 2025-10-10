@@ -17,21 +17,16 @@ const Ctx = createContext<AuthCtx>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-    // Initialize with token from localStorage if available
-    const [token, setToken] = useState<string | null>(() => {
-        if (typeof window !== "undefined") {
-            try {
-                return localStorage.getItem("token");
-            } catch {
-                return null;
-            }
-        }
-        return null;
-    }); 
+    // Initialize with null to avoid hydration mismatch
+    const [token, setToken] = useState<string | null>(null);
+    const [isHydrated, setIsHydrated] = useState(false); 
 
     useEffect(() => {
+        // Mark as hydrated and load token from localStorage
+        setIsHydrated(true);
         try {
             const t = localStorage.getItem("token");
+            console.log("AuthContext: Loading token from localStorage:", t ? "found" : "not found");
             if (t) {
                 setToken(t);
                 
@@ -44,6 +39,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("AuthContext: Error reading from localStorage:", error);
         }
+        
+        // Listen for token cleared events from api.ts
+        const handleTokenCleared = () => {
+            console.log("AuthContext: Token cleared event received, updating state");
+            setToken(null);
+        };
+        
+        window.addEventListener('token-cleared', handleTokenCleared);
+        
+        return () => {
+            window.removeEventListener('token-cleared', handleTokenCleared);
+        };
     }, []);
 
     const login = useCallback((jwt: string) => {
@@ -57,9 +64,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         } catch (error) {
             console.error("Failed to save token:", error);
         }
-    }, [token]);
+    }, []);
 
     const logout = useCallback(() => {
+        console.log("AuthContext: Logout called");
         try {
             localStorage.removeItem("token");
             // Also clear the cookie
@@ -70,7 +78,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         }
     }, []);
 
-    const isAuthenticated = !!token;
+    const isAuthenticated = isHydrated && !!token;
 
     return <Ctx.Provider value={{ token, login, logout, isAuthenticated }}>{children}</Ctx.Provider>;
 }

@@ -1,8 +1,8 @@
 "use client";
 
 import { useParams, usePathname } from "next/navigation";
-import { useGroups } from "@/hooks/useGroups";
-import { useSingleSet } from "@/hooks/useSingleSet";
+import { useEffect, useState } from "react";
+import { api } from "@/lib/api";
 import {
   Breadcrumb,
   BreadcrumbEllipsis,
@@ -28,16 +28,30 @@ interface BreadcrumbItem {
 export default function DynamicBreadcrumb() {
   const pathname = usePathname();
   const params = useParams();
-  const { items: groups } = useGroups();
+  const [fetchedGroupId, setFetchedGroupId] = useState<string | null>(null);
 
-  // Find current group and set information
+  // Get IDs directly from URL params - no API calls needed for breadcrumb navigation
   const groupId = params.groupId as string;
   const setId = params.setId as string;
-  
-  const currentGroup = groups.find(group => group.groupId === groupId);
-  
-  // Fetch set data if we have a setId (for sets or study pages)
-  const { item: currentSet } = useSingleSet(setId);
+
+  // Fetch groupId from flashcard set if we're on study page and don't have groupId
+  useEffect(() => {
+    const fetchGroupIdFromSet = async () => {
+      if (pathname.startsWith("/study/") && setId && !groupId) {
+        try {
+          const flashcardSet = await api<{ groupId: string }>(`/api/sets/${setId}`, {
+            skipAuthRedirect: true
+          });
+          setFetchedGroupId(flashcardSet.groupId);
+        } catch (error) {
+          // Silently fail - breadcrumb will work without groupId
+          console.warn("Could not fetch groupId for breadcrumb:", error);
+        }
+      }
+    };
+
+    fetchGroupIdFromSet();
+  }, [pathname, setId, groupId]);
 
   // Build breadcrumb items based on current path
   const buildBreadcrumbItems = (): BreadcrumbItem[] => {
@@ -49,8 +63,8 @@ export default function DynamicBreadcrumb() {
       href: "/groups"
     });
 
-    // Determine the groupId - either from params or from set data
-    const effectiveGroupId = groupId || currentSet?.groupId;
+    // Use groupId directly from URL params, or fetch it if we're on study page
+    const effectiveGroupId = groupId || fetchedGroupId;
     
 
     // Only add Flashcard Sets if we have a valid groupId
@@ -90,6 +104,7 @@ export default function DynamicBreadcrumb() {
 
   // If we have more than 3 items, use ellipsis
   const shouldUseEllipsis = breadcrumbItems.length > 3;
+  
   
   const renderBreadcrumbItems = () => {
     if (!shouldUseEllipsis) {

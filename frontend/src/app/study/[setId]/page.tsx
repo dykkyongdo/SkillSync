@@ -170,7 +170,7 @@ export default function StudyPage() {
                                         <RotateCcw className="w-4 h-4 mr-2" />
                                         Study Again
                                     </Button>
-                                    <Button asChild variant="outline" className="w-full">
+                                    <Button asChild variant="neutral" className="w-full">
                                         <Link href="/groups">Back to Groups</Link>
                                     </Button>
                                 </CardContent>
@@ -247,15 +247,15 @@ export default function StudyPage() {
                                         </p>
                                         <div className="grid grid-cols-2 gap-2">
                                             <Button
-                                                variant="destructive"
+                                                variant="neutral"
                                                 onClick={() => handleGrade(0)}
-                                                className="flex items-center gap-2"
+                                                className="flex items-center gap-2 bg-red-500 hover:bg-red-600 text-white"
                                             >
                                                 <XCircle className="w-4 h-4" />
                                                 Again
                                             </Button>
                                             <Button
-                                                variant="outline"
+                                                variant="neutral"
                                                 onClick={() => handleGrade(1)}
                                                 className="flex items-center gap-2"
                                             >
@@ -270,7 +270,7 @@ export default function StudyPage() {
                                                 Good
                                             </Button>
                                             <Button
-                                                variant="secondary"
+                                                variant="neutral"
                                                 onClick={() => handleGrade(3)}
                                                 className="flex items-center gap-2"
                                             >

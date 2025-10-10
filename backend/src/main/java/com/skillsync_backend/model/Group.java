@@ -29,6 +29,7 @@ public class Group {
     private String name;
     private String description;
     private Instant createdAt;
+    
 
     @ManyToOne
     @JoinColumn(name = "created_by")

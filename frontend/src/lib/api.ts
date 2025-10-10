@@ -34,6 +34,9 @@ export function clearExpiredToken(): void {
         // Also clear the cookie
         document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
         console.log("Expired token cleared from localStorage and cookies");
+        
+        // Dispatch a custom event to notify AuthContext
+        window.dispatchEvent(new CustomEvent('token-cleared'));
     } catch (error) {
         console.error("Failed to clear token:", error);
     }
@@ -41,7 +44,7 @@ export function clearExpiredToken(): void {
 
 export async function api<T = unknown>(
     path: string,
-    init: RequestInit = {}
+    init: RequestInit & { skipAuthRedirect?: boolean } = {}
 ): Promise<T> {
     const token = await getToken();
     
@@ -53,19 +56,23 @@ export async function api<T = unknown>(
 
     const res = await fetch(toUrl(path), { ...init, headers, cache: "no-store" });
 
-    console.log(`API ${init.method || 'GET'} ${path}: Status ${res.status}`);
-
     if (!res.ok) {
-        console.log(`API ${init.method || 'GET'} ${path}: Error response`, res.status, res.statusText);
         // Handle token expiration (401 Unauthorized or 403 Forbidden)
-        if ((res.status === 401 || res.status === 403) && token) {
-            console.log("API: Token expired or unauthorized, clearing token and redirecting");
+        if ((res.status === 401 || res.status === 403) && token && !init.skipAuthRedirect) {
+            console.log("API: Auth error detected", {
+                path,
+                method: init.method || 'GET',
+                status: res.status,
+                skipAuthRedirect: init.skipAuthRedirect,
+                currentPath: typeof window !== "undefined" ? window.location.pathname : 'server'
+            });
+            
             // Clear expired token
             clearExpiredToken();
             
             // Redirect to login if not already on auth pages
             if (typeof window !== "undefined" && !window.location.pathname.startsWith("/auth/")) {
-                console.log("API: Redirecting to login page");
+                console.log("API: Redirecting to login from:", window.location.pathname);
                 window.location.href = "/auth/login";
                 return Promise.reject(new Error("Token expired. Redirecting to login..."));
             }

@@ -27,8 +27,8 @@ function isActive(pathname: string, href: string, exact = false) {
 
 export default function Navbar() {
     const pathname = usePathname();
-    const { token, logout } = useAuth();
-    const isAuthed = !!token;
+    const { logout, isAuthenticated } = useAuth();
+    const isAuthed = isAuthenticated;
 
     const Item = ({ href, label, exact }: NavItem) => {
         const active = isActive(pathname, href, exact);
