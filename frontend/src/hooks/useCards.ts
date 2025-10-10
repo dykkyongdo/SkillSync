@@ -53,10 +53,17 @@ export function useCards(setId: string) {
                 return; // Success - card is gone
             }
             
-            // For other errors, restore the card to the UI
+            // For other errors, restore the card to the UI and provide better error message
             console.error("Failed to delete card:", error);
+            
             // Reload the list to restore the card
             load();
+            
+            // Provide a more user-friendly error message
+            if (error.message.includes("unexpected error")) {
+                throw new Error("Failed to delete card: The card may be in use by study sessions. Please try again.");
+            }
+            
             throw err;
         } finally {
             // Remove from deleting set

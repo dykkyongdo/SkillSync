@@ -90,7 +90,7 @@ export default function SetPage() {
             const error = err as Error;
             // Only show error if it's not a "not found" error (which is actually success)
             if (!error.message.includes("not found") && !error.message.includes("Flashcard not found")) {
-                alert("Failed to delete card: " + error.message);
+                alert(error.message);
             }
         }
     };
@@ -211,7 +211,7 @@ export default function SetPage() {
                         
                         {/* Empty State */}
                         {!error && cards.length === 0 && (
-                            <Card>
+                            <Card className="bg-main">
                                 <CardHeader>
                                     <CardTitle>No cards yet</CardTitle>
                                     <CardDescription>
