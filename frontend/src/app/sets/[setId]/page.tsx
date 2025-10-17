@@ -325,7 +325,7 @@ export default function SetPage() {
                                                         size="icon"
                                                         aria-label="Delete flashcard"
                                                         disabled={deletingIds.has(card.id)}
-                                                        className="border-2 border-border shadow-shadow bg-white hover:bg-red-500 disabled:opacity-50"
+                                                        className="w-8 h-8 min-w-8 min-h-8 flex-shrink-0 ml-2 border-2 border-border shadow-shadow bg-white hover:bg-red-500 disabled:opacity-50"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>
