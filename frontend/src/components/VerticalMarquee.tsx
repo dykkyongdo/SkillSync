@@ -25,7 +25,6 @@ export default function VerticalMarquee({
 }: Props) {
   const stackRef = React.useRef<HTMLDivElement | null>(null);
   const [distance, setDistance] = React.useState(0);
-  const [ready, setReady] = React.useState(false);
 
   const measure = React.useCallback(() => {
     const el = stackRef.current;
@@ -37,7 +36,6 @@ export default function VerticalMarquee({
   React.useEffect(() => {
     const id = requestAnimationFrame(() => {
       measure();
-      setReady(true);
     });
     const ro = new ResizeObserver(() => measure());
     if (stackRef.current) ro.observe(stackRef.current);

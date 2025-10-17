@@ -59,6 +59,7 @@ export function AIFlashcardGenerator({
   const [suggestions, setSuggestions] = useState<{
     suggestedCount: number;
     suggestedDifficulty: string;
+    suggestedAspects?: string[];
   } | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
 

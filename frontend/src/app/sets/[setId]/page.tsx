@@ -4,15 +4,13 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import RequireAuth from "@/components/RequireAuth";
 import { useCards } from "@/hooks/useCards";
-import { useSets } from "@/hooks/useSets";
-import { useGroups } from "@/hooks/useGroups";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
-import { ArrowLeft, Plus, Trash2, Edit, Loader2, Sparkles } from "lucide-react";
+import { Plus, Trash2, Loader2, Sparkles } from "lucide-react";
 import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import {
     AlertDialog,
@@ -27,11 +25,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import {
     Dialog,
-    DialogContent,
-    DialogDescription,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { AIFlashcardGenerator } from "@/components/AIFlashcardGenerator";
@@ -40,28 +33,9 @@ export default function SetPage() {
     const params = useParams();
     const setId = params.setId as string;
     const { items: cards, error, create, remove, deletingIds } = useCards(setId);
-    const { items: groups } = useGroups();
     
     // Find the set and its group by searching through all groups
-    const currentSet = null;
-    let currentGroup = null;
-    const setTitle = "Flashcard Set";
-    let groupName = "Group";
     
-    for (const group of groups) {
-        // We need to load sets for each group to find our set
-        // For now, we'll use a simple approach and get the groupId from the first card
-        if (cards.length > 0) {
-            const cardGroupId = cards[0]?.groupId;
-            if (group.groupId === cardGroupId) {
-                currentGroup = group;
-                groupName = group.name;
-                break;
-            }
-        }
-    }
-    
-    const [open, setOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [explanation, setExplanation] = useState("");
@@ -129,7 +103,6 @@ export default function SetPage() {
             setExplanation("");
             setDifficulty(1);
             setTags("");
-            setOpen(false);
         } catch (err) {
             setFormError("Failed to create card: " + (err as Error).message);
         } finally {

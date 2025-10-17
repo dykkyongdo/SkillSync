@@ -18,7 +18,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-export default function LoginPage() {
+function LoginForm() {
     const router = useRouter();
     const { login } = useAuth();
     const [email, setEmail] = React.useState("");
@@ -147,5 +147,13 @@ export default function LoginPage() {
             </Card>
         </section>
         </main>
+    );
+}
+
+export default function LoginPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <LoginForm />
+        </React.Suspense>
     );
 }

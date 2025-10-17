@@ -68,7 +68,7 @@ ChartContainer.displayName = "Chart"
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([_, config]) => config.theme || config.color
+    ([, config]) => config.theme || config.color
   )
 
   if (!colorConfig.length) {
@@ -79,7 +79,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
     <style
       dangerouslySetInnerHTML={{
         __html: Object.entries(config)
-          .filter(([_, config]) => config.theme || config.color)
+          .filter(([, config]) => config.theme || config.color)
           .map(([key, itemConfig]) => {
             if ("color" in itemConfig && itemConfig.color) {
               return `[data-chart="${id}"] .color-${key} { color: ${itemConfig.color}; }`
@@ -103,17 +103,7 @@ const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
 // Chart Tooltip
 const ChartTooltip = RechartsPrimitive.Tooltip
 
-const ChartTooltipContent = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentProps<typeof RechartsPrimitive.Tooltip> &
-    React.ComponentProps<"div"> & {
-      hideLabel?: boolean
-      hideIndicator?: boolean
-      indicator?: "line" | "dot" | "dashed"
-      nameKey?: string
-      labelKey?: string
-    }
->(
+const ChartTooltipContent = React.forwardRef<HTMLDivElement, Record<string, unknown>>(
   (
     {
       active,
@@ -130,6 +120,12 @@ const ChartTooltipContent = React.forwardRef<
       nameKey,
       labelKey,
     }: {
+      active?: boolean;
+      payload?: unknown[];
+      className?: string;
+      indicator?: "line" | "dot" | "dashed";
+      hideLabel?: boolean;
+      hideIndicator?: boolean;
       label?: string;
       labelFormatter?: (label: string, payload: unknown[]) => string;
       labelClassName?: string;
@@ -148,8 +144,8 @@ const ChartTooltipContent = React.forwardRef<
       }
 
       const [item] = payload
-      const key = `${labelKey || item.dataKey || item.name || "value"}`
-      const itemConfig = getPayloadConfigFromPayload(config, item, key)
+      const key = `${labelKey || (item as Record<string, unknown>).dataKey || (item as Record<string, unknown>).name || "value"}`
+      const itemConfig = getPayloadConfigFromPayload(config, item as Record<string, unknown>, key)
       const value =
         !labelKey && typeof label === "string"
           ? config[label as keyof typeof config]?.label || label
@@ -189,21 +185,22 @@ const ChartTooltipContent = React.forwardRef<
           </div>
         ) : null}
         <div className="grid gap-1.5">
-          {payload.map((item: Record<string, unknown>, index: number) => {
-            const key = `${nameKey || item.name || item.dataKey || "value"}`
-            const itemConfig = getPayloadConfigFromPayload(config, item, key)
-            const indicatorColor = color || (item as Record<string, unknown>).payload?.fill || item.color
+          {payload.map((item) => {
+            const typedItem = item as Record<string, unknown>;
+            const key = `${nameKey || typedItem.name || typedItem.dataKey || "value"}`
+            const itemConfig = getPayloadConfigFromPayload(config, typedItem, key)
+            const indicatorColor = (color || (typedItem.payload as Record<string, unknown>)?.fill || typedItem.color) as string
 
             return (
               <div
-                key={item.dataKey}
+                key={typedItem.dataKey as string}
                 className={cn(
                   "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5 [&>svg]:text-muted-foreground",
                   indicator === "dot" && "items-center"
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, (item as Record<string, unknown>).payload)
+                {formatter && typedItem?.value !== undefined && typedItem.name ? (
+                  formatter(typedItem.value, typedItem.name as string)
                 ) : (
                   <>
                     {indicator === "dot" && !hideIndicator ? (
@@ -241,16 +238,16 @@ const ChartTooltipContent = React.forwardRef<
                           </div>
                         ) : null}
                         <div className="text-muted-foreground">
-                          {itemConfig?.icon ? (
-                            <itemConfig.icon />
+                          {(itemConfig?.icon as React.ComponentType) ? (
+                            React.createElement(itemConfig!.icon as React.ComponentType)
                           ) : (
-                            itemConfig?.label || item.name
+                            (itemConfig?.label || typedItem.name) as React.ReactNode
                           )}
                         </div>
                       </div>
-                      {item.value && (
+                      {(typedItem.value as React.ReactNode) && (
                         <div className="font-mono font-medium tabular-nums text-foreground">
-                          {item.value}
+                          {typedItem.value as React.ReactNode}
                         </div>
                       )}
                     </div>

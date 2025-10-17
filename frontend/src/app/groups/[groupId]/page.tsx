@@ -7,7 +7,7 @@ import { useSets } from "@/hooks/useSets";
 import { useGroups } from "@/hooks/useGroups";
 import { Calendar as CalendarIcon } from "lucide-react"
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2, Loader2, Users } from "lucide-react";
+import { Plus, Trash2, Loader2, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -18,8 +18,6 @@ import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import {
     AlertDialog,
     AlertDialogTrigger,
-    AlertDialogPortal,
-    AlertDialogOverlay,
     AlertDialogContent,
     AlertDialogHeader,
     AlertDialogFooter,
@@ -48,7 +46,6 @@ export default function GroupPage() {
     
     // Find the current group to get its name
     const currentGroup = groups.find(group => group.groupId === groupId);
-    const groupName = currentGroup?.name || "Group";
 
     const [open, setOpen] = useState(false);
     const [title, setTitle] = useState("");
@@ -57,7 +54,6 @@ export default function GroupPage() {
     const [formError, setFormError] = useState<string | null>(null);
 
     // Delete dialog state
-    const [deleteOpen, setDeleteOpen] = useState(false);
     const [pendingDeleteId, setPendingDeleteId] = useState<string | null>(null);
     const [deleting, setDeleting] = useState(false);
 
@@ -93,7 +89,6 @@ export default function GroupPage() {
         setDeleting(true);
         try {
         await remove(pendingDeleteId);
-        setDeleteOpen(false);
         setPendingDeleteId(null);
         } catch (err) {
         alert("Failed to delete set: " + (err as Error).message);
@@ -280,7 +275,6 @@ export default function GroupPage() {
                             <AlertDialogFooter>
                                 <AlertDialogCancel
                                 onClick={() => {
-                                    setDeleteOpen(false);
                                     setPendingDeleteId(null);
                                 }}
                                 className="border-2 border-border shadow-shadow font-medium"

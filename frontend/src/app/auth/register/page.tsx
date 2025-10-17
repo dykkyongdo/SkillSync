@@ -18,7 +18,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
-export default function RegisterPage() {
+function RegisterForm() {
     const router = useRouter();
     const { login } = useAuth();
     const [email, setEmail] = React.useState("");
@@ -151,5 +151,13 @@ export default function RegisterPage() {
             </Card>
         </section>
         </main>
+    );
+}
+
+export default function RegisterPage() {
+    return (
+        <React.Suspense fallback={<div>Loading...</div>}>
+            <RegisterForm />
+        </React.Suspense>
     );
 }

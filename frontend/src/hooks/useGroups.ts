@@ -12,7 +12,7 @@ export function useGroups() {
     
     const load = useCallback(async () => {
         if (!isAuthenticated) return;
-        setLoading(true), setError(null);
+        setLoading(true); setError(null);
         try {
             const data = await api<Group[]>("/api/groups/my-groups");
             setItems(data);

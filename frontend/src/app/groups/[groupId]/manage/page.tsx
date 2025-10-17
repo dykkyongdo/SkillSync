@@ -2,6 +2,7 @@
 "use client";
 
 import * as React from "react";
+import { useCallback } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import RequireAuth from "@/components/RequireAuth";
@@ -19,7 +20,7 @@ import {
   useReactTable,
   VisibilityState,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal, ArrowLeft, Loader2, MailPlus, Trash2, Users } from "lucide-react";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, ArrowLeft, Loader2, MailPlus, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -58,7 +59,6 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Group as GroupType } from "@/types";
 
 type Role = "OWNER" | "ADMIN" | "MEMBER";
 
@@ -171,7 +171,7 @@ export default function GroupManagementPage() {
   }, [group?.currentUserGroupRole, members, me]);
 
   const canInvite = myRole === "OWNER" || myRole === "ADMIN";
-  function canRemove(target: Member): boolean {
+  const canRemove = useCallback((target: Member): boolean => {
     if (!myRole) return false;
     if (myRole === "OWNER") {
       // OWNER can remove anyone except themselves (optional guard)
@@ -182,7 +182,7 @@ export default function GroupManagementPage() {
       return target.role === "MEMBER";
     }
     return false;
-  }
+  }, [myRole, me?.id]);
 
   // Column definitions for the members table
   const columns: ColumnDef<Member>[] = React.useMemo(() => [

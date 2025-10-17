@@ -112,9 +112,9 @@ export async function api<T = unknown>(
             }
             // Handle other error formats
             else if (j.message) {
-                message = j.message;
+                message = String(j.message);
             } else if (j.error) {
-                message = j.error;
+                message = String(j.error);
             }
         } else {
             const text = await res.text();

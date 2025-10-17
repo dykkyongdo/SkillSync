@@ -57,7 +57,7 @@ export default function DashboardPage() {
         setActivityLoading(true)
         const activity = await api<Array<{id: string, when: string, text: string}>>("/api/me/recent-activity", { method: "GET" })
         if (!cancelled) setRecentActivity(activity)
-      } catch (e: unknown) {
+      } catch {
         if (!cancelled) {
           // Set placeholder data on error
           setRecentActivity([

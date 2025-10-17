@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import {
-  ArrowUpRight, Users, BookOpen, TrendingUp, Award, Target, Zap,
+  ArrowUpRight, Users, BookOpen, TrendingUp, Award, Target,
 } from "lucide-react";
 import Star9 from "@/components/icons/Star9";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";

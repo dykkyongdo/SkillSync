@@ -44,13 +44,13 @@ import { Progress } from "@/components/ui/progress";
 
 // Group Card Component
 function GroupCard({ group, onDelete }: { group: Group; onDelete: (id: string) => void }) {
-    function getCompletion(_g: Group): number {
+    function getCompletion(): number {
         // For now, return 0 since Group type doesn't have progress/completion
         // This can be updated when the backend provides progress data
         return 0;
     }
 
-    const pct = getCompletion(group);
+    const pct = getCompletion();
 
     return (
         <Card className="transition-all duration-200 border-2 border-border shadow-shadow bg-main">

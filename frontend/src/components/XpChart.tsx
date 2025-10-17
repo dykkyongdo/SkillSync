@@ -22,10 +22,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import {
-  ChartConfig,
-  ChartContainer,
   ChartTooltip,
-  ChartTooltipContent,
 } from "@/components/ui/chart"
 
 type DailyXpData = {
@@ -33,10 +30,6 @@ type DailyXpData = {
   xp: number
   day: string
 }
-
-const chartConfig = {
-  xp: { label: "XP Earned" },
-} satisfies ChartConfig
 
 export default function XpChart() {
   const [data, setData] = React.useState<DailyXpData[]>([])
