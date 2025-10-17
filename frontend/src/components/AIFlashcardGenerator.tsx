@@ -85,9 +85,7 @@ export function AIFlashcardGenerator({
   };
 
   return (
-    // Blue trim wrapper (like screenshot): blue border outside, then brutal black card
-    <div className="max-w-2xl w-[min(100%,40rem)] mx-auto p-1 rounded-[14px] border-2 border-main">
-      <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[12px] border-2 border-border shadow-shadow bg-background">
+    <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[12px] border-2 border-border shadow-shadow bg-background">
         <DialogHeader className="gap-1">
           <DialogTitle className="font-heading text-2xl font-semibold">
             Edit with AI
@@ -255,6 +253,5 @@ export function AIFlashcardGenerator({
           </Button>
         </DialogFooter>
       </DialogContent>
-    </div>
   );
 }

@@ -153,7 +153,7 @@ export default function SetPage() {
                                 <p className="text-muted-foreground">Manage your flashcards</p>
                             </div>
 
-                            <div className="flex gap-2">
+                            <div className="flex gap-5">
                                 {/* AI Generation Button */}
                                 <Dialog open={aiDialogOpen} onOpenChange={setAiDialogOpen}>
                                     <DialogTrigger asChild>
