@@ -58,7 +58,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { Group } from "@/types";
+import { Group as GroupType } from "@/types";
 
 type Role = "OWNER" | "ADMIN" | "MEMBER";
 
@@ -71,7 +71,7 @@ type Member = {
   joinedAt?: string;
 };
 
-type Group = {
+type GroupData = {
   id: string;
   name: string;
   description?: string;
@@ -87,7 +87,7 @@ export default function GroupManagementPage() {
   const params = useParams();
   const groupId = params.groupId as string;
 
-  const [group, setGroup] = React.useState<Group | null>(null);
+  const [group, setGroup] = React.useState<GroupData | null>(null);
   const [members, setMembers] = React.useState<Member[]>([]);
   const [me, setMe] = React.useState<Me | null>(null);
 
@@ -118,7 +118,7 @@ export default function GroupManagementPage() {
         setError(null);
 
         const [groupRes, membersRes] = await Promise.all([
-          api<Group>(`/api/groups/${groupId}`, { method: "GET" }),
+          api<GroupData>(`/api/groups/${groupId}`, { method: "GET" }),
           api<Member[]>(`/api/groups/${groupId}/members`, { method: "GET" }),
         ]);
 
