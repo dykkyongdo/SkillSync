@@ -34,8 +34,8 @@ export default function NotificationPage() {
                 // Load real invitations from API
                 const invitations = await api<Invitation[]>("/api/notifications/invitations", { method: "GET" });
                 if (!cancel) setInvites(invitations);
-            } catch (e: any) {
-                if (!cancel) setError(e?.message ?? "Failed to load notifications");
+            } catch (e: unknown) {
+                if (!cancel) setError(e instanceof Error ? e.message : "Failed to load notifications");
             } finally {
                 if (!cancel) setLoading(false);
             }
@@ -53,8 +53,8 @@ export default function NotificationPage() {
             await api<void>(`/api/notifications/invitations/${membershipId}/accept`, { method: "POST" });
             // Remove from local list 
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
-        } catch (e: any) {
-            alert(e?.message ?? "Failed to accept invitation");
+        } catch (e: unknown) {
+            alert(e instanceof Error ? e.message : "Failed to accept invitation");
         }
     }
 
@@ -64,8 +64,8 @@ export default function NotificationPage() {
             await api<void>(`/api/notifications/invitations/${membershipId}/reject`, { method: "POST" });
             // Remove from local list
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
-        } catch (e: any) {
-            alert(e?.message ?? "Failed to reject invitation");
+        } catch (e: unknown) {
+            alert(e instanceof Error ? e.message : "Failed to reject invitation");
         }
     }
 

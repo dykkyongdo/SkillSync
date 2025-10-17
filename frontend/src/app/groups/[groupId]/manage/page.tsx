@@ -134,8 +134,8 @@ export default function GroupManagementPage() {
           setMembers(membersRes);
           setMe(meRes);
         }
-      } catch (e: any) {
-        if (!cancel) setError(e?.message ?? "Failed to load group management");
+      } catch (e: unknown) {
+        if (!cancel) setError(e instanceof Error ? e.message : "Failed to load group management");
       } finally {
         if (!cancel) setLoading(false);
       }
@@ -356,8 +356,8 @@ export default function GroupManagementPage() {
       setInviteOpen(false);
       setInviteEmail("");
       await reloadMembers();
-    } catch (e: any) {
-      setInviteError(e?.message ?? "Failed to invite member");
+    } catch (e: unknown) {
+      setInviteError(e instanceof Error ? e.message : "Failed to invite member");
     } finally {
       setInviting(false);
     }
@@ -373,8 +373,8 @@ export default function GroupManagementPage() {
       });
       setRemoveId(null);
       await reloadMembers();
-    } catch (e: any) {
-      alert(e?.message ?? "Failed to remove member");
+    } catch (e: unknown) {
+      alert(e instanceof Error ? e.message : "Failed to remove member");
     } finally {
       setRemoving(false);
     }

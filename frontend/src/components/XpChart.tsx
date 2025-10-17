@@ -51,8 +51,8 @@ export default function XpChart() {
         setError(null)
         const xpData = await api<DailyXpData[]>("/api/me/daily-xp", { method: "GET" })
         if (!cancelled) setData(xpData)
-      } catch (e: any) {
-        if (!cancelled) setError(e?.message ?? "Failed to load XP data")
+      } catch (e: unknown) {
+        if (!cancelled) setError(e instanceof Error ? e.message : "Failed to load XP data")
       } finally {
         if (!cancelled) setLoading(false)
       }
