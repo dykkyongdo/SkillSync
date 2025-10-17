@@ -7,7 +7,7 @@ import { useSets } from "@/hooks/useSets";
 import { useGroups } from "@/hooks/useGroups";
 import { Calendar as CalendarIcon } from "lucide-react"
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Loader2, Users } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -127,7 +127,17 @@ export default function GroupPage() {
                     <p className="text-foreground/70 font-medium">Create and manage your flashcard sets</p>
                 </div>
 
-                <Dialog open={open} onOpenChange={setOpen}>
+                <div className="flex gap-3">
+                    {(currentGroup?.currentUserGroupRole === "OWNER" || currentGroup?.currentUserGroupRole === "ADMIN") && (
+                        <Button asChild variant="neutral" className="border-2 border-border shadow-shadow font-medium">
+                            <Link href={`/groups/${groupId}/manage`}>
+                                <Users className="mr-2 h-4 w-4" />
+                                Manage Group
+                            </Link>
+                        </Button>
+                    )}
+
+                    <Dialog open={open} onOpenChange={setOpen}>
                     <DialogTrigger asChild>
                         <Button className="font-semibold bg-white">
                             <Plus className="mr-2 h-5 w-5" />
@@ -199,6 +209,7 @@ export default function GroupPage() {
                         </form>
                     </DialogContent>
                 </Dialog>
+                </div>
                 </div>
 
                 {/* Invalid group ID message */}

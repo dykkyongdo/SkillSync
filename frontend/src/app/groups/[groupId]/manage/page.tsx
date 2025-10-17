@@ -7,7 +7,22 @@ import { useParams } from "next/navigation";
 import RequireAuth from "@/components/RequireAuth";
 import { api } from "@/lib/api";
 
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  SortingState,
+  useReactTable,
+  VisibilityState,
+} from "@tanstack/react-table";
+import { ArrowUpDown, ChevronDown, MoreHorizontal, ArrowLeft, Loader2, MailPlus, Trash2, Users } from "lucide-react";
+
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Card,
   CardContent,
@@ -23,10 +38,27 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-import { ArrowLeft, Loader2, MailPlus, Trash2, Users } from "lucide-react";
+import { Group } from "@/types";
 
 type Role = "OWNER" | "ADMIN" | "MEMBER";
 
@@ -70,6 +102,12 @@ export default function GroupManagementPage() {
   const [removeId, setRemoveId] = React.useState<string | null>(null);
   const [removing, setRemoving] = React.useState(false);
 
+  // Table state
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({});
+  const [rowSelection, setRowSelection] = React.useState({});
+
   // Load group, members, and current user
   React.useEffect(() => {
     let cancel = false;
@@ -109,8 +147,14 @@ export default function GroupManagementPage() {
     };
   }, [groupId]);
 
-  // Derive current user's role from members + me (fallback gracefully)
+  // Get current user's role from group data (preferred) or fallback to members list
   const myRole: Role | null = React.useMemo(() => {
+    // First try to get role from group data
+    if (group?.currentUserGroupRole) {
+      return group.currentUserGroupRole;
+    }
+    
+    // Fallback: derive from members list
     if (!members.length) return null;
     if (me?.id) {
       const mineById = members.find((m) => m.userId === me.id);
@@ -123,7 +167,7 @@ export default function GroupManagementPage() {
       if (mineByEmail) return mineByEmail.role;
     }
     return null;
-  }, [members, me]);
+  }, [group?.currentUserGroupRole, members, me]);
 
   const canInvite = myRole === "OWNER" || myRole === "ADMIN";
   function canRemove(target: Member): boolean {
@@ -138,6 +182,151 @@ export default function GroupManagementPage() {
     }
     return false;
   }
+
+  // Column definitions for the members table
+  const columns: ColumnDef<Member>[] = React.useMemo(() => [
+    {
+      id: "select",
+      header: ({ table }) => (
+        <Checkbox
+          checked={
+            table.getIsAllPageRowsSelected() ||
+            (table.getIsSomePageRowsSelected() && "indeterminate")
+          }
+          onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+          aria-label="Select all"
+        />
+      ),
+      cell: ({ row }) => (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
+          aria-label="Select row"
+        />
+      ),
+      enableSorting: false,
+      enableHiding: false,
+    },
+    {
+      accessorKey: "name",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="noShadow"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Member
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => {
+        const member = row.original;
+        const isMe = (me?.id && member.userId === me.id) || 
+                     (me?.email && member.email?.toLowerCase() === me.email.toLowerCase());
+        
+        return (
+          <div className="min-w-0">
+            <div className="font-semibold leading-tight">
+              {member.name || member.email.split("@")[0]}
+              {isMe ? (
+                <span className="ml-2 inline-flex items-center rounded-base border-2 border-border bg-main px-1.5 py-0.5 text-[11px] font-semibold text-main-foreground shadow-shadow">
+                  You
+                </span>
+              ) : null}
+            </div>
+            {member.joinedAt && (
+              <div className="text-xs text-foreground/70 font-medium">
+                Joined {new Date(member.joinedAt).toLocaleDateString()}
+              </div>
+            )}
+          </div>
+        );
+      },
+    },
+    {
+      accessorKey: "email",
+      header: ({ column }) => {
+        return (
+          <Button
+            variant="noShadow"
+            size="sm"
+            onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          >
+            Email
+            <ArrowUpDown className="ml-2 h-4 w-4" />
+          </Button>
+        )
+      },
+      cell: ({ row }) => <div className="lowercase">{row.getValue("email")}</div>,
+    },
+    {
+      accessorKey: "role",
+      header: "Role",
+      cell: ({ row }) => {
+        const role = row.getValue("role") as Role;
+        return <RolePill role={role} />;
+      },
+    },
+    {
+      id: "actions",
+      enableHiding: false,
+      cell: ({ row }) => {
+        const member = row.original;
+        const isMe = (me?.id && member.userId === me.id) || 
+                     (me?.email && member.email?.toLowerCase() === me.email.toLowerCase());
+        const canRemoveThis = canRemove(member) && !isMe;
+
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="noShadow" className="size-8 p-0">
+                <span className="sr-only">Open menu</span>
+                <MoreHorizontal className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+              <DropdownMenuItem
+                onClick={() => navigator.clipboard.writeText(member.email)}
+              >
+                Copy email
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                onClick={() => setRemoveId(member.membershipId)}
+                disabled={!canRemoveThis}
+                className="text-red-600"
+              >
+                Remove member
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        )
+      },
+    },
+  ], [me, canRemove]);
+
+  // Table configuration
+  const table = useReactTable({
+    data: members,
+    columns,
+    onSortingChange: setSorting,
+    onColumnFiltersChange: setColumnFilters,
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    onColumnVisibilityChange: setColumnVisibility,
+    onRowSelectionChange: setRowSelection,
+    state: {
+      sorting,
+      columnFilters,
+      columnVisibility,
+      rowSelection,
+    },
+  });
 
   async function reloadMembers() {
     try {
@@ -298,75 +487,121 @@ export default function GroupManagementPage() {
                 </CardHeader>
 
                 <CardContent>
-                  <div className="overflow-x-auto">
-                    <table className="w-full border-2 border-border rounded-base shadow-shadow bg-background">
-                      <thead>
-                        <tr className="text-left">
-                          <Th>Member</Th>
-                          <Th>Email</Th>
-                          <Th>Role</Th>
-                          <Th className="text-right">Actions</Th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {members.map((m) => {
-                          const isMe =
-                            (me?.id && m.userId === me.id) ||
-                            (me?.email &&
-                              m.email?.toLowerCase() ===
-                                me.email.toLowerCase());
-                          const canRemoveThis = canRemove(m) && !isMe;
-
-                          return (
-                            <tr
-                              key={m.membershipId}
-                              className="border-t-2 border-border"
-                            >
-                              <Td>
-                                <div className="min-w-0">
-                                  <div className="font-semibold leading-tight">
-                                    {m.name || m.email.split("@")[0]}
-                                    {isMe ? (
-                                      <span className="ml-2 inline-flex items-center rounded-base border-2 border-border bg-main px-1.5 py-0.5 text-[11px] font-semibold text-main-foreground shadow-shadow">
-                                        You
-                                      </span>
-                                    ) : null}
-                                  </div>
-                                  {m.joinedAt && (
-                                    <div className="text-xs text-foreground/70 font-medium">
-                                      Joined{" "}
-                                      {new Date(m.joinedAt).toLocaleDateString()}
-                                    </div>
-                                  )}
-                                </div>
-                              </Td>
-                              <Td className="align-top">{m.email}</Td>
-                              <Td className="align-top">
-                                <RolePill role={m.role} />
-                              </Td>
-                              <Td className="align-top text-right">
-                                <Button
-                                  variant="noShadow"
-                                  size="sm"
-                                  className="text-red-600 hover:text-red-700"
-                                  onClick={() => setRemoveId(m.membershipId)}
-                                  disabled={!canRemoveThis}
-                                  title={
-                                    !canRemoveThis
-                                      ? isMe
-                                        ? "You cannot remove yourself"
-                                        : "You don't have permission to remove this member"
-                                      : undefined
+                  <div className="w-full font-base text-main-foreground">
+                    <div className="flex items-center py-4">
+                      <Input
+                        placeholder="Filter emails..."
+                        value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
+                        onChange={(event) =>
+                          table.getColumn("email")?.setFilterValue(event.target.value)
+                        }
+                        className="max-w-sm"
+                      />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="noShadow" className="ml-auto">
+                            Columns <ChevronDown className="ml-2 h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          {table
+                            .getAllColumns()
+                            .filter((column) => column.getCanHide())
+                            .map((column) => {
+                              return (
+                                <DropdownMenuCheckboxItem
+                                  key={column.id}
+                                  className="capitalize"
+                                  checked={column.getIsVisible()}
+                                  onCheckedChange={(value) =>
+                                    column.toggleVisibility(!!value)
                                   }
                                 >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              </Td>
-                            </tr>
-                          );
-                        })}
-                      </tbody>
-                    </table>
+                                  {column.id}
+                                </DropdownMenuCheckboxItem>
+                              )
+                            })}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                    <div>
+                      <Table>
+                        <TableHeader className="font-heading">
+                          {table.getHeaderGroups().map((headerGroup) => (
+                            <TableRow
+                              className="bg-secondary-background text-foreground"
+                              key={headerGroup.id}
+                            >
+                              {headerGroup.headers.map((header) => {
+                                return (
+                                  <TableHead className="text-foreground" key={header.id}>
+                                    {header.isPlaceholder
+                                      ? null
+                                      : flexRender(
+                                          header.column.columnDef.header,
+                                          header.getContext(),
+                                        )}
+                                  </TableHead>
+                                )
+                              })}
+                            </TableRow>
+                          ))}
+                        </TableHeader>
+                        <TableBody>
+                          {table.getRowModel().rows?.length ? (
+                            table.getRowModel().rows.map((row) => (
+                              <TableRow
+                                className="bg-secondary-background text-foreground data-[state=selected]:bg-main data-[state=selected]:text-main-foreground"
+                                key={row.id}
+                                data-state={row.getIsSelected() && "selected"}
+                              >
+                                {row.getVisibleCells().map((cell) => (
+                                  <TableCell className="px-4 py-2" key={cell.id}>
+                                    {flexRender(
+                                      cell.column.columnDef.cell,
+                                      cell.getContext(),
+                                    )}
+                                  </TableCell>
+                                ))}
+                              </TableRow>
+                            ))
+                          ) : (
+                            <TableRow>
+                              <TableCell
+                                colSpan={columns.length}
+                                className="h-24 text-center"
+                              >
+                                No results.
+                              </TableCell>
+                            </TableRow>
+                          )}
+                        </TableBody>
+                      </Table>
+                    </div>
+                    <div className="flex items-center justify-end space-x-2 py-4">
+                      <div className="text-foreground flex-1 text-sm">
+                        {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                        {table.getFilteredRowModel().rows.length} row(s) selected.
+                      </div>
+                      <div className="space-x-2">
+                        <Button
+                          variant="noShadow"
+                          size="sm"
+                          onClick={() => table.previousPage()}
+                          disabled={!table.getCanPreviousPage()}
+                        >
+                          Previous
+                        </Button>
+                        <Button
+                          variant="noShadow"
+                          size="sm"
+                          onClick={() => table.nextPage()}
+                          disabled={!table.getCanNextPage()}
+                        >
+                          Next
+                        </Button>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -467,29 +702,6 @@ export default function GroupManagementPage() {
 }
 
 /* ===== Presentational helpers ===== */
-
-function Th({
-  className = "",
-  children,
-}: React.PropsWithChildren<{ className?: string }>) {
-  return (
-    <th
-      className={[
-        "px-3 py-2 text-xs uppercase tracking-wide font-semibold border-b-2 border-border bg-secondary-background",
-        className,
-      ].join(" ")}
-    >
-      {children}
-    </th>
-  );
-}
-
-function Td({
-  className = "",
-  children,
-}: React.PropsWithChildren<{ className?: string }>) {
-  return <td className={["px-3 py-3 align-middle", className].join(" ")}>{children}</td>;
-}
 
 function RolePill({ role }: { role: Role }) {
   const label = role === "OWNER" ? "Owner" : role === "ADMIN" ? "Admin" : "Member";
