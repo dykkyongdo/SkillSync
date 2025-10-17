@@ -14,7 +14,7 @@ export function useStudy(setId: string) {
         try {
             const cards = await api<DueCard[]>(`/api/sets/${setId}/study/due?limit=${limit}`);
             setQueue(cards);
-        } catch (e:any) { setError(e.message); }
+        } catch (e: unknown) { setError(e instanceof Error ? e.message : "An error occurred"); }
     }, [setId]);
 
     const grade = useCallback(async (flashcardId: string, grade: 0|1|2|3) => {

@@ -23,8 +23,8 @@ export function useUserStats() {
             setError(null);
             const userStats = await api<UserStats>("/api/me/stats");
             setStats(userStats);
-        } catch (e: any) {
-            setError(e.message);
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : "An error occurred");
         } finally {
             setLoading(false);
         }

@@ -21,8 +21,8 @@ export function useSingleSet(setId: string) {
         try {
             const set = await api<FlashcardSet>(`/api/flashcard-sets/${setId}`);
             setItem(set);
-        } catch (e: any) {
-            setError(e.message);
+        } catch (e: unknown) {
+            setError(e instanceof Error ? e.message : "An error occurred");
             setItem(null);
         } finally {
             setLoading(false);

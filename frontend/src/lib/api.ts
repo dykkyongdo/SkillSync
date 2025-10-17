@@ -103,11 +103,11 @@ export async function api<T = unknown>(
         const ct = res.headers.get("content-type") || "";
         try {
         if (ct.includes("application/json")) {
-            const j = await res.json() as any;
+            const j = await res.json() as Record<string, unknown>;
             
             // Handle validation errors from backend
             if (j.fields && Array.isArray(j.fields)) {
-                const fieldErrors = j.fields.map((field: any) => `${field.field}: ${field.message}`).join(', ');
+                const fieldErrors = (j.fields as Array<{field: string; message: string}>).map((field) => `${field.field}: ${field.message}`).join(', ');
                 message = fieldErrors;
             }
             // Handle other error formats

@@ -21,7 +21,7 @@ export function useSets(groupId: string) {
             console.log("useSets: Loading sets for groupId:", groupId);
             const page = await api<Page<FlashcardSet>>(`/api/flashcard-sets/group/${groupId}?page=0&size=20`);
             setItems(page.content);
-        } catch (e:any) { setError(e.message); }
+        } catch (e: unknown) { setError(e instanceof Error ? e.message : "An error occurred"); }
     }, [groupId]);
 
     useEffect(() => { load(); }, [load]);

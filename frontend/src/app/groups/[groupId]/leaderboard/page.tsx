@@ -43,15 +43,15 @@ export default function WeeklyLeaderboardPage() {
                 const [list, meRes] = await Promise.all([
                     api<Entry[]>(`/api/groups/${groupId}/leaderboard/weekly`, { method: "GET" }),
                     // best effort for current user (for highlighting)
-                    api<Me>("/api/me", { method: "GET" }).catch(() => null as any),
+                    api<Me>("/api/me", { method: "GET" }).catch(() => null as Me | null),
                 ]);
 
                 if (!cancel) { 
                     setEntries(Array.isArray(list) ? list : []);
                     setMe(meRes);
                 }
-            } catch (e: any) {
-                if (!cancel) setError(e?.message ?? "Failed to load leaderboard");
+            } catch (e: unknown) {
+                if (!cancel) setError(e instanceof Error ? e.message : "Failed to load leaderboard");
             } finally {
                 if (!cancel) setLoading(false);
             }
