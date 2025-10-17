@@ -16,7 +16,7 @@ export default function TokenCleanup() {
         <div className="p-4 border border-red-300 bg-red-50 rounded-lg">
             <h3 className="text-red-800 font-semibold mb-2">Token Cleanup Utility</h3>
             <p className="text-red-700 text-sm mb-3">
-                If you're seeing JWT validation errors, click the button below to clear the expired token.
+                If you&apos;re seeing JWT validation errors, click the button below to clear the expired token.
             </p>
             <button
                 onClick={handleClearToken}

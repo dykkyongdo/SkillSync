@@ -203,7 +203,7 @@ const ChartTooltipContent = React.forwardRef<
                 )}
               >
                 {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, (item as any).payload)
+                  formatter(item.value, item.name, item, index, (item as Record<string, unknown>).payload)
                 ) : (
                   <>
                     {indicator === "dot" && !hideIndicator ? (

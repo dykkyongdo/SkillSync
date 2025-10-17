@@ -134,7 +134,7 @@ export default function NotificationPage() {
                                 <CardHeader>
                                     <CardTitle className="font-semibold">No notifications</CardTitle>
                                     <CardDescription className="font-medium">
-                                        You're all caught up. We'll let you know when something arrives.
+                                        You&apos;re all caught up. We&apos;ll let you know when something arrives.
                                     </CardDescription>
                                 </CardHeader>
                                 <CardContent>
