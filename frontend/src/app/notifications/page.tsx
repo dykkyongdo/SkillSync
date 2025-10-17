@@ -15,14 +15,7 @@ import {
 } from "@/components/ui/card";
 
 import { ArrowLeft, Bell, Check, X } from "lucide-react";
-
-type Invitation = { 
-    id: string; 
-    groupId: string;
-    groupName: string 
-    inviter: string;
-    sentAt?: string; 
-};
+import { Invitation } from "@/types";
 
 export default function NotificationPage() {
     const [loading, setLoading] = React.useState(true);
@@ -38,25 +31,9 @@ export default function NotificationPage() {
                 setLoading(true);
                 setError(null);
 
-                // Simulate loading delay + mock data
-                await new Promise((r) => setTimeout(r, 350));
-                const mock: Invitation[] = [
-                    {
-                        id: "inv-1",
-                        groupId: "g-42",
-                        groupName: "Data Structures (Fall)",
-                        inviter: "prof.alex@example.com",
-                        sentAt: new Date().toISOString(),
-                    },
-                    {
-                        id: "inv-2",
-                        groupId: "g-77",
-                        groupName: "Spanish A2 • Vocab Sprints",
-                        inviter: "maria@example.com",
-                        sentAt: new Date(Date.now() - 1000 * 60 * 60 * 6).toISOString(),
-                    },
-                ];
-                if (!cancel) setInvites(mock);
+                // Load real invitations from API
+                const invitations = await api<Invitation[]>("/api/notifications/invitations", { method: "GET" });
+                if (!cancel) setInvites(invitations);
             } catch (e: any) {
                 if (!cancel) setError(e?.message ?? "Failed to load notifications");
             } finally {
@@ -70,32 +47,36 @@ export default function NotificationPage() {
         };
     }, []);
 
-    async function acceptInvite(groupId: string, inviteId: string) {
+    async function acceptInvite(groupId: string, membershipId: string) {
         try {
-            // Accept via existing membership API
-            await api<void>(`/api/groups/${groupId}/members/accept`, { method: "POST" });
+            // Accept via new notification API
+            await api<void>(`/api/notifications/invitations/${membershipId}/accept`, { method: "POST" });
             // Remove from local list 
-            setInvites((prev) => prev.filter((i) => i.id !== inviteId));
+            setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
         } catch (e: any) {
             alert(e?.message ?? "Failed to accept invitation");
         }
     }
 
-    function declineInvite(inviteId: string) {
-        // No endpoint yet - just dismiss locally
-        setInvites((prev) => prev.filter((i) => i.id !== inviteId));
+    async function declineInvite(membershipId: string) {
+        try {
+            // Reject via new notification API
+            await api<void>(`/api/notifications/invitations/${membershipId}/reject`, { method: "POST" });
+            // Remove from local list
+            setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
+        } catch (e: any) {
+            alert(e?.message ?? "Failed to reject invitation");
+        }
     }
 
     return (
         <RequireAuth>
             <main className="relative isolate pt-14">
                 {/* Background */}
-                <div className="absolute inset-0 -z-10 bg-background"/>
-                <div className="
-                    absolute inset-0 -z-10 pointer-events-none
-                    bg-[linear-gradient(to_right,var(--grid-line)_2px,transparent_2px),linear-gradient(to_bottom,var(--grid-line)_2px,transparent_2px)]
-                    [background-size:var(--grid-size)_var(--grid-size)]
-                "/>
+                <div className="absolute inset-0 -z-10 bg-background" />
+                <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
+                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
+                        bg-[size:48px_48px]" />
 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="mx-auto max-w-3xl">
@@ -120,7 +101,7 @@ export default function NotificationPage() {
 
                         {/* Loading */}
                         {loading && (
-                            <Card className="border-2 border-border shadow-shadow bg-secondary-background">
+                            <Card className="border-2 border-border shadow-shadow bg-main">
                                 <CardHeader>
                                     <CardTitle className="font-semibold">Loading...</CardTitle>
                                     <CardDescription className="font-medium">
@@ -137,7 +118,7 @@ export default function NotificationPage() {
 
                         {/* Error */}
                         {!loading && error && (
-                            <Card className="border-2 border-border shadow-shadow bg-secondary-background">
+                            <Card className="border-2 border-border shadow-shadow bg-main">
                                 <CardHeader>
                                     <CardTitle className="text-red-600">Error</CardTitle>
                                 </CardHeader>
@@ -149,7 +130,7 @@ export default function NotificationPage() {
 
                         {/* Empty */}
                         {!loading && !error && invites.length === 0 && (
-                            <Card className="border-2 border-border shadow-shadow bg-secondary-background">
+                            <Card className="border-2 border-border shadow-shadow bg-main">
                                 <CardHeader>
                                     <CardTitle className="font-semibold">No notifications</CardTitle>
                                     <CardDescription className="font-medium">
@@ -169,14 +150,14 @@ export default function NotificationPage() {
                         {!loading && !error && invites.length > 0 && (
                             <div className="space-y-4">
                                 {invites.map((inv) => (
-                                    <Card key={inv.id} className="border-2 border-border shadow-shadow bg-secondary-background">
+                                    <Card key={inv.membershipId} className="border-2 border-border shadow-shadow bg-main">
                                         <CardHeader className="flex flex-row items-start justify-between gap-4">
                                             <div className="min-w-0">
                                                 <CardTitle className="font-semibold truncate">
                                                     {inv.groupName}
                                                 </CardTitle>
                                                 <CardDescription className="font-medium">
-                                                    Invited by <span className="font-semibold">{inv.inviter}</span>
+                                                    Invited by <span className="font-semibold">{inv.inviterName}</span>
                                                     {inv.sentAt ? (
                                                         <span className="text-foreground/60">
                                                             {" "}
@@ -188,12 +169,12 @@ export default function NotificationPage() {
                                         </CardHeader>
 
                                         <CardContent className="flex flex-wrap items-center justify-end gap-3">
-                                            <Button onClick={() => declineInvite(inv.id)} variant="neutral" className="border-2 border-border shadow-shadow font-medium" title="Decline">
+                                            <Button onClick={() => declineInvite(inv.membershipId)} variant="neutral" className="border-2 border-border shadow-shadow font-medium" title="Decline">
                                                 <X className="w-4 h-4 mr-2"/>
                                                 Decline
                                             </Button> 
 
-                                            <Button onClick={() => acceptInvite(inv.groupId, inv.id)} className="border-2 border-border shadow-shadow font-semibold" title="Accept">
+                                            <Button onClick={() => acceptInvite(inv.groupId, inv.membershipId)} className="border-2 border-border shadow-shadow font-semibold" title="Accept">
                                                 <Check className="w-4 h-4 mr-2"/>
                                             </Button>
                                         </CardContent>
