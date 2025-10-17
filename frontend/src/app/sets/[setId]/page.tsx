@@ -10,8 +10,9 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
-import { ArrowLeft, Plus, Trash2, Edit, Loader2 } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Edit, Loader2, Sparkles } from "lucide-react";
 import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import {
     AlertDialog,
@@ -24,6 +25,16 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/components/ui/dialog";
+import { AIFlashcardGenerator } from "@/components/AIFlashcardGenerator";
 
 export default function SetPage() {
     const params = useParams();
@@ -53,8 +64,12 @@ export default function SetPage() {
     const [open, setOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
+    const [explanation, setExplanation] = useState("");
+    const [difficulty, setDifficulty] = useState(1);
+    const [tags, setTags] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
+    const [aiDialogOpen, setAiDialogOpen] = useState(false);
 
     const handleCreateCard = async () => {
         setFormError(null);
@@ -71,9 +86,13 @@ export default function SetPage() {
         
         setSubmitting(true);
         try {
-            await create(question.trim(), answer.trim());
+            const tagsArray = tags.trim() ? tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : [];
+            await create(question.trim(), answer.trim(), explanation.trim() || undefined, difficulty, tagsArray);
             setQuestion("");
             setAnswer("");
+            setExplanation("");
+            setDifficulty(1);
+            setTags("");
             setOpen(false);
         } catch (err) {
             setFormError("Failed to create card: " + (err as Error).message);
@@ -95,15 +114,30 @@ export default function SetPage() {
         }
     };
 
+    const handleAIFlashcardsGenerated = async (generatedFlashcards: any[]) => {
+        try {
+            for (const flashcardData of generatedFlashcards) {
+                await create(
+                    flashcardData.question,
+                    flashcardData.answer,
+                    flashcardData.explanation,
+                    flashcardData.difficulty,
+                    flashcardData.tags || []
+                );
+            }
+            setAiDialogOpen(false);
+        } catch (err) {
+            console.error("Failed to create AI-generated flashcards:", err);
+        }
+    };
+
     return (
         <RequireAuth>
             <main className="relative isolate pt-14">
                 <div className="absolute inset-0 -z-10 bg-background" />
-                <div
-                    className="absolute inset-0 -z-10 opacity-70 dark:opacity-20 pointer-events-none
-                                bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                                bg-[size:48px_48px]"
-                />
+                <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
+                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
+                        bg-[size:48px_48px]" />
 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="max-w-4xl mx-auto">
@@ -119,13 +153,30 @@ export default function SetPage() {
                                 <p className="text-muted-foreground">Manage your flashcards</p>
                             </div>
 
-                            <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                    <Button className="font-semibold bg-white">
-                                        <Plus className="mr-2 h-5 w-5" />
-                                        Add Card
-                                    </Button>
-                                </AlertDialogTrigger>
+                            <div className="flex gap-2">
+                                {/* AI Generation Button */}
+                                <Dialog open={aiDialogOpen} onOpenChange={setAiDialogOpen}>
+                                    <DialogTrigger asChild>
+                                        <Button variant="neutral" className="font-semibold">
+                                            <Sparkles className="mr-2 h-5 w-5 text-purple-500" />
+                                            AI Generate
+                                        </Button>
+                                    </DialogTrigger>
+                                    <AIFlashcardGenerator
+                                        setId={setId}
+                                        onFlashcardsGenerated={handleAIFlashcardsGenerated}
+                                        onClose={() => setAiDialogOpen(false)}
+                                    />
+                                </Dialog>
+
+                                {/* Manual Add Card Button */}
+                                <AlertDialog>
+                                    <AlertDialogTrigger asChild>
+                                        <Button className="font-semibold bg-white">
+                                            <Plus className="mr-2 h-5 w-5" />
+                                            Add Card
+                                        </Button>
+                                    </AlertDialogTrigger>
 
                                 <AlertDialogContent className="rounded-base border-2 border-border shadow-shadow">
                                     <AlertDialogHeader className="gap-1">
@@ -161,6 +212,42 @@ export default function SetPage() {
                                             />
                                         </div>
 
+                                        <div className="grid gap-2">
+                                            <Label className="font-medium">Explanation (Optional)</Label>
+                                            <Textarea
+                                                id="explanation"
+                                                placeholder="Additional details or context..."
+                                                value={explanation}
+                                                onChange={(e) => setExplanation(e.target.value)}
+                                                rows={3}
+                                            />
+                                        </div>
+
+                                        <div className="grid gap-2">
+                                            <Label className="font-medium">Difficulty</Label>
+                                            <select
+                                                value={difficulty}
+                                                onChange={(e) => setDifficulty(parseInt(e.target.value))}
+                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                                            >
+                                                <option value={1}>Beginner</option>
+                                                <option value={2}>Easy</option>
+                                                <option value={3}>Medium</option>
+                                                <option value={4}>Hard</option>
+                                                <option value={5}>Expert</option>
+                                            </select>
+                                        </div>
+
+                                        <div className="grid gap-2">
+                                            <Label className="font-medium">Tags (Optional)</Label>
+                                            <Input
+                                                id="tags"
+                                                placeholder="e.g. geography, capitals, europe (comma-separated)"
+                                                value={tags}
+                                                onChange={(e) => setTags(e.target.value)}
+                                            />
+                                        </div>
+
                                         {formError && (
                                             <p className="text-sm font-medium text-red-600">{formError}</p>
                                         )}
@@ -173,6 +260,9 @@ export default function SetPage() {
                                                 setFormError(null);
                                                 setQuestion("");
                                                 setAnswer("");
+                                                setExplanation("");
+                                                setDifficulty(1);
+                                                setTags("");
                                             }}
                                             disabled={submitting}
                                         >
@@ -194,7 +284,8 @@ export default function SetPage() {
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
-                            </AlertDialog>
+                                </AlertDialog>
+                            </div>
                         </div>
 
                         {/* Study Button */}
@@ -266,6 +357,27 @@ export default function SetPage() {
                                         <CardDescription className="line-clamp-3">
                                             {card.answer}
                                         </CardDescription>
+                                        {card.explanation && (
+                                            <div className="mt-2 text-sm text-muted-foreground">
+                                                <strong>Explanation:</strong> {card.explanation}
+                                            </div>
+                                        )}
+                                        <div className="mt-2 flex flex-wrap gap-2">
+                                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                                                {card.difficulty === 1 && "Beginner"}
+                                                {card.difficulty === 2 && "Easy"}
+                                                {card.difficulty === 3 && "Medium"}
+                                                {card.difficulty === 4 && "Hard"}
+                                                {card.difficulty === 5 && "Expert"}
+                                            </span>
+                                            {card.tags && card.tags.length > 0 && (
+                                                card.tags.map((tag, index) => (
+                                                    <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                                        {tag}
+                                                    </span>
+                                                ))
+                                            )}
+                                        </div>
                                     </CardContent>
                                 </Card>
                             ))}
