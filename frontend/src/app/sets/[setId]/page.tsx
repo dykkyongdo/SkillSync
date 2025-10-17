@@ -412,7 +412,7 @@ export default function SetPage() {
                                     </CardHeader>
                                     <CardContent>
                                         <CardDescription className="line-clamp-3">
-                                            {card.answer}
+                                            <strong>Answer:</strong> {card.answer}
                                         </CardDescription>
                                         {card.explanation && (
                                             <div className="mt-2 text-sm text-muted-foreground">
