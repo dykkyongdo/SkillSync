@@ -43,10 +43,10 @@ export default function SetPage() {
     const { items: groups } = useGroups();
     
     // Find the set and its group by searching through all groups
-    const currentSet = null;
-    const currentGroup = null;
-    const setTitle = "Flashcard Set";
-    const groupName = "Group";
+    let currentSet = null;
+    let currentGroup = null;
+    let setTitle = "Flashcard Set";
+    let groupName = "Group";
     
     for (const group of groups) {
         // We need to load sets for each group to find our set
