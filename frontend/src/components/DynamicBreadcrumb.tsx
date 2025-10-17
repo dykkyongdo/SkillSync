@@ -46,7 +46,7 @@ export default function DynamicBreadcrumb() {
       if (pathname.startsWith("/study/") && setId && !groupId) {
         console.log("Breadcrumb: Fetching groupId for study page");
         try {
-          const flashcardSet = await api<{ groupId: string }>(`/api/sets/${setId}`, {
+          const flashcardSet = await api<{ groupId: string }>(`/api/flashcard-sets/${setId}`, {
             skipAuthRedirect: true
           });
           console.log("Breadcrumb: Successfully fetched groupId:", flashcardSet.groupId);

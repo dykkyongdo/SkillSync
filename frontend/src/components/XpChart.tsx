@@ -1,9 +1,17 @@
 "use client"
 
-import * as React from "react";
-import { TrendingUp } from "lucide-react";
-import { Bar, BarChart, CartesianGrid, XAxis, YAxis, ResponsiveContainer } from "recharts";
-import { api } from "@/lib/api";
+import * as React from "react"
+import { TrendingUp } from "lucide-react"
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  ResponsiveContainer,
+  LabelList,
+} from "recharts"
+import { api } from "@/lib/api"
 
 import {
   Card,
@@ -12,168 +20,188 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
+} from "@/components/ui/card"
 import {
   ChartConfig,
   ChartContainer,
   ChartTooltip,
   ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@/components/ui/chart"
 
 type DailyXpData = {
-  date: string;
-  xp: number;
-  day: string;
-};
+  date: string
+  xp: number
+  day: string
+}
 
 const chartConfig = {
-  xp: {
-    label: "XP Earned",
-    color: "#0099FF",
-  },
-} satisfies ChartConfig;
+  xp: { label: "XP Earned" },
+} satisfies ChartConfig
 
 export default function XpChart() {
-  const [data, setData] = React.useState<DailyXpData[]>([]);
-  const [loading, setLoading] = React.useState(true);
-  const [error, setError] = React.useState<string | null>(null);
+  const [data, setData] = React.useState<DailyXpData[]>([])
+  const [loading, setLoading] = React.useState(true)
+  const [error, setError] = React.useState<string | null>(null)
 
   React.useEffect(() => {
-    let cancelled = false;
-    
-    (async () => {
+    let cancelled = false
+    ;(async () => {
       try {
-        setLoading(true);
-        setError(null);
-        const xpData = await api<DailyXpData[]>("/api/me/daily-xp", { method: "GET" });
-        if (!cancelled) setData(xpData);
+        setLoading(true)
+        setError(null)
+        const xpData = await api<DailyXpData[]>("/api/me/daily-xp", { method: "GET" })
+        if (!cancelled) setData(xpData)
       } catch (e: any) {
-        if (!cancelled) setError(e?.message ?? "Failed to load XP data");
+        if (!cancelled) setError(e?.message ?? "Failed to load XP data")
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!cancelled) setLoading(false)
       }
-    })();
-
+    })()
     return () => {
-      cancelled = true;
-    };
-  }, []);
+      cancelled = true
+    }
+  }, [])
 
-  // Calculate total XP and trend
-  const totalXp = data.reduce((sum, day) => sum + day.xp, 0);
-  const avgXp = data.length > 0 ? Math.round(totalXp / data.length) : 0;
-  const todayXp = data.length > 0 ? data[data.length - 1].xp : 0;
-  const yesterdayXp = data.length > 1 ? data[data.length - 2].xp : 0;
-  const trend = yesterdayXp > 0 ? ((todayXp - yesterdayXp) / yesterdayXp * 100) : 0;
+  const totalXp = data.reduce((sum, d) => sum + d.xp, 0)
+  const avgXp = data.length ? Math.round(totalXp / data.length) : 0
+  const todayXp = data.at(-1)?.xp ?? 0
+  const yesterdayXp = data.length > 1 ? data[data.length - 2].xp : 0
+  const trend = yesterdayXp > 0 ? ((todayXp - yesterdayXp) / yesterdayXp) * 100 : 0
 
   if (loading) {
     return (
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background">
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground">
         <CardHeader>
           <CardTitle className="font-semibold">Daily XP Progress</CardTitle>
-          <CardDescription className="font-medium">Loading your XP data...</CardDescription>
+          <CardDescription className="font-medium text-main-foreground/90">
+            Loading your XP data...
+          </CardDescription>
         </CardHeader>
         <CardContent className="animate-pulse">
-          <div className="h-48 w-full bg-foreground/10 rounded" />
+          <div className="h-48 w-full rounded-base border-2 border-border bg-secondary-background shadow-shadow" />
         </CardContent>
       </Card>
-    );
+    )
   }
 
   if (error) {
     return (
-      <Card className="border-2 border-border shadow-shadow bg-secondary-background">
+      <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground">
         <CardHeader>
-          <CardTitle className="font-semibold text-red-600">Error</CardTitle>
-          <CardDescription className="font-medium">{error}</CardDescription>
+          <CardTitle className="font-semibold text-red-900">Error</CardTitle>
+          <CardDescription className="font-medium text-main-foreground/90">
+            {error}
+          </CardDescription>
         </CardHeader>
       </Card>
-    );
+    )
   }
 
   return (
-    <Card className="border-2 border-border shadow-shadow bg-secondary-background">
+    <Card className="border-2 border-border shadow-shadow bg-main text-main-foreground">
       <CardHeader>
         <CardTitle className="font-semibold">Daily XP Progress</CardTitle>
-        <CardDescription className="font-medium">Your XP earned over the last 7 days</CardDescription>
+        <CardDescription className="font-medium text-main-foreground/90">
+          Your XP earned over the last 7 days
+        </CardDescription>
       </CardHeader>
+
       <CardContent>
         <div className="h-48 w-full">
           <ResponsiveContainer width="100%" height="100%">
-            <BarChart 
-              data={data} 
-              margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
-              barCategoryGap="20%"
-            >
-              <CartesianGrid 
-                strokeDasharray="3 3" 
-                stroke="#cbd5e1" 
-                vertical={false}
-                opacity={0.8}
-              />
+            <BarChart data={data} margin={{ top: 12, right: 12, left: 8, bottom: 12 }} barCategoryGap="24%">
+              {/* Neo-brutal drop shadow for bars */}
+              <defs>
+                <filter id="brutalShadow" x="-20%" y="-20%" width="140%" height="140%">
+                  <feOffset dx="4" dy="4" in="SourceAlpha" result="off" />
+                  <feFlood floodColor="var(--color-border)" result="flood" />
+                  <feComposite in="flood" in2="off" operator="in" result="shadow" />
+                  <feMerge>
+                    <feMergeNode in="shadow" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+
+              {/* Black-ish horizontal grid (no verticals) */}
+              <CartesianGrid vertical={false} stroke="rgba(0,0,0,0.28)" strokeDasharray="0" />
+
               <XAxis
                 dataKey="day"
-                axisLine={{ stroke: "#e2e8f0" }}
-                tickLine={{ stroke: "#e2e8f0" }}
-                tick={{ fontSize: 12, fill: "#64748b", fontWeight: 500 }}
+                axisLine={false}
+                tickLine={false}
+                tickMargin={8}
+                tick={{ fill: "var(--color-foreground)", fontSize: 12, fontWeight: 700 }}
               />
               <YAxis
                 axisLine={false}
                 tickLine={false}
-                tick={{ fontSize: 11, fill: "#64748b" }}
+                tick={{ fill: "var(--color-foreground)", fontSize: 11 }}
                 tickCount={6}
-                domain={[0, 'dataMax + 10']}
+                domain={[0, (dataMax: number) => Math.max(100, dataMax + 10)]}
               />
+
               <ChartTooltip
+                cursor={{ fill: "rgba(0,0,0,0.08)" }}
                 content={({ active, payload, label }) => {
                   if (active && payload && payload.length) {
                     return (
-                      <div className="rounded-lg border bg-white p-3 shadow-lg">
-                        <p className="font-medium text-gray-900">{label}</p>
-                        <p className="text-sm text-blue-600">
-                          <span className="font-medium">{payload[0].value}</span> XP earned
-                        </p>
+                      <div className="rounded-base border-2 border-border bg-secondary-background p-2 text-foreground shadow-shadow">
+                        <div className="text-xs font-semibold">{label}</div>
+                        <div className="text-sm">
+                          <span className="font-bold">{payload[0].value}</span> XP
+                        </div>
                       </div>
-                    );
+                    )
                   }
-                  return null;
+                  return null
                 }}
-                cursor={{ fill: 'rgba(0, 153, 255, 0.1)' }}
               />
-              <Bar 
-                dataKey="xp" 
-                fill="#0099FF"
+
+              <Bar
+                dataKey="xp"
+                fill="var(--color-secondary-background)"  // white
+                stroke="var(--color-border)"              // black outline
+                strokeWidth={2}
                 radius={[6, 6, 0, 0]}
-                stroke="#0088e5"
-                strokeWidth={1}
-              />
+                filter="url(#brutalShadow)"
+                maxBarSize={36}
+              >
+                <LabelList
+                  dataKey="xp"
+                  position="top"
+                  className="fill-[var(--color-foreground)] text-[11px] font-semibold"
+                  offset={6}
+                />
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
       </CardContent>
+
       <CardFooter className="flex-col items-start gap-2 text-sm">
         <div className="flex gap-2 leading-none font-medium">
           {trend > 0 ? (
             <>
-              Trending up by {Math.abs(trend).toFixed(1)}% today 
-              <TrendingUp className="h-4 w-4 text-green-600" />
+              Trending up by {Math.abs(trend).toFixed(1)}% today
+              <TrendingUp className="h-4 w-4 text-green-700" />
             </>
           ) : trend < 0 ? (
             <>
-              Down by {Math.abs(trend).toFixed(1)}% from yesterday 
-              <TrendingUp className="h-4 w-4 rotate-180 text-red-600" />
+              Down by {Math.abs(trend).toFixed(1)}% from yesterday
+              <TrendingUp className="h-4 w-4 rotate-180 text-red-700" />
             </>
           ) : (
             <>
-              Same as yesterday 
-              <TrendingUp className="h-4 w-4 text-gray-600" />
+              Same as yesterday
+              <TrendingUp className="h-4 w-4 text-foreground/70" />
             </>
           )}
         </div>
-        <div className="text-foreground/70 leading-none">
+        <div className="leading-none text-main-foreground/90">
           {totalXp} XP total • {avgXp} XP average per day
         </div>
       </CardFooter>
     </Card>
-  );
+  )
 }
