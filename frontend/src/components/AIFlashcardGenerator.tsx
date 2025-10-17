@@ -26,7 +26,13 @@ import { useAIGeneration, type AIGenerationRequest } from "@/hooks/useAIGenerati
 
 interface AIFlashcardGeneratorProps {
   setId: string;
-  onFlashcardsGenerated: (flashcards: any[]) => void;
+  onFlashcardsGenerated: (flashcards: Array<{
+    question: string;
+    answer: string;
+    explanation: string;
+    difficulty: number;
+    tags: string[];
+  }>) => void;
   onClose: () => void;
 }
 
@@ -50,7 +56,10 @@ export function AIFlashcardGenerator({
   const difficulties = ["Beginner", "Easy", "Medium", "Hard", "Expert"];
 
   // lightweight AI suggestions (no advanced panel)
-  const [suggestions, setSuggestions] = useState<any>(null);
+  const [suggestions, setSuggestions] = useState<{
+    suggestedCount: number;
+    suggestedDifficulty: string;
+  } | null>(null);
   const [showSuggestions, setShowSuggestions] = useState(false);
 
   useEffect(() => {
@@ -70,7 +79,7 @@ export function AIFlashcardGenerator({
     }
   }, [topic, getTopicSuggestions]);
 
-  const handleUseSuggestion = (s: any) => {
+  const handleUseSuggestion = (s: { suggestedCount: number; suggestedDifficulty: string }) => {
     setCount(s?.suggestedCount || 5);
     setDifficulty(s?.suggestedDifficulty || "Medium");
     setShowSuggestions(false);

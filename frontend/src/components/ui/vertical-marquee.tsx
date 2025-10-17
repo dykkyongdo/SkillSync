@@ -47,12 +47,12 @@ export default function VerticalMarquee({
   // CSS custom props for the track
   const styleVars = {
     // animation distance
-    ["--vmq-stack-h" as any]: `${stackH}px`,
+    ["--vmq-stack-h" as keyof React.CSSProperties]: `${stackH}px`,
     // duration
-    ["--vmq-duration" as any]: `${duration}s`,
+    ["--vmq-duration" as keyof React.CSSProperties]: `${duration}s`,
     // spacing
-    ["--vmq-gap" as any]: `${gap}px`,
-    ["--vmq-pad" as any]: `${padY}px`,
+    ["--vmq-gap" as keyof React.CSSProperties]: `${gap}px`,
+    ["--vmq-pad" as keyof React.CSSProperties]: `${padY}px`,
   };
 
   return (

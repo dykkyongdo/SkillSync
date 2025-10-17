@@ -1,8 +1,6 @@
-"use client"
 import { useCallback, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import type { Flashcard, Page } from "@/types";
-import { resolve } from "path";
 
 export function useCards(setId: string) {
     const [items, setItems] = useState<Flashcard[]>([]);
@@ -17,8 +15,8 @@ export function useCards(setId: string) {
             console.log("Loaded flashcards:", page.content);
             console.log("Total flashcards in set:", page.totalElements);
             setItems(page.content);
-        } catch(e:any) { 
-            setError(e.message); 
+        } catch(e: unknown) { 
+            setError(e instanceof Error ? e.message : "An error occurred"); 
         }
     }, [setId]);
 

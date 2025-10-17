@@ -51,9 +51,9 @@ export default function VerticalMarquee({
     duration ?? (distance > 0 && speed ? Math.max(2, distance / speed) : 8);
 
   const trackStyle: React.CSSProperties = {
-    ["--vmq-gap" as any]: `${gap}px`,
-    ["--vmq-distance" as any]: `${distance}px`,
-    ["--vmq-duration" as any]: `${computedDuration}s`,
+    ["--vmq-gap" as keyof React.CSSProperties]: `${gap}px`,
+    ["--vmq-distance" as keyof React.CSSProperties]: `${distance}px`,
+    ["--vmq-duration" as keyof React.CSSProperties]: `${computedDuration}s`,
   };
 
   return (

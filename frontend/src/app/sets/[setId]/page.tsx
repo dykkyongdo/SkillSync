@@ -43,10 +43,10 @@ export default function SetPage() {
     const { items: groups } = useGroups();
     
     // Find the set and its group by searching through all groups
-    let currentSet = null;
-    let currentGroup = null;
-    let setTitle = "Flashcard Set";
-    let groupName = "Group";
+    const currentSet = null;
+    const currentGroup = null;
+    const setTitle = "Flashcard Set";
+    const groupName = "Group";
     
     for (const group of groups) {
         // We need to load sets for each group to find our set
@@ -61,7 +61,7 @@ export default function SetPage() {
         }
     }
     
-    const [open, setOpen] = useState(false);
+    const [open] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [explanation, setExplanation] = useState("");
@@ -150,7 +150,13 @@ export default function SetPage() {
         }
     };
 
-    const handleAIFlashcardsGenerated = async (generatedFlashcards: any[]) => {
+    const handleAIFlashcardsGenerated = async (generatedFlashcards: Array<{
+        question: string;
+        answer: string;
+        explanation: string;
+        difficulty: number;
+        tags: string[];
+    }>) => {
         try {
             for (const flashcardData of generatedFlashcards) {
                 await create(

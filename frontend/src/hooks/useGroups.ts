@@ -16,7 +16,7 @@ export function useGroups() {
         try {
             const data = await api<Group[]>("/api/groups/my-groups");
             setItems(data);
-        } catch (e:any) { setError(e.message); }
+        } catch (e: unknown) { setError(e instanceof Error ? e.message : "An error occurred"); }
         finally { setLoading(false); }
     }, [isAuthenticated]);
 

@@ -42,7 +42,7 @@ export default function Marquee({
           vertical ? "marquee-vertical" : "marquee-horizontal",
           reverse && "marquee-reverse"
         )}
-        style={{ ["--marquee-duration" as any]: duration }}
+        style={{ ["--marquee-duration" as keyof React.CSSProperties]: duration }}
       >
         {/* Slot A */}
         <div className={cn("marquee-slot", vertical ? "flex-col" : "flex-row", gapClassName)}>

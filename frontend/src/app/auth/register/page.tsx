@@ -63,8 +63,8 @@ export default function RegisterPage() {
         login(data.token);
         router.push(next);
         router.refresh();
-        } catch (err: any) {
-        setError(err.message ?? "Something went wrong");
+        } catch (err: unknown) {
+        setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
         setLoading(false);
         }

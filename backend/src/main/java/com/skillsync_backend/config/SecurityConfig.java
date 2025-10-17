@@ -44,6 +44,13 @@ public class SecurityConfig {
                 .sessionManagement(session -> session       // Stateless session management (JWT = no session)
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                
+                // Headers configuration
+                .headers(headers -> headers
+                        .frameOptions(frameOptions -> frameOptions
+                                .sameOrigin()  // Allow frames from same origin (for H2 console)
+                        )
+                )
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
@@ -52,6 +59,8 @@ public class SecurityConfig {
                         .requestMatchers("/v3/api-docs").permitAll()      // <-- root JSON (this is the one you’re missing)
                         .requestMatchers("/v3/api-docs/**").permitAll()   // swagger-config & groups
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        // H2 Console (for development)
+                        .requestMatchers("/h2-console/**").permitAll()
 
                         // Everything else
                         .anyRequest().authenticated()
