@@ -12,7 +12,10 @@ export function useCards(setId: string) {
     const load = useCallback(async () => {
         setError(null);
         try {
+            console.log("Loading flashcards for set:", setId);
             const page = await api<Page<Flashcard>>(`/api/flashcards/set/${setId}?page=0&size=50`);
+            console.log("Loaded flashcards:", page.content);
+            console.log("Total flashcards in set:", page.totalElements);
             setItems(page.content);
         } catch(e:any) { 
             setError(e.message); 
@@ -21,10 +24,17 @@ export function useCards(setId: string) {
 
     useEffect(() => { if (setId) load(); }, [setId, load]);
 
-    const create = useCallback(async (question: string, answer: string) => {
+    const create = useCallback(async (question: string, answer: string, explanation?: string, difficulty: number = 1, tags: string[] = []) => {
         const created = await api<Flashcard>(`/api/flashcards`, {
             method: "POST",
-            body: JSON.stringify({ question, answer, setId }),
+            body: JSON.stringify({ 
+                question, 
+                answer, 
+                explanation,
+                difficulty,
+                tags,
+                setId 
+            }),
         });
         setItems(prev => [created, ...prev]);
         return created;
