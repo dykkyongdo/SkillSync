@@ -31,9 +31,8 @@ export default function VerticalMarquee({
     const el = stackRef.current;
     if (!el) return;
     const h = el.getBoundingClientRect().height;
-    const dist = h + gap; 
-    setDistance(dist);
-  }, [gap]);
+    setDistance(h);
+  }, []);
 
   React.useEffect(() => {
     const id = requestAnimationFrame(() => {
@@ -55,7 +54,6 @@ export default function VerticalMarquee({
     ["--vmq-gap" as any]: `${gap}px`,
     ["--vmq-distance" as any]: `${distance}px`,
     ["--vmq-duration" as any]: `${computedDuration}s`,
-    animationPlayState: ready && distance > 0 ? "running" : "paused",
   };
 
   return (

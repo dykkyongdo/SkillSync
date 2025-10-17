@@ -135,9 +135,12 @@
   .vmq-stack {
     display: flex;
     flex-direction: column;
-    gap: var(--vmq-gap);
-    margin: 0;
+    margin-bottom: var(--vmq-gap);
     padding: 0;
+  }
+
+  .vmq-stack:last-child {
+    margin-bottom: 0;
   }
 
   /* Nuke stray margins that some components ship with */
@@ -147,7 +150,7 @@
 
   @keyframes vmq-scroll {
     from { transform: translate3d(0, 0, 0); }
-    to   { transform: translate3d(0, calc(-1 * var(--vmq-distance)), 0); }
+    to   { transform: translate3d(0, calc(-1 * (var(--vmq-stack-h) + var(--vmq-gap))), 0); }
   }
 
   @media (prefers-reduced-motion: reduce) {

@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import Star9 from "@/components/icons/Star9";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import VerticalMarquee from "@/components/VerticalMarquee";
+import VerticalMarquee from "@/components/ui/vertical-marquee";
 import WeeklyProgressChart from "@/components/WeeklyProgressChart";
 
 /* Progress bar: blue fill, white track, black border */
