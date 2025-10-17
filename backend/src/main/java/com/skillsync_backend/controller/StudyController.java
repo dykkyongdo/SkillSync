@@ -25,4 +25,14 @@ public class StudyController {
     public ResponseEntity<ReviewResultDto> review(@PathVariable UUID setId, @PathVariable UUID flashcardId, @RequestBody ReviewRequest req, Authentication auth) {
         return ResponseEntity.ok(study.review(setId, flashcardId, req.getGrade(), auth.getName()));
     }
+
+    @PostMapping("/{flashcardId}/submit")
+    public ResponseEntity<StudyResponseDto> submitStudy(@PathVariable UUID setId, @PathVariable UUID flashcardId, @RequestBody StudySubmissionDto submission, Authentication auth) {
+        return ResponseEntity.ok(study.submitStudy(setId, flashcardId, submission, auth.getName()));
+    }
+
+    @GetMapping("/debug")
+    public ResponseEntity<Map<String, Object>> debug(@PathVariable UUID setId, Authentication auth) {
+        return ResponseEntity.ok(study.debugInfo(setId, auth.getName()));
+    }
 }
