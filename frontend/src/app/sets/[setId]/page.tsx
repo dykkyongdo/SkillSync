@@ -61,7 +61,7 @@ export default function SetPage() {
         }
     }
     
-    const [open] = useState(false);
+    const [open, setOpen] = useState(false);
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [explanation, setExplanation] = useState("");
