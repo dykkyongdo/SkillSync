@@ -75,6 +75,7 @@ type GroupData = {
   id: string;
   name: string;
   description?: string;
+  currentUserGroupRole?: Role;
 };
 
 type Me = {
