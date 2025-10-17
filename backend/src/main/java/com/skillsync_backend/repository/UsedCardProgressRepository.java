@@ -14,6 +14,9 @@ public interface UsedCardProgressRepository extends JpaRepository<UserCardProgre
     // Find due cards for a user within set
     List<UserCardProgress> findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(UUID userId, UUID setId, Instant dueBefore);
 
+    // Find all progress records for a user within set
+    List<UserCardProgress> findByUser_IdAndFlashcard_Set_Id(UUID userId, UUID setId);
+
     int countByUser_IdAndMasteredTrue(UUID userId);
 
     void deleteAllByFlashcard_Group_Id(UUID groupId);

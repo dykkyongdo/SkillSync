@@ -27,5 +27,9 @@ public interface ReviewLogRepository extends JpaRepository<ReviewLog, UUID> {
 
     void deleteAllByGroup_Id(UUID groupId);
 
+    List<ReviewLog> findByUser_IdAndReviewedAtAfterOrderByReviewedAtAsc(UUID userId, Instant after);
+    
+    List<ReviewLog> findByUser_IdAndReviewedAtAfterOrderByReviewedAtDesc(UUID userId, Instant after);
+
 }
 

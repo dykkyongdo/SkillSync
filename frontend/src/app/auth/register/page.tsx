@@ -74,11 +74,9 @@ export default function RegisterPage() {
         <main className="relative isolate pt-14">
         {/* Background */}
         <div className="absolute inset-0 -z-10 bg-background" />
-        <div
-            className="absolute inset-0 -z-10 opacity-70 dark:opacity-20 pointer-events-none
+        <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
                         bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]"
-        />
+                        bg-[size:48px_48px]" />
 
         <section className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 relative z-0">
             <Card className="w-full max-w-sm bg-white">
