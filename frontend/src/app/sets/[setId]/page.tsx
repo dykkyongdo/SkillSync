@@ -153,7 +153,7 @@ export default function SetPage() {
     const handleAIFlashcardsGenerated = async (generatedFlashcards: Array<{
         question: string;
         answer: string;
-        explanation: string;
+        explanation?: string;
         difficulty: number;
         tags: string[];
     }>) => {
