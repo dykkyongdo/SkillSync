@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { ArrowLeft, Plus, Trash2, Edit, Loader2, Sparkles } from "lucide-react";
 import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
 import {
@@ -70,6 +70,42 @@ export default function SetPage() {
     const [submitting, setSubmitting] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
     const [aiDialogOpen, setAiDialogOpen] = useState(false);
+    const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
+    const [truncatedCards, setTruncatedCards] = useState<Set<string>>(new Set());
+    const cardRefs = useRef<Map<string, HTMLElement>>(new Map());
+
+    const toggleCardExpansion = (cardId: string) => {
+        setExpandedCards(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(cardId)) {
+                newSet.delete(cardId);
+            } else {
+                newSet.add(cardId);
+            }
+            return newSet;
+        });
+    };
+
+    useEffect(() => {
+        const checkTruncation = () => {
+            const newTruncatedCards = new Set<string>();
+            cardRefs.current.forEach((element, cardId) => {
+                if (element && element.scrollHeight > element.clientHeight) {
+                    newTruncatedCards.add(cardId);
+                }
+            });
+            setTruncatedCards(newTruncatedCards);
+        };
+
+        checkTruncation();
+        
+        const resizeObserver = new ResizeObserver(checkTruncation);
+        cardRefs.current.forEach(element => {
+            if (element) resizeObserver.observe(element);
+        });
+
+        return () => resizeObserver.disconnect();
+    }, [cards]);
 
     const handleCreateCard = async () => {
         setFormError(null);
@@ -318,7 +354,28 @@ export default function SetPage() {
                                 <Card key={card.id} className="transition-transform border-2 border-border shadow-shadow bg-main">
                                     <CardHeader>
                                         <div className="flex justify-between items-start">
-                                            <CardTitle className="text-lg line-clamp-2">{card.question}</CardTitle>
+                                            <div className="flex-1">
+                                                <CardTitle 
+                                                    ref={(el) => {
+                                                        if (el) {
+                                                            cardRefs.current.set(card.id, el);
+                                                        } else {
+                                                            cardRefs.current.delete(card.id);
+                                                        }
+                                                    }}
+                                                    className={`text-lg ${expandedCards.has(card.id) ? '' : 'line-clamp-2'}`}
+                                                >
+                                                    {card.question}
+                                                </CardTitle>
+                                                {(truncatedCards.has(card.id) || expandedCards.has(card.id)) && (
+                                                    <button
+                                                        onClick={() => toggleCardExpansion(card.id)}
+                                                        className="mt-1 text-xs text-muted-foreground hover:text-main transition-colors"
+                                                    >
+                                                        {expandedCards.has(card.id) ? 'Show less' : 'Show more'}
+                                                    </button>
+                                                )}
+                                            </div>
                                             <AlertDialog>
                                                 <AlertDialogTrigger asChild>
                                                     <Button
