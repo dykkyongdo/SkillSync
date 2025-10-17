@@ -29,7 +29,7 @@ interface AIFlashcardGeneratorProps {
   onFlashcardsGenerated: (flashcards: Array<{
     question: string;
     answer: string;
-    explanation: string;
+    explanation?: string;
     difficulty: number;
     tags: string[];
   }>) => void;
