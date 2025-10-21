@@ -7,7 +7,16 @@ if (typeof window !== "undefined") {
 }
 
 function toUrl(path: string) {
-    const url = /^https?:\/\//i.test(path) || path.startsWith("/") ? path : `${API_BASE}${path}`;
+    // If it's already a full URL, use it as-is
+    if (/^https?:\/\//i.test(path)) {
+        return path;
+    }
+    // If it starts with /, prepend API_BASE
+    if (path.startsWith("/")) {
+        return `${API_BASE}${path}`;
+    }
+    // Otherwise, prepend API_BASE with /
+    const url = `${API_BASE}/${path}`;
     if (typeof window !== "undefined") {
         console.log("toUrl:", path, "->", url);
     }
