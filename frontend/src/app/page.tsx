@@ -9,7 +9,6 @@ import Star9 from "@/components/icons/Star9";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import VerticalMarquee from "@/components/ui/vertical-marquee";
 import WeeklyProgressChart from "@/components/WeeklyProgressChart";
-import DebugAPI from "@/components/DebugAPI";
 
 /* Progress bar: blue fill, white track, black border */
 function BrutalProgress({ value }: { value: number }) {
@@ -24,7 +23,6 @@ function BrutalProgress({ value }: { value: number }) {
 export default function HomePage() {
   return (
     <main className="relative isolate overflow-hidden">
-      <DebugAPI />
       {/* Background */}
       <div className="absolute inset-0 -z-10 bg-background" />
       <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
