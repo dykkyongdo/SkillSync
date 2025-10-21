@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
-import { Linkedin } from "lucide-react";
+import { useInvitationCount } from "@/hooks/useInvitationCount";
+import { Linkedin, Bell } from "lucide-react";
 
 type NavItem = { href: string; label: string; exact?: boolean };
 
@@ -28,9 +29,10 @@ function isActive(pathname: string, href: string, exact = false) {
 export default function Navbar() {
     const pathname = usePathname();
     const { logout, isAuthenticated } = useAuth();
+    const { count: invitationCount } = useInvitationCount();
     const isAuthed = isAuthenticated;
 
-    const Item = ({ href, label, exact }: NavItem) => {
+    const Item = ({ href, label, exact, showBadge }: NavItem & { showBadge?: boolean }) => {
         const active = isActive(pathname, href, exact);
         return (
             <Link
@@ -38,7 +40,7 @@ export default function Navbar() {
             aria-current={active ? "page" : undefined}
             className={[
                 // bigger text + base font family
-                "px-3 py-2 rounded-base font-medium text-2l sm:text-2l",
+                "px-3 py-2 rounded-base font-medium text-2l sm:text-2l relative",
                 "focus:outline-none focus-visible:ring-2 focus-visible:ring-[--color-ring]",
                 active
                 ? "bg-secondary-background text-foreground border-2 border-border shadow-shadow"
@@ -46,6 +48,11 @@ export default function Navbar() {
             ].join(" ")}
             >
             {label}
+            {showBadge && invitationCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {invitationCount > 9 ? '9+' : invitationCount}
+                </span>
+            )}
             </Link>
         );
     };
@@ -84,7 +91,11 @@ export default function Navbar() {
                 aria-label="Primary"
                 >
                 {(isAuthed ? AUTH_NAV_ITEMS : UNAUTH_NAV_ITEMS).map((it) => (
-                    <Item key={it.href} {...it} />
+                    <Item 
+                        key={it.href} 
+                        {...it} 
+                        showBadge={it.href === "/notifications"} 
+                    />
                 ))}
 
                 {isAuthed && (

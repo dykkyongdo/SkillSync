@@ -16,11 +16,13 @@ import {
 
 import { ArrowLeft, Bell, Check, X } from "lucide-react";
 import { Invitation } from "@/types";
+import { useInvitationCount } from "@/hooks/useInvitationCount";
 
 export default function NotificationPage() {
     const [loading, setLoading] = React.useState(true);
     const [error, setError] = React.useState<string | null>(null);
     const [invites, setInvites] = React.useState<Invitation[]>([]);
+    const { refresh: refreshInvitationCount } = useInvitationCount();
 
     // load mock invitations
     React.useEffect(() => {
@@ -53,6 +55,8 @@ export default function NotificationPage() {
             await api<void>(`/api/notifications/invitations/${membershipId}/accept`, { method: "POST" });
             // Remove from local list 
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
+            // Refresh invitation count
+            refreshInvitationCount();
         } catch (e: unknown) {
             alert(e instanceof Error ? e.message : "Failed to accept invitation");
         }
@@ -64,6 +68,8 @@ export default function NotificationPage() {
             await api<void>(`/api/notifications/invitations/${membershipId}/reject`, { method: "POST" });
             // Remove from local list
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
+            // Refresh invitation count
+            refreshInvitationCount();
         } catch (e: unknown) {
             alert(e instanceof Error ? e.message : "Failed to reject invitation");
         }
