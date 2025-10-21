@@ -139,4 +139,28 @@ public class GroupMembershipService {
                 .build();
         membershipRepo.save(m);
     }
+
+    // Utility to create a general membership
+    @Transactional
+    public void createMembership(Group group, User user, GroupRole role, MembershipStatus status) {
+        if (group.getId() == null) {
+            throw new IllegalStateException("Group must be persisted before creating membership");
+        }
+        if (membershipRepo.existsByGroup_IdAndUser_Email(group.getId(), user.getEmail())) {
+            throw new ForbiddenException("User is already a member of this group");
+        }
+        
+        // Add user to the group's members collection
+        group.getMembers().add(user);
+        groupRepo.save(group);
+        
+        // Create the membership record
+        var m = GroupMembership.builder()
+                .group(group)
+                .user(user)
+                .role(role)
+                .status(status)
+                .build();
+        membershipRepo.save(m);
+    }
 }
