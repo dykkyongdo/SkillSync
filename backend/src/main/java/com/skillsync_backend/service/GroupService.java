@@ -5,6 +5,9 @@ import com.skillsync_backend.exception.ResourceNotFoundException;
 import com.skillsync_backend.exception.UserNotFoundException;
 import com.skillsync_backend.model.User;
 import com.skillsync_backend.model.Group;
+import com.skillsync_backend.model.GroupMembership;
+import com.skillsync_backend.model.GroupRole;
+import com.skillsync_backend.model.MembershipStatus;
 import com.skillsync_backend.repository.GroupMembershipRepository;
 import com.skillsync_backend.repository.GroupRepository;
 import com.skillsync_backend.repository.ReviewLogRepository;
@@ -54,17 +57,20 @@ public class GroupService {
     @Transactional
     public void joinGroup(UUID groupId, String userEmail) {
         Group group = groupRepository.findById(groupId).orElseThrow(() -> new ResourceNotFoundException("Group not found"));
-
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        group.getMembers().add(user);
-        groupRepository.save(group);
+        // Use GroupMembershipService to create membership
+        membershipService.createMembership(group, user, GroupRole.MEMBER, MembershipStatus.ACTIVE);
     }
 
     public List<Group> getGroupsForUser(String userEmail) {
         User user = userRepository.findByEmail(userEmail).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-        return groupRepository.findAllByMembersContaining(user);
+        // Use GroupMembership to get only ACTIVE memberships
+        return membershipRepo.findByUser_IdAndStatus(user.getId(), MembershipStatus.ACTIVE)
+                .stream()
+                .map(GroupMembership::getGroup)
+                .toList();
     }
 
     @Transactional
