@@ -4,6 +4,7 @@ import Link from "next/link";
 import * as React from "react";
 import RequireAuth from "@/components/RequireAuth";
 import { useGroups } from "@/hooks/useGroups";
+import { useInvitationCount } from "@/hooks/useInvitationCount";
 import { Calendar as CalendarIcon, Trash2, Loader2, Users } from "lucide-react"
 import type { Group } from "@/types";
 import { Button } from "@/components/ui/button";
@@ -145,7 +146,19 @@ function GroupCard({ group, onDelete }: { group: Group; onDelete: (id: string) =
 }
 
 export default function GroupsPage() {
-    const { items: groups, loading, error, create, remove } = useGroups();
+    const { items: groups, loading, error, create, remove, reload } = useGroups();
+    const { refresh: refreshInvitationCount } = useInvitationCount();
+
+    // Refresh groups when invitation count changes (user might have accepted an invitation)
+    React.useEffect(() => {
+        const handleFocus = () => {
+            reload();
+            refreshInvitationCount();
+        };
+        
+        window.addEventListener('focus', handleFocus);
+        return () => window.removeEventListener('focus', handleFocus);
+    }, [reload, refreshInvitationCount]);
 
     const [open, setOpen] = React.useState(false);
     const [name, setName] = React.useState("");
