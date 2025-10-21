@@ -1,9 +1,17 @@
-export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080").replace(/\/$/, "");
+// Use local proxy in production to avoid mixed content issues
+const isProduction = process.env.NODE_ENV === 'production';
+const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
+
+export const API_BASE = isProduction && isVercel 
+    ? "" // Use relative URLs in production on Vercel (will go through our proxy)
+    : (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080").replace(/\/$/, "");
 
 // Debug logging
 if (typeof window !== "undefined") {
     console.log("API_BASE:", API_BASE);
     console.log("NEXT_PUBLIC_API_BASE:", process.env.NEXT_PUBLIC_API_BASE);
+    console.log("isProduction:", isProduction);
+    console.log("isVercel:", isVercel);
 }
 
 function toUrl(path: string) {
