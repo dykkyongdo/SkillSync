@@ -2,9 +2,10 @@ import { NextRequest, NextResponse } from 'next/server';
 
 const BACKEND_URL = 'http://skill-sync-backend-env.eba-ma6u2vbm.us-east-1.elasticbeanstalk.com';
 
-export async function POST(request: NextRequest, { params }: { params: { path: string[] } }) {
+export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   try {
-    const path = params.path.join('/');
+    const resolvedParams = await params;
+    const path = resolvedParams.path.join('/');
     
     // Security: Validate path to prevent path traversal
     if (path.includes('..') || path.includes('//')) {
@@ -53,9 +54,10 @@ export async function POST(request: NextRequest, { params }: { params: { path: s
   }
 }
 
-export async function GET(request: NextRequest, { params }: { params: { path: string[] } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   try {
-    const path = params.path.join('/');
+    const resolvedParams = await params;
+    const path = resolvedParams.path.join('/');
     
     // Security: Validate path to prevent path traversal
     if (path.includes('..') || path.includes('//')) {
