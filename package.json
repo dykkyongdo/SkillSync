@@ -1,0 +1,14 @@
+{
+  "name": "skillsync",
+  "version": "1.0.0",
+  "description": "SkillSync - A collaborative learning platform",
+  "private": true,
+  "scripts": {
+    "build": "cd frontend && npm run build",
+    "dev": "cd frontend && npm run dev",
+    "start": "cd frontend && npm run start"
+  },
+  "workspaces": [
+    "frontend"
+  ]
+}
