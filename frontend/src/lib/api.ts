@@ -1,7 +1,17 @@
 export const API_BASE = (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080").replace(/\/$/, "");
 
+// Debug logging
+if (typeof window !== "undefined") {
+    console.log("API_BASE:", API_BASE);
+    console.log("NEXT_PUBLIC_API_BASE:", process.env.NEXT_PUBLIC_API_BASE);
+}
+
 function toUrl(path: string) {
-    return /^https?:\/\//i.test(path) || path.startsWith("/") ? path : `${API_BASE}${path}`;
+    const url = /^https?:\/\//i.test(path) || path.startsWith("/") ? path : `${API_BASE}${path}`;
+    if (typeof window !== "undefined") {
+        console.log("toUrl:", path, "->", url);
+    }
+    return url;
 }
 
 async function getToken(): Promise<string | null> {
