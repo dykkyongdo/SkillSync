@@ -36,5 +36,11 @@ export function useInvitationCount() {
         loadCount(); 
     }, [loadCount]);
 
-    return { count, loading, refresh: loadCount };
+    // Force refresh function that always triggers a re-render
+    const refresh = useCallback(() => {
+        console.log("Manual refresh called");
+        loadCount();
+    }, [loadCount]);
+
+    return { count, loading, refresh };
 }
