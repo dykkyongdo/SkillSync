@@ -668,6 +668,11 @@ public class StudyService {
             stats.put("streakCount", user.getStreakCount());
             stats.put("lastStudyDate", user.getLastStudyDate());
             
+            // Ensure user's level is correct based on their XP
+            maybeLevelUp(user);
+            // Save the user to persist level changes
+            userRepo.save(user);
+            
             // Calculate level progress
             // Level 1 needs 500 XP to reach Level 2
             // Level 2 needs 1000 XP to reach Level 3
