@@ -59,6 +59,7 @@ export default function NotificationPage() {
             // Refresh invitation count with a small delay to ensure backend has processed
             console.log("Calling refreshInvitationCount after accept");
             setTimeout(() => {
+                console.log("Executing refreshInvitationCount after accept");
                 refreshInvitationCount();
             }, 100);
         } catch (e: unknown) {
@@ -76,6 +77,7 @@ export default function NotificationPage() {
             // Refresh invitation count with a small delay to ensure backend has processed
             console.log("Calling refreshInvitationCount after decline");
             setTimeout(() => {
+                console.log("Executing refreshInvitationCount after decline");
                 refreshInvitationCount();
             }, 100);
         } catch (e: unknown) {
