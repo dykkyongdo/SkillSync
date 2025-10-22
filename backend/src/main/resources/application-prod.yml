@@ -1,8 +1,8 @@
 spring:
   datasource:
-    url: jdbc:postgresql://${RDS_HOSTNAME:localhost}:${RDS_PORT:5432}/${RDS_DB_NAME:postgres}
-    username: ${RDS_USERNAME:postgres}
-    password: ${RDS_PASSWORD:}
+    url: jdbc:postgresql://skillsync-database.c8fui4oca2gt.us-east-1.rds.amazonaws.com:5432/postgres
+    username: postgres
+    password: aOmELuxe7YyGnpQ5hRcR
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
