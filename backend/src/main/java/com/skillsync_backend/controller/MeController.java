@@ -1,6 +1,7 @@
 package com.skillsync_backend.controller;
 
 import com.skillsync_backend.service.StudyService;
+import com.skillsync_backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
@@ -15,6 +16,18 @@ import java.util.Map;
 public class MeController {
 
     private final StudyService studyService;
+    private final UserRepository userRepository;
+
+    @GetMapping
+    public ResponseEntity<Map<String, Object>> getMe(Authentication auth) {
+        var user = userRepository.findByEmail(auth.getName())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(Map.of(
+            "id", user.getId().toString(),
+            "email", user.getEmail(),
+            "name", user.getEmail() // Use email as name since User model doesn't have name field
+        ));
+    }
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats(Authentication auth) {
