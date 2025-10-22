@@ -256,10 +256,10 @@ export default function SetPage() {
                                         <div className="grid gap-2">
                                             <Label className="font-medium">Difficulty</Label>
                                             <Select value={difficulty} onValueChange={setDifficulty}>
-                                                <SelectTrigger className="border-2 border-border shadow-shadow bg-secondary-background">
+                                                <SelectTrigger className="border-2 border-border bg-secondary-background">
                                                     <SelectValue placeholder="Select difficulty" />
                                                 </SelectTrigger>
-                                                <SelectContent className="rounded-base border-2 border-border shadow-shadow bg-secondary-background">
+                                                <SelectContent className="rounded-base border-2 border-border bg-secondary-background">
                                                     {difficultyOptions.map((option) => (
                                                         <SelectItem key={option.value} value={option.value}>
                                                             {option.label}
