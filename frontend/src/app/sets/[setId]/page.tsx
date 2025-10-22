@@ -9,6 +9,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import {
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select";
 import { useState, useEffect, useRef } from "react";
 import { Plus, Trash2, Loader2, Sparkles } from "lucide-react";
 import DynamicBreadcrumb from "@/components/DynamicBreadcrumb";
@@ -39,7 +46,7 @@ export default function SetPage() {
     const [question, setQuestion] = useState("");
     const [answer, setAnswer] = useState("");
     const [explanation, setExplanation] = useState("");
-    const [difficulty, setDifficulty] = useState(1);
+    const [difficulty, setDifficulty] = useState("1");
     const [tags, setTags] = useState("");
     const [submitting, setSubmitting] = useState(false);
     const [formError, setFormError] = useState<string | null>(null);
@@ -47,6 +54,14 @@ export default function SetPage() {
     const [expandedCards, setExpandedCards] = useState<Set<string>>(new Set());
     const [truncatedCards, setTruncatedCards] = useState<Set<string>>(new Set());
     const cardRefs = useRef<Map<string, HTMLElement>>(new Map());
+
+    const difficultyOptions = [
+        { value: "1", label: "Beginner" },
+        { value: "2", label: "Easy" },
+        { value: "3", label: "Medium" },
+        { value: "4", label: "Hard" },
+        { value: "5", label: "Expert" },
+    ];
 
     const toggleCardExpansion = (cardId: string) => {
         setExpandedCards(prev => {
@@ -97,11 +112,11 @@ export default function SetPage() {
         setSubmitting(true);
         try {
             const tagsArray = tags.trim() ? tags.split(',').map(tag => tag.trim()).filter(tag => tag.length > 0) : [];
-            await create(question.trim(), answer.trim(), explanation.trim() || undefined, difficulty, tagsArray);
+            await create(question.trim(), answer.trim(), explanation.trim() || undefined, parseInt(difficulty), tagsArray);
             setQuestion("");
             setAnswer("");
             setExplanation("");
-            setDifficulty(1);
+            setDifficulty("1");
             setTags("");
         } catch (err) {
             setFormError("Failed to create card: " + (err as Error).message);
@@ -240,17 +255,18 @@ export default function SetPage() {
 
                                         <div className="grid gap-2">
                                             <Label className="font-medium">Difficulty</Label>
-                                            <select
-                                                value={difficulty}
-                                                onChange={(e) => setDifficulty(parseInt(e.target.value))}
-                                                className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                                            >
-                                                <option value={1}>Beginner</option>
-                                                <option value={2}>Easy</option>
-                                                <option value={3}>Medium</option>
-                                                <option value={4}>Hard</option>
-                                                <option value={5}>Expert</option>
-                                            </select>
+                                            <Select value={difficulty} onValueChange={setDifficulty}>
+                                                <SelectTrigger className="border-2 border-border shadow-shadow bg-secondary-background">
+                                                    <SelectValue placeholder="Select difficulty" />
+                                                </SelectTrigger>
+                                                <SelectContent className="rounded-base border-2 border-border shadow-shadow bg-secondary-background">
+                                                    {difficultyOptions.map((option) => (
+                                                        <SelectItem key={option.value} value={option.value}>
+                                                            {option.label}
+                                                        </SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
                                         </div>
 
                                         <div className="grid gap-2">
@@ -276,7 +292,7 @@ export default function SetPage() {
                                                 setQuestion("");
                                                 setAnswer("");
                                                 setExplanation("");
-                                                setDifficulty(1);
+                                                setDifficulty("1");
                                                 setTags("");
                                             }}
                                             disabled={submitting}
