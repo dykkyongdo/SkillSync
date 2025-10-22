@@ -22,6 +22,8 @@ public interface GroupMembershipRepository extends JpaRepository<GroupMembership
 
     List<GroupMembership> findByUser_IdAndStatus(UUID userId, MembershipStatus status);
 
+    long countByUser_IdAndStatus(UUID userId, MembershipStatus status);
+
     long countByGroup_IdAndRole(UUID groupId, com.skillsync_backend.model.GroupRole role);
 
     void deleteAllByGroup_Id(UUID groupId);

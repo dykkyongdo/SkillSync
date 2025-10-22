@@ -81,6 +81,19 @@ public class NotificationService {
         log.info("Invitation {} rejected successfully", membershipId);
     }
 
+    @Transactional(readOnly = true)
+    public int getInvitationCount(String userEmail) {
+        log.info("Getting invitation count for user: {}", userEmail);
+        
+        var user = userRepo.findByEmail(userEmail)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+
+        int count = (int) membershipRepo.countByUser_IdAndStatus(user.getId(), MembershipStatus.INVITED);
+        
+        log.info("User {} has {} pending invitations", userEmail, count);
+        return count;
+    }
+
     private InvitationDto toInvitationDto(GroupMembership membership) {
         var group = membership.getGroup();
         var inviter = group.getCreatedBy(); // Assuming the group creator is the inviter

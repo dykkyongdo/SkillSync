@@ -308,7 +308,7 @@ export default function StudyPage() {
                                 <div className="flex justify-between text-sm mb-2 font-base">
                                     <span className="text-foreground">Level {stats.level} Progress</span>
                                     <span className="text-foreground">
-                                        {stats.progressInLevel}/{stats.progressInLevel + stats.xpNeededForNextLevel} XP
+                                        {stats.xp}/{stats.progressInLevel + stats.xpNeededForNextLevel} XP
                                     </span>
                                 </div>
                                 <Progress value={stats.progressPercentage} className="h-2" />

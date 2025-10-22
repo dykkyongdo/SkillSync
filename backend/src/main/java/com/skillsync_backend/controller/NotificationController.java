@@ -34,4 +34,10 @@ public class NotificationController {
         notificationService.rejectInvitation(membershipId, auth.getName());
         return ResponseEntity.ok(Map.of("message", "Invitation rejected successfully"));
     }
+
+    @GetMapping("/invitations/count")
+    public ResponseEntity<Map<String, Integer>> getInvitationCount(Authentication auth) {
+        int count = notificationService.getInvitationCount(auth.getName());
+        return ResponseEntity.ok(Map.of("count", count));
+    }
 }
