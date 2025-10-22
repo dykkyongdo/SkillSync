@@ -28,7 +28,14 @@ public class AIFlashcardGenerationService {
     @Value("${ai.openai.model:gpt-3.5-turbo}")
     private String openaiModel;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestTemplate restTemplate;
+    
+    public AIFlashcardGenerationService() {
+        this.restTemplate = new RestTemplate();
+        // Set timeout to prevent hanging requests
+        this.restTemplate.getRequestFactory().setConnectTimeout(10000); // 10 seconds
+        this.restTemplate.getRequestFactory().setReadTimeout(30000); // 30 seconds
+    }
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     /**
@@ -37,14 +44,29 @@ public class AIFlashcardGenerationService {
     public List<FlashcardRequest> generateFlashcards(String topic, int count, String difficulty, String setId) {
         log.info("Generating {} flashcards for topic: {} with difficulty: {}", count, topic, difficulty);
 
-        try {
-            String prompt = buildPrompt(topic, count, difficulty);
-            String response = callOpenAI(prompt);
-            return parseResponse(response, setId);
-        } catch (Exception e) {
-            log.error("Error generating flashcards for topic: {}", topic, e);
-            return generateFallbackFlashcards(topic, count, setId);
+        // Retry logic for OpenAI API calls
+        int maxRetries = 3;
+        for (int attempt = 1; attempt <= maxRetries; attempt++) {
+            try {
+                String prompt = buildPrompt(topic, count, difficulty);
+                String response = callOpenAI(prompt);
+                return parseResponse(response, setId);
+            } catch (Exception e) {
+                log.warn("Attempt {} failed for topic: {} - {}", attempt, topic, e.getMessage());
+                if (attempt == maxRetries) {
+                    log.error("All attempts failed for topic: {}, using fallback", topic);
+                    return generateFallbackFlashcards(topic, count, setId);
+                }
+                // Wait before retry (exponential backoff)
+                try {
+                    Thread.sleep(1000 * attempt);
+                } catch (InterruptedException ie) {
+                    Thread.currentThread().interrupt();
+                    break;
+                }
+            }
         }
+        return generateFallbackFlashcards(topic, count, setId);
     }
 
     /**
@@ -136,8 +158,14 @@ public class AIFlashcardGenerationService {
             
             return (String) message.get("content");
         } catch (Exception e) {
-            log.error("Error calling OpenAI API", e);
-            throw new RuntimeException("Failed to call OpenAI API: " + e.getMessage());
+            log.error("Error calling OpenAI API: {}", e.getMessage());
+            if (e.getMessage().contains("timeout") || e.getMessage().contains("Connection")) {
+                throw new RuntimeException("OpenAI API timeout or connection error: " + e.getMessage());
+            } else if (e.getMessage().contains("rate limit") || e.getMessage().contains("429")) {
+                throw new RuntimeException("OpenAI API rate limit exceeded: " + e.getMessage());
+            } else {
+                throw new RuntimeException("OpenAI API error: " + e.getMessage());
+            }
         }
     }
 

@@ -57,8 +57,18 @@ public class AIFlashcardController {
             log.info("Generated {} flashcards for topic: {}", flashcards.size(), request.getTopic());
             return ResponseEntity.ok(flashcards);
 
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid request for topic: {} - {}", request.getTopic(), e.getMessage());
+            return ResponseEntity.badRequest().build();
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("rate limit") || e.getMessage().contains("timeout")) {
+                log.warn("OpenAI API issue for topic: {} - {}", request.getTopic(), e.getMessage());
+                return ResponseEntity.status(503).build(); // Service Unavailable
+            }
+            log.error("Error generating flashcards for topic: {} - {}", request.getTopic(), e.getMessage());
+            return ResponseEntity.internalServerError().build();
         } catch (Exception e) {
-            log.error("Error generating flashcards for topic: {}", request.getTopic(), e);
+            log.error("Unexpected error generating flashcards for topic: {}", request.getTopic(), e);
             return ResponseEntity.internalServerError().build();
         }
     }
