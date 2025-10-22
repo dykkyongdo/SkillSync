@@ -33,21 +33,8 @@ export default function StudyPage() {
         try {
             setLoading(true);
             setError(null);
-            console.log("Loading due cards for set:", setId);
             const apiUrl = `/api/sets/${setId}/study/due?limit=20`;
-            console.log("API URL:", apiUrl);
             const dueCards = await api<DueCard[]>(apiUrl);
-            console.log("Loaded due cards:", dueCards);
-            console.log("Number of cards loaded:", dueCards.length);
-            
-            // Log each card for debugging
-            dueCards.forEach((card, index) => {
-                console.log(`Card ${index + 1}:`, {
-                    id: card.flashcardId,
-                    question: card.question.substring(0, 50) + "...",
-                    answer: card.answer.substring(0, 50) + "..."
-                });
-            });
             setCards(dueCards);
             setCurrentCardIndex(0);
             setStudyComplete(false);
@@ -55,8 +42,6 @@ export default function StudyPage() {
             setShowFeedback(false);
             setLastResponse(null);
         } catch (err: unknown) {
-            console.error("Failed to load cards:", err);
-            console.error("Error details:", err);
             setError(err instanceof Error ? err.message : 'An error occurred');
         } finally {
             setLoading(false);
@@ -103,10 +88,6 @@ export default function StudyPage() {
                 body: JSON.stringify(submission),
             });
 
-            console.log("Answer submitted successfully:", result);
-            console.log("Is correct:", result.isCorrect);
-            console.log("Feedback:", result.feedback);
-            console.log("Full result object:", JSON.stringify(result, null, 2));
             setLastResponse(result);
             setShowFeedback(true);
 
@@ -114,7 +95,6 @@ export default function StudyPage() {
             refetchStats();
 
         } catch (err: unknown) {
-            console.error("Failed to submit answer:", err);
             const errorMessage = err instanceof Error ? err.message : 'An error occurred';
             alert("Failed to submit answer: " + errorMessage);
         }
@@ -134,12 +114,9 @@ export default function StudyPage() {
 
     const debugInfo = async () => {
         try {
-            console.log("Fetching debug info for set:", setId);
             const debug = await api(`/api/sets/${setId}/study/debug`);
-            console.log("Debug info:", debug);
             alert("Debug info logged to console. Check browser console for details.");
         } catch (err: unknown) {
-            console.error("Failed to get debug info:", err);
             alert("Failed to get debug info: " + (err instanceof Error ? err.message : 'Unknown error'));
         }
     };
@@ -308,36 +285,36 @@ export default function StudyPage() {
                         {/* User Stats */}
                         {stats && (
                             <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <Card className="p-3 dark:bg-[var(--main)]">
+                                <Card className="p-3 bg-main">
                                     <div className="flex items-center gap-2">
-                                        <Star className="w-4 h-4 text-main" />
+                                        <Star className="w-4 h-4 text-main text-white" />
                                         <div>
                                             <div className="text-xs text-foreground font-base dark:text-black">Level</div>
                                             <div className="font-heading dark:text-black">{stats.level}</div>
                                         </div>
                                     </div>
                                 </Card>
-                                <Card className="p-3 dark:bg-[var(--main)]">
+                                <Card className="p-3 bg-main">
                                     <div className="flex items-center gap-2">
-                                        <TrendingUp className="w-4 h-4 text-main" />
+                                        <TrendingUp className="w-4 h-4 text-main text-white" />
                                         <div>
                                             <div className="text-xs text-foreground font-base dark:text-black">XP</div>
                                             <div className="font-heading dark:text-black">{stats.xp}</div>
                                         </div>
                                     </div>
                                 </Card>
-                                <Card className="p-3 dark:bg-[var(--main)]">
+                                <Card className="p-3 bg-main">
                                     <div className="flex items-center gap-2">
-                                        <Target className="w-4 h-4 text-main" />
+                                        <Target className="w-4 h-4 text-main text-white" />
                                         <div>
                                             <div className="text-xs text-foreground font-base dark:text-black">Streak</div>
                                             <div className="font-heading dark:text-black">{stats.streakCount} days</div>
                                         </div>
                                     </div>
                                 </Card>
-                                <Card className="p-3 dark:bg-[var(--main)]">
+                                <Card className="p-3 bg-main">
                                     <div className="flex items-center gap-2">
-                                        <CheckCircle className="w-4 h-4 text-main" />
+                                        <CheckCircle className="w-4 h-4 text-main text-white" />
                                         <div>
                                             <div className="text-xs text-foreground font-base dark:text-black">Mastered</div>
                                             <div className="font-heading dark:text-black">{stats.masteredCards}</div>
@@ -373,7 +350,7 @@ export default function StudyPage() {
                         </div>
 
                         {/* Card */}
-                        <Card className="min-h-[400px] flex flex-col dark:bg-[var(--main)]">
+                        <Card className="min-h-[400px] flex flex-col bg-main">
                             <CardHeader className="text-center">
                                 <CardTitle className="text-xl dark:text-black">
                                     Choose the correct answer
@@ -427,7 +404,7 @@ export default function StudyPage() {
                                                 ? 'text-white border-black' 
                                                 : 'text-white border-black'
                                         }`} style={{
-                                            backgroundColor: lastResponse.isCorrect ? '#00D696' : '#FF4D50'
+                                            backgroundColor: lastResponse.isCorrect ? '#05e17a' : '#ff4d4f'
                                         }}>
                                             {/* Debug info */}
                                             <div className="text-xs text-gray-500 mb-2">

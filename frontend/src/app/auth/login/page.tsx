@@ -49,14 +49,9 @@ function LoginForm() {
             method: "POST",
             body: JSON.stringify({ email, password }),
         });
-        console.log("Login successful, token received:", data.token ? "YES" : "NO");
-        console.log("Token preview:", data.token ? (data.token.length > 20 ? data.token.substring(0, 20) + "..." : data.token) : "null");
         login(data.token);
-        console.log("Token stored in AuthContext and localStorage");
         
-        // Give the AuthContext a moment to update before navigating
         setTimeout(() => {
-            console.log("Login: Navigating to", next);
             router.push(next);
             router.refresh();
         }, 100);

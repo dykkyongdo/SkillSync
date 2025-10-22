@@ -161,16 +161,11 @@ export default function GroupsPage() {
 
     async function handleDeleteGroup(groupId: string) {
         try {
-            console.log("Starting group deletion for ID:", groupId);
             await remove(groupId);
-            console.log("Group deletion successful");
         } catch (err) {
             const errorMessage = (err as Error).message;
-            console.log("Group deletion failed with error:", errorMessage);
-            // Don't show error alert for authentication issues - the user will be redirected
             if (errorMessage.includes("Token expired") || errorMessage.includes("Redirecting to login")) {
-                console.log("Authentication issue during group deletion:", errorMessage);
-                return; // Let the redirect happen
+                return;
             }
             alert("Failed to delete group: " + errorMessage);
         }

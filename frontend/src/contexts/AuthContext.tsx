@@ -46,7 +46,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                 }
             }
         } catch (error) {
-            console.error("AuthContext: Error reading from localStorage:", error);
+            // Silent fail - localStorage access is best effort
         }
         
         // Listen for token cleared events from api.ts
@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             
             setToken(jwt);
         } catch (error) {
-            console.error("Failed to save token:", error);
+            // Silent fail - token saving is best effort
         }
     }, []);
 
@@ -81,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             setToken(null);
         } catch (error) {
-            console.error("Failed to remove token:", error);
+            // Silent fail - token removal is best effort
         }
     }, []);
 

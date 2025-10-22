@@ -11,9 +11,7 @@ export function useInvitationCount() {
     const { isAuthenticated } = useAuth();
     
     const loadCount = useCallback(async () => {
-        console.log("loadCount called, isAuthenticated:", isAuthenticated);
         if (!isAuthenticated) {
-            console.log("Not authenticated, setting count to 0");
             setCount(0);
             return;
         }
@@ -21,12 +19,8 @@ export function useInvitationCount() {
         setLoading(true);
         try {
             const response = await api<{ count: number }>("/api/notifications/invitations/count", { method: "GET" });
-            console.log("Invitation count response:", response);
-            console.log("Setting count to:", response.count);
             setCount(response.count);
         } catch (e: unknown) {
-            console.error("Failed to load invitation count:", e);
-            console.log("Setting count to 0 due to error");
             setCount(0);
         } finally {
             setLoading(false);
@@ -37,9 +31,7 @@ export function useInvitationCount() {
         loadCount(); 
     }, [isAuthenticated, loadCount, refreshTrigger]);
 
-    // Force refresh function that always triggers a re-render
     const refresh = useCallback(() => {
-        console.log("Manual refresh called");
         setRefreshTrigger(prev => prev + 1);
     }, []);
 

@@ -32,11 +32,6 @@ export default function Navbar() {
     const { logout, isAuthenticated } = useAuth();
     const { count: invitationCount } = useInvitationCount();
     const { theme, toggleTheme } = useTheme();
-    const isAuthed = isAuthenticated;
-    
-    // Debug logging
-    console.log("Navbar render - invitationCount:", invitationCount, "isAuthed:", isAuthed);
-    console.log("Navbar render - count type:", typeof invitationCount, "value:", invitationCount);
 
     const Item = ({ href, label, exact, showBadge }: NavItem & { showBadge?: boolean }) => {
         const active = isActive(pathname, href, exact);
@@ -54,21 +49,11 @@ export default function Navbar() {
             ].join(" ")}
             >
             {label}
-            {showBadge && invitationCount > 0 ? (
-                (() => {
-                    console.log("Rendering badge - invitationCount:", invitationCount);
-                    return (
-                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
-                            {invitationCount > 9 ? '9+' : invitationCount}
-                        </span>
-                    );
-                })()
-            ) : showBadge ? (
-                (() => {
-                    console.log("Badge should be hidden - invitationCount:", invitationCount);
-                    return null;
-                })()
-            ) : null}
+            {showBadge && invitationCount > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">
+                    {invitationCount > 9 ? '9+' : invitationCount}
+                </span>
+            )}
             </Link>
         );
     };

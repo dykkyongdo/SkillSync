@@ -51,15 +51,9 @@ export default function NotificationPage() {
 
     async function acceptInvite(groupId: string, membershipId: string) {
         try {
-            console.log("Accepting invitation:", membershipId);
-            // Accept via new notification API
             await api<void>(`/api/notifications/invitations/${membershipId}/accept`, { method: "POST" });
-            // Remove from local list 
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
-            // Refresh invitation count with a small delay to ensure backend has processed
-            console.log("Calling refreshInvitationCount after accept");
             setTimeout(() => {
-                console.log("Executing refreshInvitationCount after accept");
                 refreshInvitationCount();
             }, 100);
         } catch (e: unknown) {
@@ -69,15 +63,9 @@ export default function NotificationPage() {
 
     async function declineInvite(membershipId: string) {
         try {
-            console.log("Declining invitation:", membershipId);
-            // Reject via new notification API
             await api<void>(`/api/notifications/invitations/${membershipId}/reject`, { method: "POST" });
-            // Remove from local list
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
-            // Refresh invitation count with a small delay to ensure backend has processed
-            console.log("Calling refreshInvitationCount after decline");
             setTimeout(() => {
-                console.log("Executing refreshInvitationCount after decline");
                 refreshInvitationCount();
             }, 100);
         } catch (e: unknown) {

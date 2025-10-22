@@ -19,9 +19,7 @@ export function InvitationCountProvider({ children }: { children: React.ReactNod
     const { isAuthenticated } = useAuth();
     
     const loadCount = useCallback(async () => {
-        console.log("InvitationCountProvider - loadCount called, isAuthenticated:", isAuthenticated);
         if (!isAuthenticated) {
-            console.log("InvitationCountProvider - Not authenticated, setting count to 0");
             setCount(0);
             return;
         }
@@ -29,12 +27,8 @@ export function InvitationCountProvider({ children }: { children: React.ReactNod
         setLoading(true);
         try {
             const response = await api<{ count: number }>("/api/notifications/invitations/count", { method: "GET" });
-            console.log("InvitationCountProvider - Invitation count response:", response);
-            console.log("InvitationCountProvider - Setting count to:", response.count);
             setCount(response.count);
         } catch (e: unknown) {
-            console.error("InvitationCountProvider - Failed to load invitation count:", e);
-            console.log("InvitationCountProvider - Setting count to 0 due to error");
             setCount(0);
         } finally {
             setLoading(false);
@@ -46,7 +40,6 @@ export function InvitationCountProvider({ children }: { children: React.ReactNod
     }, [isAuthenticated, loadCount, refreshTrigger]);
 
     const refresh = useCallback(() => {
-        console.log("InvitationCountProvider - Manual refresh called");
         setRefreshTrigger(prev => prev + 1);
     }, []);
 
