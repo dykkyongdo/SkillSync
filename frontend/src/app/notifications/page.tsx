@@ -16,7 +16,7 @@ import {
 
 import { ArrowLeft, Bell, Check, X } from "lucide-react";
 import { Invitation } from "@/types";
-import { useInvitationCount } from "@/hooks/useInvitationCount";
+import { useInvitationCount } from "@/contexts/InvitationCountContext";
 
 export default function NotificationPage() {
     const [loading, setLoading] = React.useState(true);

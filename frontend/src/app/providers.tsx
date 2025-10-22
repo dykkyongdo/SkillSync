@@ -4,6 +4,7 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
+import { InvitationCountProvider } from "@/contexts/InvitationCountContext";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
@@ -23,7 +24,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <QueryClientProvider client={queryClient}>
             <Tooltip.Provider>
                 <AuthProvider>
-                    {children}
+                    <InvitationCountProvider>
+                        {children}
+                    </InvitationCountProvider>
                 </AuthProvider>
             </Tooltip.Provider>
         </QueryClientProvider>

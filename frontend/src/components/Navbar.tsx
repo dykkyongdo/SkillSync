@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
-import { useInvitationCount } from "@/hooks/useInvitationCount";
+import { useInvitationCount } from "@/contexts/InvitationCountContext";
 import { Linkedin } from "lucide-react";
 
 type NavItem = { href: string; label: string; exact?: boolean };
