@@ -30,8 +30,8 @@ module.exports = {
         'base': '5px',
       },
       fontFamily: {
-        'base': ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
-        'heading': ['Inter', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'base': ['var(--font-dm-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+        'heading': ['var(--font-dm-sans)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
       },
       fontWeight: {
         'base': '500',
