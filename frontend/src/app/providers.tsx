@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import * as Tooltip from "@radix-ui/react-tooltip";
 import { AuthProvider } from "@/contexts/AuthContext";
 import { InvitationCountProvider } from "@/contexts/InvitationCountContext";
+import { ThemeProvider } from "@/contexts/ThemeContext";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
     const [queryClient] = useState(
@@ -20,15 +21,17 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         })
     );
 
-    return (
-        <QueryClientProvider client={queryClient}>
-            <Tooltip.Provider>
-                <AuthProvider>
-                    <InvitationCountProvider>
-                        {children}
-                    </InvitationCountProvider>
-                </AuthProvider>
-            </Tooltip.Provider>
-        </QueryClientProvider>
-    );
+            return (
+                <QueryClientProvider client={queryClient}>
+                    <Tooltip.Provider>
+                        <ThemeProvider>
+                            <AuthProvider>
+                                <InvitationCountProvider>
+                                    {children}
+                                </InvitationCountProvider>
+                            </AuthProvider>
+                        </ThemeProvider>
+                    </Tooltip.Provider>
+                </QueryClientProvider>
+            );
 }
