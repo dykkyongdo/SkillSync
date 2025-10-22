@@ -20,7 +20,7 @@ export function useInvitationCount() {
         try {
             const response = await api<{ count: number }>("/api/notifications/invitations/count", { method: "GET" });
             setCount(response.count);
-        } catch (_e: unknown) {
+        } catch {
             setCount(0);
         } finally {
             setLoading(false);

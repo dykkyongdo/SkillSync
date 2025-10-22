@@ -91,7 +91,7 @@ export default function Navbar() {
                 className="flex items-center gap-4 sm:gap-6 flex-wrap min-w-0"
                 aria-label="Primary"
                 >
-                {(isAuthed ? AUTH_NAV_ITEMS : UNAUTH_NAV_ITEMS).map((it) => (
+                {(isAuthenticated ? AUTH_NAV_ITEMS : UNAUTH_NAV_ITEMS).map((it) => (
                     <Item 
                         key={it.href} 
                         {...it} 
@@ -99,7 +99,7 @@ export default function Navbar() {
                     />
                 ))}
 
-                {isAuthed && (
+                {isAuthenticated && (
                     <Button 
                     className="font-semibold"
                     variant="neutral" onClick={logout}>

@@ -63,7 +63,7 @@ export function clearExpiredToken(): void {
         
         // Dispatch a custom event to notify AuthContext
         window.dispatchEvent(new CustomEvent('token-cleared'));
-    } catch (_error) {
+    } catch {
         // Silent fail - token clearing is best effort
     }
 }
