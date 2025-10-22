@@ -7,6 +7,7 @@ import { useAuth } from "@/contexts/AuthContext";
 export function useInvitationCount() {
     const [count, setCount] = useState(0);
     const [loading, setLoading] = useState(false);
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
     const { isAuthenticated } = useAuth();
     
     const loadCount = useCallback(async () => {
@@ -34,13 +35,13 @@ export function useInvitationCount() {
 
     useEffect(() => { 
         loadCount(); 
-    }, [isAuthenticated, loadCount]);
+    }, [isAuthenticated, loadCount, refreshTrigger]);
 
     // Force refresh function that always triggers a re-render
-    const refresh = () => {
+    const refresh = useCallback(() => {
         console.log("Manual refresh called");
-        loadCount();
-    };
+        setRefreshTrigger(prev => prev + 1);
+    }, []);
 
     return { count, loading, refresh };
 }
