@@ -17,10 +17,12 @@ export function useInvitationCount() {
         
         setLoading(true);
         try {
-            const invitations = await api<Array<{ membershipId: string }>>("/api/notifications/invitations", { method: "GET" });
-            setCount(invitations.length);
+            const response = await api<{ count: number }>("/api/notifications/invitations/count", { method: "GET" });
+            console.log("Invitation count response:", response);
+            setCount(response.count);
         } catch (e: unknown) {
             console.error("Failed to load invitation count:", e);
+            console.log("Setting count to 0 due to error");
             setCount(0);
         } finally {
             setLoading(false);
