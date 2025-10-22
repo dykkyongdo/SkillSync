@@ -9,7 +9,7 @@ export function useInvitationCount() {
     const [loading, setLoading] = useState(false);
     const { isAuthenticated } = useAuth();
     
-    const loadCount = async () => {
+    const loadCount = useCallback(async () => {
         console.log("loadCount called, isAuthenticated:", isAuthenticated);
         if (!isAuthenticated) {
             console.log("Not authenticated, setting count to 0");
@@ -30,11 +30,11 @@ export function useInvitationCount() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [isAuthenticated]);
 
     useEffect(() => { 
         loadCount(); 
-    }, [isAuthenticated]);
+    }, [isAuthenticated, loadCount]);
 
     // Force refresh function that always triggers a re-render
     const refresh = () => {

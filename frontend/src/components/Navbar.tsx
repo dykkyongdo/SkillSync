@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useAuth } from "@/contexts/AuthContext";
 import { useInvitationCount } from "@/hooks/useInvitationCount";
-import { Linkedin, Bell } from "lucide-react";
+import { Linkedin } from "lucide-react";
 
 type NavItem = { href: string; label: string; exact?: boolean };
 
@@ -56,7 +56,10 @@ export default function Navbar() {
                     {invitationCount > 9 ? '9+' : invitationCount}
                 </span>
             ) : showBadge ? (
-                console.log("Badge should be hidden - invitationCount:", invitationCount) || null
+                (() => {
+                    console.log("Badge should be hidden - invitationCount:", invitationCount);
+                    return null;
+                })()
             ) : null}
             </Link>
         );
