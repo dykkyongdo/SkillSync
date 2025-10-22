@@ -98,6 +98,14 @@
   h1, h2, h3, h4, h5, h6{
     @apply font-heading;
   }
+
+  /* Dark mode grid background */
+  .dark body {
+    background-image: 
+      linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
 }
 
 @layer utilities {
