@@ -40,19 +40,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Plus } from "lucide-react";
 
-// NEW: progress
-import { Progress } from "@/components/ui/progress";
-
 // Group Card Component
 function GroupCard({ group, onDelete }: { group: Group; onDelete: (id: string) => void }) {
-    function getCompletion(): number {
-        // For now, return 0 since Group type doesn't have progress/completion
-        // This can be updated when the backend provides progress data
-        return 0;
-    }
-
-    const pct = getCompletion();
-
     return (
         <Card className="transition-all duration-200 border-2 border-border shadow-shadow bg-main">
             <CardHeader>
@@ -104,19 +93,6 @@ function GroupCard({ group, onDelete }: { group: Group; onDelete: (id: string) =
                 <p className="text-sm text-foreground/70 font-medium">
                     <CalendarIcon /> {new Date(group.createdAt).toLocaleDateString()}
                 </p>
-
-                {/* Progress row */}
-                <div className="mt-3">
-                    <div className="mb-1 flex items-center justify-between text-sm">
-                        <span className="font-medium">Progress</span>
-                        <span className="font-semibold">{pct}%</span>
-                    </div>
-
-                    <Progress
-                        value={pct}
-                        className="h-3 w-full rounded-base border-2 border-border bg-secondary-background"
-                    />
-                </div>
 
                 {/* View and Manage links */}
                 <div className="mt-4 space-y-2">
