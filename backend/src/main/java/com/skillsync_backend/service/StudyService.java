@@ -578,10 +578,15 @@ public class StudyService {
 
     private void maybeLevelUp(User user) {
         // Simple rule: 500 XP per level
-        int needed = user.getLevel() * 500;
-        while (user.getXp() >= needed) {
+        // Level 1 needs 500 XP to reach Level 2
+        // Level 2 needs 1000 XP to reach Level 3
+        int currentLevel = user.getLevel();
+        int xpForNextLevel = (currentLevel + 1) * 500;
+        
+        while (user.getXp() >= xpForNextLevel) {
             user.setLevel(user.getLevel() + 1);
-            needed = user.getLevel() * 500;
+            currentLevel = user.getLevel();
+            xpForNextLevel = (currentLevel + 1) * 500;
         }
     }
 
@@ -664,8 +669,11 @@ public class StudyService {
             stats.put("lastStudyDate", user.getLastStudyDate());
             
             // Calculate level progress
-            int currentLevelXp = user.getLevel() * 500;
-            int nextLevelXp = (user.getLevel() + 1) * 500;
+            // Level 1 needs 500 XP to reach Level 2
+            // Level 2 needs 1000 XP to reach Level 3
+            int currentLevel = user.getLevel();
+            int currentLevelXp = currentLevel * 500;  // XP threshold for current level
+            int nextLevelXp = (currentLevel + 1) * 500;  // XP threshold for next level
             int progressInLevel = Math.max(0, user.getXp() - currentLevelXp);
             int xpNeededForNextLevel = Math.max(0, nextLevelXp - user.getXp());
             int progressPercentage = nextLevelXp > currentLevelXp ? 
