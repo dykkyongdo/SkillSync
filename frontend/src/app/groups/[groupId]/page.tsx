@@ -268,10 +268,10 @@ export default function GroupPage() {
                             </AlertDialogTrigger>
 
                             {/* Dialog */}
-                            <AlertDialogContent>
+                            <AlertDialogContent className="dark:bg-[var(--main)]">
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Delete this set?</AlertDialogTitle>
-                                <AlertDialogDescription>
+                                <AlertDialogTitle className="dark:text-black">Delete this set?</AlertDialogTitle>
+                                <AlertDialogDescription className="dark:text-black">
                                 This will permanently delete the set and all its flashcards. This action cannot be undone.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>

@@ -66,10 +66,10 @@ function GroupCard({ group, onDelete }: { group: Group; onDelete: (id: string) =
                         </AlertDialogTrigger>
 
                         {/* Dialog */}
-                        <AlertDialogContent>
+                        <AlertDialogContent className="dark:bg-[var(--main)]">
                             <AlertDialogHeader>
-                                <AlertDialogTitle>Delete this group?</AlertDialogTitle>
-                                <AlertDialogDescription>
+                                <AlertDialogTitle className="dark:text-black">Delete this group?</AlertDialogTitle>
+                                <AlertDialogDescription className="dark:text-black">
                                     This will permanently delete the group and all its flashcard sets. This action cannot be undone.
                                 </AlertDialogDescription>
                             </AlertDialogHeader>

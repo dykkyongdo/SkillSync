@@ -507,7 +507,7 @@ public class StudyService {
         progress.setNextDueAt(now.plus(interval, ChronoUnit.DAYS));
 
         // ---- XP + streaks + optional logging ----------------------------------------
-        int gained = xpForGrade(grade);
+        int gained = xpForGrade(grade, card.getDifficulty());
         user.setXp(user.getXp() + gained);
         applyDailyStreak(user, now);
         maybeLevelUp(user);
@@ -537,14 +537,24 @@ public class StudyService {
 
     // ---------------------- helpers ----------------------
 
-    private int xpForGrade(int grade) {
-        return switch (grade) {
+    private int xpForGrade(int grade, int difficulty) {
+        int baseXp = switch (grade) {
             case 0 -> 0;  // again
-            case 1 -> 3;  // hard
-            case 2 -> 5;  // good
+            case 1 -> 5;  // hard
+            case 2 -> 6;  // good
             case 3 -> 7;  // easy
             default -> 0;
         };
+        
+        // Apply difficulty multiplier
+        double multiplier = switch (difficulty) {
+            case 1, 2 -> 1.0;      // Beginner/Easy: 5-7 XP
+            case 3 -> 1.5;         // Medium: 7.5-10.5 XP
+            case 4, 5 -> 2.0;      // Hard/Expert: 10-14 XP
+            default -> 1.0;
+        };
+        
+        return (int) Math.round(baseXp * multiplier);
     }
 
     private void applyDailyStreak(User user, Instant now) {

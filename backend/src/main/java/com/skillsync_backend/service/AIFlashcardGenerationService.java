@@ -10,6 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.client.SimpleClientHttpRequestFactory;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -31,10 +32,10 @@ public class AIFlashcardGenerationService {
     private final RestTemplate restTemplate;
     
     public AIFlashcardGenerationService() {
-        this.restTemplate = new RestTemplate();
-        // Set timeout to prevent hanging requests
-        this.restTemplate.getRequestFactory().setConnectTimeout(10000); // 10 seconds
-        this.restTemplate.getRequestFactory().setReadTimeout(30000); // 30 seconds
+        SimpleClientHttpRequestFactory factory = new SimpleClientHttpRequestFactory();
+        factory.setConnectTimeout(10000); // 10 seconds
+        factory.setReadTimeout(30000); // 30 seconds
+        this.restTemplate = new RestTemplate(factory);
     }
     private final ObjectMapper objectMapper = new ObjectMapper();
 
