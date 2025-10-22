@@ -114,7 +114,7 @@ export default function StudyPage() {
 
     const debugInfo = async () => {
         try {
-            const debug = await api(`/api/sets/${setId}/study/debug`);
+            await api(`/api/sets/${setId}/study/debug`);
             alert("Debug info logged to console. Check browser console for details.");
         } catch (err: unknown) {
             alert("Failed to get debug info: " + (err instanceof Error ? err.message : 'Unknown error'));

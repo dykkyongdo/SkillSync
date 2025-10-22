@@ -45,7 +45,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
                     }
                 }
             }
-        } catch (error) {
+        } catch (_error) {
             // Silent fail - localStorage access is best effort
         }
         
@@ -69,7 +69,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             document.cookie = `auth_token=${jwt}; path=/; max-age=604800; SameSite=Lax`;
             
             setToken(jwt);
-        } catch (error) {
+        } catch (_error) {
             // Silent fail - token saving is best effort
         }
     }, []);
@@ -80,7 +80,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
             // Also clear the cookie
             document.cookie = "auth_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT";
             setToken(null);
-        } catch (error) {
+        } catch (_error) {
             // Silent fail - token removal is best effort
         }
     }, []);

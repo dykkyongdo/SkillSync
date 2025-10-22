@@ -28,7 +28,7 @@ export function InvitationCountProvider({ children }: { children: React.ReactNod
         try {
             const response = await api<{ count: number }>("/api/notifications/invitations/count", { method: "GET" });
             setCount(response.count);
-        } catch (e: unknown) {
+        } catch (_e: unknown) {
             setCount(0);
         } finally {
             setLoading(false);
