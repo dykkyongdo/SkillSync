@@ -103,9 +103,12 @@ export default function GroupPage() {
             {/* Background */}
             <div className="absolute inset-0 -z-10 bg-background" />
             <div
-            className="absolute inset-0 -z-10 opacity-70 dark:opacity-20 pointer-events-none
-                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]"
+                className="
+                absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                bg-[size:48px_48px]
+                "
             />
 
             <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
@@ -140,19 +143,19 @@ export default function GroupPage() {
                         </Button>
                     </DialogTrigger>
 
-                    <DialogContent className="rounded-base border-2 border-border shadow-shadow">
+                    <DialogContent className="rounded-base border-2 border-border shadow-shadow dark:bg-[var(--main)]">
                         <DialogHeader className="gap-1">
-                            <DialogTitle className="font-medium text-2xl">
+                            <DialogTitle className="font-medium text-2xl dark:text-black">
                                 New Flashcard Set
                             </DialogTitle>
-                            <DialogDescription className="font-medium">
+                            <DialogDescription className="font-medium dark:text-black">
                                 Give your flashcard set a title and (optionally) a description.
                             </DialogDescription>
                         </DialogHeader>
 
                         <form onSubmit={handleCreateSet} className="grid gap-5">
                             <div className="grid gap-2">
-                                <Label className="font-medium">Set title</Label>
+                                <Label className="font-medium dark:text-black">Set title</Label>
                                 <Input
                                     id="title"
                                     placeholder="e.g. Python Basics"
@@ -164,7 +167,7 @@ export default function GroupPage() {
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="description" className="font-medium">
+                                <Label htmlFor="description" className="font-medium dark:text-black">
                                     Description{" "}
                                     <span className="text-foreground/50">(optional)</span>
                                 </Label>

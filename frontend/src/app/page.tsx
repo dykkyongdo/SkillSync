@@ -25,9 +25,14 @@ export default function HomePage() {
     <main className="relative isolate overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0 -z-10 bg-background" />
-      <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
-                      bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                      bg-[size:48px_48px]" />
+      <div
+        className="
+          absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+          [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+          bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+          bg-[size:48px_48px]
+        "
+      />
 
       {/* Left column (up) */}
       <aside className="fixed left-[-72px] top-0 h-screen w-80 xl:w-96 pointer-events-none z-10 overflow-visible">
@@ -37,7 +42,7 @@ export default function HomePage() {
       </aside>
 
       {/* Right column (down) */}
-      <aside className="fixed right-[-80px] top-0 h-screen w-80 xl:w-[22rem] pointer-events-none z-10 overflow-visible">git
+      <aside className="fixed right-[-80px] top-0 h-screen w-80 xl:w-[22rem] pointer-events-none z-10 overflow-visible">
         <VerticalMarquee reverse speed={60} gap={24}>
           <RightItems />
         </VerticalMarquee>

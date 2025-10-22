@@ -70,12 +70,17 @@ function LoginForm() {
     return (
         <main className="relative isolate pt-14">
         <div className="absolute inset-0 -z-10 bg-background" />
-        <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
-                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]" />
+        <div
+            className="
+            absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+            [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+            bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+            bg-[size:48px_48px]
+            "
+        />
 
         <section className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center px-4 relative z-0">
-            <Card className="w-full max-w-sm bg-white">
+            <Card className="w-full max-w-sm bg-white dark:bg-[var(--main)]">
             <CardHeader>
                 <CardTitle className="text-2xl font-semibold">Login to your account</CardTitle>
                 <CardDescription className="font-medium">

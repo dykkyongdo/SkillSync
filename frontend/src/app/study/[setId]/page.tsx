@@ -176,9 +176,14 @@ export default function StudyPage() {
             <RequireAuth>
                 <main className="relative isolate pt-14">
                     <div className="absolute inset-0 -z-10 bg-background" />
-                    <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
-                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]" />
+                    <div
+                        className="
+                        absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                        [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                        bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                        bg-[size:48px_48px]
+                        "
+                    />
 
                     <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                         <div className="max-w-2xl mx-auto">
@@ -218,9 +223,12 @@ export default function StudyPage() {
                 <main className="relative isolate pt-14">
                     <div className="absolute inset-0 -z-10 bg-background" />
                     <div
-                        className="absolute inset-0 -z-10 opacity-70 dark:opacity-20 pointer-events-none
-                                    bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                                    bg-[size:48px_48px]"
+                        className="
+                        absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                        [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                        bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                        bg-[size:48px_48px]
+                        "
                     />
 
                     <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
@@ -262,9 +270,12 @@ export default function StudyPage() {
             <main className="relative isolate pt-14">
                 <div className="absolute inset-0 -z-10 bg-background" />
                 <div
-                    className="absolute inset-0 -z-10 opacity-70 dark:opacity-20 pointer-events-none
-                                bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                                bg-[size:48px_48px]"
+                    className="
+                    absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                    [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                    bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                    bg-[size:48px_48px]
+                    "
                 />
 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
@@ -276,7 +287,7 @@ export default function StudyPage() {
 
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">
-                            <div className="text-sm text-foreground font-base">
+                            <div className="text-sm text-foreground font-base ">
                                 {currentCardIndex + 1} of {cards.length} cards
                             </div>
                             <div className="flex items-center gap-4">
@@ -297,39 +308,39 @@ export default function StudyPage() {
                         {/* User Stats */}
                         {stats && (
                             <div className="mb-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <Card className="p-3">
+                                <Card className="p-3 dark:bg-[var(--main)]">
                                     <div className="flex items-center gap-2">
                                         <Star className="w-4 h-4 text-main" />
                                         <div>
-                                            <div className="text-xs text-foreground font-base">Level</div>
-                                            <div className="font-heading">{stats.level}</div>
+                                            <div className="text-xs text-foreground font-base dark:text-black">Level</div>
+                                            <div className="font-heading dark:text-black">{stats.level}</div>
                                         </div>
                                     </div>
                                 </Card>
-                                <Card className="p-3">
+                                <Card className="p-3 dark:bg-[var(--main)]">
                                     <div className="flex items-center gap-2">
                                         <TrendingUp className="w-4 h-4 text-main" />
                                         <div>
-                                            <div className="text-xs text-foreground font-base">XP</div>
-                                            <div className="font-heading">{stats.xp}</div>
+                                            <div className="text-xs text-foreground font-base dark:text-black">XP</div>
+                                            <div className="font-heading dark:text-black">{stats.xp}</div>
                                         </div>
                                     </div>
                                 </Card>
-                                <Card className="p-3">
+                                <Card className="p-3 dark:bg-[var(--main)]">
                                     <div className="flex items-center gap-2">
                                         <Target className="w-4 h-4 text-main" />
                                         <div>
-                                            <div className="text-xs text-foreground font-base">Streak</div>
-                                            <div className="font-heading">{stats.streakCount} days</div>
+                                            <div className="text-xs text-foreground font-base dark:text-black">Streak</div>
+                                            <div className="font-heading dark:text-black">{stats.streakCount} days</div>
                                         </div>
                                     </div>
                                 </Card>
-                                <Card className="p-3">
+                                <Card className="p-3 dark:bg-[var(--main)]">
                                     <div className="flex items-center gap-2">
                                         <CheckCircle className="w-4 h-4 text-main" />
                                         <div>
-                                            <div className="text-xs text-foreground font-base">Mastered</div>
-                                            <div className="font-heading">{stats.masteredCards}</div>
+                                            <div className="text-xs text-foreground font-base dark:text-black">Mastered</div>
+                                            <div className="font-heading dark:text-black">{stats.masteredCards}</div>
                                         </div>
                                     </div>
                                 </Card>
@@ -362,15 +373,15 @@ export default function StudyPage() {
                         </div>
 
                         {/* Card */}
-                        <Card className="min-h-[400px] flex flex-col">
-            <CardHeader className="text-center">
-                <CardTitle className="text-xl">
-                    Choose the correct answer
-                </CardTitle>
-            </CardHeader>
+                        <Card className="min-h-[400px] flex flex-col dark:bg-[var(--main)]">
+                            <CardHeader className="text-center">
+                                <CardTitle className="text-xl dark:text-black">
+                                    Choose the correct answer
+                                </CardTitle>
+                            </CardHeader>
                             <CardContent className="flex-1 flex items-center justify-center">
                                 <div className="text-center w-full">
-                                    <p className="text-lg leading-relaxed mb-6 font-base">
+                                    <p className="text-lg leading-relaxed mb-6 font-base dark:text-black">
                                         {currentCard.question}
                                     </p>
                                     

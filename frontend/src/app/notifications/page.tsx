@@ -90,9 +90,14 @@ export default function NotificationPage() {
             <main className="relative isolate pt-14">
                 {/* Background */}
                 <div className="absolute inset-0 -z-10 bg-background" />
-                <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
-                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]" />
+                <div
+                    className="
+                    absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                    [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                    bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                    bg-[size:48px_48px]
+                    "
+                />
 
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="mx-auto max-w-3xl">
@@ -148,8 +153,8 @@ export default function NotificationPage() {
                         {!loading && !error && invites.length === 0 && (
                             <Card className="border-2 border-border shadow-shadow bg-main">
                                 <CardHeader>
-                                    <CardTitle className="font-semibold">No notifications</CardTitle>
-                                    <CardDescription className="font-medium">
+                                    <CardTitle className="font-semibold dark:text-black">No notifications</CardTitle>
+                                    <CardDescription className="font-medium dark:text-black">
                                         You&apos;re all caught up. We&apos;ll let you know when something arrives.
                                     </CardDescription>
                                 </CardHeader>
@@ -167,15 +172,15 @@ export default function NotificationPage() {
                             <div className="space-y-4">
                                 {invites.map((inv) => (
                                     <Card key={inv.membershipId} className="border-2 border-border shadow-shadow bg-main">
-                                        <CardHeader className="flex flex-row items-start justify-between gap-4">
+                                        <CardHeader className="flex flex-row items-start justify-between gap-4 dark:text-black">
                                             <div className="min-w-0">
-                                                <CardTitle className="font-semibold truncate">
+                                                <CardTitle className="font-semibold truncate dark:text-black">
                                                     {inv.groupName}
                                                 </CardTitle>
-                                                <CardDescription className="font-medium">
-                                                    Invited by <span className="font-semibold">{inv.inviterName}</span>
+                                                <CardDescription className="font-medium dark:text-black">
+                                                    Invited by <span className="font-semibold dark:text-black">{inv.inviterName}</span>
                                                     {inv.sentAt ? (
-                                                        <span className="text-foreground/60">
+                                                        <span className="text-foreground/60 dark:text-black">
                                                             {" "}
                                                             • {new Date(inv.sentAt).toLocaleString()}
                                                         </span>

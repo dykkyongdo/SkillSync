@@ -181,9 +181,14 @@ export default function GroupsPage() {
         <main className="relative isolate pt-14">
             {/* BG */}
             <div className="absolute inset-0 -z-10 bg-background" />
-            <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
-                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]" />
+            <div
+                className="
+                absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                bg-[size:48px_48px]
+                "
+            />
 
             <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
             <div className="mx-auto max-w-6xl">
@@ -198,19 +203,19 @@ export default function GroupsPage() {
                     </Button>
                     </DialogTrigger>
 
-                    <DialogContent className="rounded-base border-2 border-border shadow-shadow">
+                    <DialogContent className="rounded-base border-2 border-border shadow-shadow dark:bg-[var(--main)]">
                     <DialogHeader className="gap-1">
-                        <DialogTitle className="font-medium text-2xl">
+                        <DialogTitle className="font-medium text-2xl dark:text-black">
                         New Group
                         </DialogTitle>
-                        <DialogDescription className="font-medium">
+                        <DialogDescription className="font-medium dark:text-black">
                         Give your group a name and (optionally) a short description.
                         </DialogDescription>
                     </DialogHeader>
 
                     <form onSubmit={handleCreateGroup} className="grid gap-5">
                         <div className="grid gap-2">
-                        <Label className="font-medium">Group name</Label>
+                        <Label className="font-medium dark:text-black">Group name</Label>
                         <Input
                             id="group-name"
                             placeholder="e.g. Python Bootcamp"
@@ -222,7 +227,7 @@ export default function GroupsPage() {
                         </div>
 
                         <div className="grid gap-2">
-                        <Label htmlFor="group-desc" className=" font-medium">
+                        <Label htmlFor="group-desc" className=" font-medium dark:text-black">
                             Description{" "}
                             <span className="text-foreground/50">(optional)</span>
                         </Label>
@@ -269,7 +274,7 @@ export default function GroupsPage() {
                 {error && <p className="text-red-600">Error: {error}</p>}
 
                 {!loading && !error && groups.length === 0 && (
-                <Card className="bg-main dark:bg-white border-2 border-border shadow-shadow">
+                <Card className="bg-main dark:bg-white border-2 border-border shadow-shadow dark:bg-[var(--main)]">
                     <CardHeader>
                     <CardTitle className="font-medium">No groups yet</CardTitle>
                     <CardDescription>

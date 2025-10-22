@@ -165,10 +165,14 @@ export default function SetPage() {
         <RequireAuth>
             <main className="relative isolate pt-14">
                 <div className="absolute inset-0 -z-10 bg-background" />
-                <div className="absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-20
-                        bg-[linear-gradient(to_right,rgba(0,0,0,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(0,0,0,0.08)_1px,transparent_1px)]
-                        bg-[size:48px_48px]" />
-
+                <div
+                    className="
+                    absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                    [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                    bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                    bg-[size:48px_48px]
+                    "
+                />
                 <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
                     <div className="max-w-4xl mx-auto">
                         {/* Breadcrumb Navigation */}
@@ -179,7 +183,7 @@ export default function SetPage() {
                         {/* Header */}
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex-1">
-                                <h1 className="text-3xl font-bold">Flashcards</h1>
+                                <h1 className="text-3xl font-bold ">Flashcards</h1>
                                 <p className="text-muted-foreground">Manage your flashcards</p>
                             </div>
 
@@ -208,19 +212,19 @@ export default function SetPage() {
                                         </Button>
                                     </AlertDialogTrigger>
 
-                                <AlertDialogContent className="rounded-base border-2 border-border shadow-shadow">
+                                <AlertDialogContent className="rounded-base border-2 border-border shadow-shadow dark:bg-[var(--main)]">
                                     <AlertDialogHeader className="gap-1">
-                                        <AlertDialogTitle className="font-medium text-2xl">
+                                        <AlertDialogTitle className="font-medium text-2xl dark:text-black">
                                             New Flashcard
                                         </AlertDialogTitle>
-                                        <AlertDialogDescription className="font-medium">
+                                        <AlertDialogDescription className="font-medium dark:text-black">
                                             Add a question and answer to create a new flashcard.
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
 
                                     <div className="grid gap-5">
                                         <div className="grid gap-2">
-                                            <Label className="font-medium">Question</Label>
+                                            <Label className="font-medium dark:text-black">Question</Label>
                                             <Input
                                                 id="question"
                                                 placeholder="e.g. What is the capital of France?"
@@ -232,7 +236,7 @@ export default function SetPage() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label className="font-medium">Answer</Label>
+                                            <Label className="font-medium dark:text-black">Answer</Label>
                                             <Input
                                                 id="answer"
                                                 placeholder="e.g. Paris"
@@ -243,7 +247,7 @@ export default function SetPage() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label className="font-medium">Explanation (Optional)</Label>
+                                            <Label className="font-medium dark:text-black">Explanation (Optional)</Label>
                                             <Textarea
                                                 id="explanation"
                                                 placeholder="Additional details or context..."
@@ -254,7 +258,7 @@ export default function SetPage() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label className="font-medium">Difficulty</Label>
+                                            <Label className="font-medium dark:text-black">Difficulty</Label>
                                             <Select value={difficulty} onValueChange={setDifficulty}>
                                                 <SelectTrigger className="border-2 border-border bg-secondary-background">
                                                     <SelectValue placeholder="Select difficulty" />
@@ -270,7 +274,7 @@ export default function SetPage() {
                                         </div>
 
                                         <div className="grid gap-2">
-                                            <Label className="font-medium">Tags (Optional)</Label>
+                                            <Label className="font-medium dark:text-black">Tags (Optional)</Label>
                                             <Input
                                                 id="tags"
                                                 placeholder="e.g. geography, capitals, europe (comma-separated)"
@@ -358,14 +362,14 @@ export default function SetPage() {
                                                             cardRefs.current.delete(card.id);
                                                         }
                                                     }}
-                                                    className={`text-lg ${expandedCards.has(card.id) ? '' : 'line-clamp-2'}`}
+                                                    className={`text-lg ${expandedCards.has(card.id) ? '' : 'line-clamp-2'} dark:text-black`}
                                                 >
                                                     {card.question}
                                                 </CardTitle>
                                                 {(truncatedCards.has(card.id) || expandedCards.has(card.id)) && (
                                                     <button
                                                         onClick={() => toggleCardExpansion(card.id)}
-                                                        className="mt-1 text-xs text-muted-foreground hover:text-main transition-colors"
+                                                        className="mt-1 text-xs text-muted-foreground hover:text-main transition-colors dark:text-black"
                                                     >
                                                         {expandedCards.has(card.id) ? 'Show less' : 'Show more'}
                                                     </button>
@@ -382,10 +386,10 @@ export default function SetPage() {
                                                         <Trash2 className="w-4 h-4" />
                                                     </Button>
                                                 </AlertDialogTrigger>
-                                                <AlertDialogContent>
+                                                <AlertDialogContent className="dark:bg-[var(--main)]">
                                                     <AlertDialogHeader>
-                                                        <AlertDialogTitle>Delete this flashcard?</AlertDialogTitle>
-                                                        <AlertDialogDescription>
+                                                        <AlertDialogTitle className="dark:text-black">Delete this flashcard?</AlertDialogTitle>
+                                                        <AlertDialogDescription className="dark:text-black">
                                                             This will permanently delete the flashcard. This action cannot be undone.
                                                         </AlertDialogDescription>
                                                     </AlertDialogHeader>
@@ -406,11 +410,11 @@ export default function SetPage() {
                                         </div>
                                     </CardHeader>
                                     <CardContent>
-                                        <CardDescription className="line-clamp-3">
+                                        <CardDescription className="line-clamp-3 dark:text-black">
                                             <strong>Answer:</strong> {card.answer}
                                         </CardDescription>
                                         {card.explanation && (
-                                            <div className="mt-2 text-sm text-muted-foreground">
+                                            <div className="mt-2 text-sm text-muted-foreground dark:text-black">
                                                 <strong>Explanation:</strong> {card.explanation}
                                             </div>
                                         )}

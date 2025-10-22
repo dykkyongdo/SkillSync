@@ -387,11 +387,12 @@ export default function GroupManagementPage() {
         {/* Background */}
         <div className="absolute inset-0 -z-10 bg-background" />
         <div
-          className="
-            absolute inset-0 -z-10 pointer-events-none
-            bg-[linear-gradient(to_right,var(--grid-line)_2px,transparent_2px),linear-gradient(to_bottom,var(--grid-line)_2px,transparent_2px)]
-            [background-size:var(--grid-size)_var(--grid-size)]
-          "
+                    className="
+                    absolute inset-0 -z-10 pointer-events-none opacity-70 dark:opacity-50
+                    [--grid:rgba(0,0,0,0.08)] dark:[--grid:rgba(255,255,255,0.12)]
+                    bg-[linear-gradient(to_right,var(--grid)_1px,transparent_1px),linear-gradient(to_bottom,var(--grid)_1px,transparent_1px)]
+                    bg-[size:48px_48px]
+                    "
         />
 
         <section className="min-h-[calc(100vh-3.5rem)] px-4 py-8 relative z-0">
@@ -402,7 +403,7 @@ export default function GroupManagementPage() {
                 <Button
                   asChild
                   variant="neutral"
-                  className="border-2 border-border shadow-shadow"
+                  className="border-2 border-border shadow-shadow dark:bg-[var(--main)] dark:text-black dark:[&_*]:text-black dark:hover:text-black dark:focus:text-black"
                 >
                   <Link href={`/groups/${groupId}`}>
                     <ArrowLeft className="w-4 h-4 mr-2" />
@@ -462,7 +463,7 @@ export default function GroupManagementPage() {
                     <Users className="w-5 h-5" />
                     <CardTitle className="font-semibold">{group.name}</CardTitle>
                   </div>
-                  <span className="inline-flex items-center rounded-base border-2 border-border bg-background px-2 py-1 text-xs font-semibold shadow-shadow">
+                  <span className="inline-flex items-center rounded-base border-2 border-border bg-background px-2 py-1 text-xs font-semibold">
                     Your role:&nbsp;
                     <span className="uppercase">{myRole ?? "UNKNOWN"}</span>
                   </span>
@@ -613,17 +614,17 @@ export default function GroupManagementPage() {
 
       {/* Invite dialog */}
       <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
-        <DialogContent className="rounded-base border-2 border-border shadow-shadow">
+        <DialogContent className="rounded-base border-2 border-border shadow-shadow dark:bg-[var(--main)]">
           <DialogHeader>
-            <DialogTitle className="font-semibold">Invite member</DialogTitle>
-            <DialogDescription className="font-medium">
+            <DialogTitle className="font-semibold dark:text-black">Invite member</DialogTitle>
+            <DialogDescription className="font-medium dark:text-black">
               Send an invitation to join this group.
             </DialogDescription>
           </DialogHeader>
 
           <form onSubmit={onInvite} className="grid gap-4">
             <div className="grid gap-2">
-              <Label htmlFor="invite-email" className="font-medium">
+              <Label htmlFor="invite-email" className="font-medium dark:text-black">
                 Email
               </Label>
               <Input

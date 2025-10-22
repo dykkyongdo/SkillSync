@@ -95,7 +95,7 @@ export function AIFlashcardGenerator({
   };
 
   return (
-    <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[12px] border-2 border-border shadow-shadow bg-background">
+    <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[12px] border-2 border-border shadow-shadow bg-background dark:bg-[var(--main)]">
         <DialogHeader className="gap-1">
           <DialogTitle className="font-heading text-2xl font-semibold">
             Edit with AI
@@ -111,13 +111,13 @@ export function AIFlashcardGenerator({
             <Label htmlFor="topic" className="font-medium">
               Topic
             </Label>
-            <div className="relative">
+            <div className="relative [&>input::placeholder]:opacity-40 dark:[&>input::placeholder]:opacity-50">
               <Input
                 id="topic"
                 placeholder="e.g., React Hooks, WW2, Python Basics"
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
-                className="border-2 border-border shadow-shadow bg-secondary-background"
+                className="border-2 border-border bg-secondary-background"
               />
 
               {suggestions && showSuggestions && (
@@ -195,10 +195,10 @@ export function AIFlashcardGenerator({
                 value={String(count)}
                 onValueChange={(v) => setCount(parseInt(v))}
               >
-                <SelectTrigger className="border-2 border-border shadow-shadow bg-secondary-background">
+                <SelectTrigger className="border-2 border-border bg-secondary-background">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-base border-2 border-border shadow-shadow bg-secondary-background">
+                <SelectContent className="rounded-base border-2 border-border  bg-secondary-background">
                   {[3, 5, 8, 10, 15, 20].map((n) => (
                     <SelectItem key={n} value={String(n)}>
                       {n}
@@ -213,10 +213,10 @@ export function AIFlashcardGenerator({
                 Difficulty
               </Label>
               <Select value={difficulty} onValueChange={setDifficulty}>
-                <SelectTrigger className="border-2 border-border shadow-shadow bg-secondary-background">
+                <SelectTrigger className="border-2 border-border bg-secondary-background">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="rounded-base border-2 border-border shadow-shadow bg-secondary-background">
+                <SelectContent className="rounded-base border-2 border-border  bg-secondary-background">
                   {difficulties.map((d) => (
                     <SelectItem key={d} value={d}>
                       {d}
