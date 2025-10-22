@@ -25,6 +25,7 @@ function LoginForm() {
     const [password, setPassword] = React.useState("");
     const [loading, setLoading] = React.useState(false);
     const [error, setError] = React.useState<string | null>(null);
+    const [testCredentials, setTestCredentials] = React.useState<{email: string, password: string} | null>(null);
     const search = useSearchParams();
     const next = search.get("next") || "/groups";
 
@@ -58,7 +59,29 @@ function LoginForm() {
         } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Something went wrong");
         } finally {
-        setLoading(false);
+            setLoading(false);
+        }
+    }
+
+    async function createTestAccount() {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await api<{ token: string; email: string; password: string }>("/api/auth/test-account", {
+                method: "POST",
+            });
+            
+            setTestCredentials({ email: data.email, password: data.password });
+            login(data.token);
+            
+            setTimeout(() => {
+                router.push(next);
+                router.refresh();
+            }, 100);
+        } catch (err: unknown) {
+            setError(err instanceof Error ? err.message : "Failed to create test account");
+        } finally {
+            setLoading(false);
         }
     }
 
@@ -135,6 +158,30 @@ function LoginForm() {
                 >
                     Login with Google
                 </Button>
+
+                <Button
+                    type="button"
+                    variant="outline"
+                    className="w-full h-11 font-medium"
+                    onClick={createTestAccount}
+                    disabled={loading}
+                >
+                    {loading ? "Creating..." : "Try Demo Account"}
+                </Button>
+
+                {testCredentials && (
+                    <div className="mt-2 p-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-md">
+                        <p className="text-sm text-green-800 dark:text-green-200 font-medium">
+                            Demo account created!
+                        </p>
+                        <p className="text-xs text-green-600 dark:text-green-300 mt-1">
+                            Email: {testCredentials.email}
+                        </p>
+                        <p className="text-xs text-green-600 dark:text-green-300">
+                            Password: {testCredentials.password}
+                        </p>
+                    </div>
+                )}
 
                 <div className="mt-4 text-center text-sm font-medium">
                     Don&apos;t have an account?{" "}

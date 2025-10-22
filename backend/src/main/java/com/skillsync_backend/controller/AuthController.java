@@ -27,4 +27,10 @@ public class AuthController {
         AuthResponse response = userService.authenticate(request);
         return ResponseEntity.ok(response);
     }
+
+    @PostMapping("/test-account")
+    public ResponseEntity<AuthResponse> createTestAccount(){
+        AuthResponse response = userService.createTestAccount();
+        return ResponseEntity.ok(response);
+    }
 }

@@ -55,6 +55,33 @@ public class UserService implements UserDetailsService {
         return new AuthResponse(token);
     }
 
+    @Transactional
+    public AuthResponse createTestAccount() {
+        // Generate a unique test email
+        String testEmail = "test" + System.currentTimeMillis() + "@skillsync.demo";
+        String testPassword = "Test123!";
+        
+        // Check if this test email already exists (very unlikely due to timestamp)
+        if (userRepository.findByEmail(testEmail).isPresent()) {
+            // If it exists, generate a new one
+            testEmail = "test" + System.currentTimeMillis() + "@skillsync.demo";
+        }
+
+        User user = User.builder()
+                .email(testEmail)
+                .password(passwordEncoder.encode(testPassword))
+                .role(Role.USER)
+                .xp(0)
+                .level(1)
+                .streakCount(0)
+                .build();
+
+        userRepository.save(user);
+        String token = jwtProvider.generateToken(user);
+
+        return new AuthResponse(token, testEmail, testPassword);
+    }
+
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         return userRepository.findByEmail(email)
