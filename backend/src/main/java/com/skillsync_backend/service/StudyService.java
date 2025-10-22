@@ -589,6 +589,22 @@ public class StudyService {
             xpForNextLevel = (currentLevel + 1) * 500;
         }
     }
+    
+    private void correctUserLevel(User user) {
+        // Force-correct user's level based on their XP
+        // Level 1: 0-499 XP
+        // Level 2: 500-999 XP
+        // Level 3: 1000-1499 XP
+        int correctLevel = (user.getXp() / 500) + 1;
+        if (user.getXp() == 0) correctLevel = 1; // Special case for 0 XP
+        
+        System.out.println("DEBUG - Correcting level: XP=" + user.getXp() + ", Current Level=" + user.getLevel() + ", Correct Level=" + correctLevel);
+        
+        if (user.getLevel() != correctLevel) {
+            user.setLevel(correctLevel);
+            System.out.println("DEBUG - Level corrected from " + (correctLevel - 1) + " to " + correctLevel);
+        }
+    }
 
     /**
      * Debug method to get information about a set and user's progress
@@ -669,13 +685,16 @@ public class StudyService {
             stats.put("lastStudyDate", user.getLastStudyDate());
             
             // Ensure user's level is correct based on their XP
-            maybeLevelUp(user);
+            correctUserLevel(user);
             // Save the user to persist level changes
             userRepo.save(user);
             
+            // Debug logging
+            System.out.println("DEBUG - User XP: " + user.getXp() + ", Level: " + user.getLevel());
+            
             // Calculate level progress
-            // Level 1 needs 500 XP to reach Level 2
-            // Level 2 needs 1000 XP to reach Level 3
+            // Level 1: 0-499 XP (needs 500 XP to reach Level 2)
+            // Level 2: 500-999 XP (needs 1000 XP to reach Level 3)
             int currentLevel = user.getLevel();
             int currentLevelXp = currentLevel * 500;  // XP threshold for current level
             int nextLevelXp = (currentLevel + 1) * 500;  // XP threshold for next level
@@ -683,6 +702,11 @@ public class StudyService {
             int xpNeededForNextLevel = Math.max(0, nextLevelXp - user.getXp());
             int progressPercentage = nextLevelXp > currentLevelXp ? 
                 (int) ((double) progressInLevel / (nextLevelXp - currentLevelXp) * 100) : 100;
+            
+            // Debug logging
+            System.out.println("DEBUG - Current Level: " + currentLevel + ", Current Level XP: " + currentLevelXp + 
+                             ", Next Level XP: " + nextLevelXp + ", Progress in Level: " + progressInLevel + 
+                             ", XP Needed: " + xpNeededForNextLevel);
             
             stats.put("progressInLevel", progressInLevel);
             stats.put("xpNeededForNextLevel", xpNeededForNextLevel);
