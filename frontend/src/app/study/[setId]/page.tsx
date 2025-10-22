@@ -112,15 +112,6 @@ export default function StudyPage() {
         loadCards();
     };
 
-    const debugInfo = async () => {
-        try {
-            await api(`/api/sets/${setId}/study/debug`);
-            alert("Debug info logged to console. Check browser console for details.");
-        } catch (err: unknown) {
-            alert("Failed to get debug info: " + (err instanceof Error ? err.message : 'Unknown error'));
-        }
-    };
-
     if (loading) {
         return (
             <RequireAuth>
@@ -268,14 +259,6 @@ export default function StudyPage() {
                                 {currentCardIndex + 1} of {cards.length} cards
                             </div>
                             <div className="flex items-center gap-4">
-                                <Button 
-                                    onClick={debugInfo}
-                                    variant="neutral"
-                                    size="sm"
-                                    className="text-xs"
-                                >
-                                    Debug Info
-                                </Button>
                                 <div className="text-xs text-foreground font-base">
                                     Set ID: {setId}
                                 </div>
@@ -406,10 +389,6 @@ export default function StudyPage() {
                                         }`} style={{
                                             backgroundColor: lastResponse.isCorrect ? '#05e17a' : '#ff4d4f'
                                         }}>
-                                            {/* Debug info */}
-                                            <div className="text-xs text-gray-500 mb-2">
-                                                Debug: isCorrect = {String(lastResponse.isCorrect)}
-                                            </div>
                                             <p className="font-heading text-lg mb-2">{lastResponse.feedback}</p>
                                             {!lastResponse.isCorrect && (
                                                 <p className="text-sm font-base">
