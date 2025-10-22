@@ -51,11 +51,13 @@ export default function NotificationPage() {
 
     async function acceptInvite(groupId: string, membershipId: string) {
         try {
+            console.log("Accepting invitation:", membershipId);
             // Accept via new notification API
             await api<void>(`/api/notifications/invitations/${membershipId}/accept`, { method: "POST" });
             // Remove from local list 
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
             // Refresh invitation count
+            console.log("Calling refreshInvitationCount after accept");
             refreshInvitationCount();
         } catch (e: unknown) {
             alert(e instanceof Error ? e.message : "Failed to accept invitation");
@@ -64,11 +66,13 @@ export default function NotificationPage() {
 
     async function declineInvite(membershipId: string) {
         try {
+            console.log("Declining invitation:", membershipId);
             // Reject via new notification API
             await api<void>(`/api/notifications/invitations/${membershipId}/reject`, { method: "POST" });
             // Remove from local list
             setInvites((prev) => prev.filter((i) => i.membershipId !== membershipId));
             // Refresh invitation count
+            console.log("Calling refreshInvitationCount after decline");
             refreshInvitationCount();
         } catch (e: unknown) {
             alert(e instanceof Error ? e.message : "Failed to reject invitation");

@@ -10,7 +10,9 @@ export function useInvitationCount() {
     const { isAuthenticated } = useAuth();
     
     const loadCount = useCallback(async () => {
+        console.log("loadCount called, isAuthenticated:", isAuthenticated);
         if (!isAuthenticated) {
+            console.log("Not authenticated, setting count to 0");
             setCount(0);
             return;
         }
@@ -19,6 +21,7 @@ export function useInvitationCount() {
         try {
             const response = await api<{ count: number }>("/api/notifications/invitations/count", { method: "GET" });
             console.log("Invitation count response:", response);
+            console.log("Setting count to:", response.count);
             setCount(response.count);
         } catch (e: unknown) {
             console.error("Failed to load invitation count:", e);
