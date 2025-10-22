@@ -258,11 +258,6 @@ export default function StudyPage() {
                             <div className="text-sm text-foreground font-base ">
                                 {currentCardIndex + 1} of {cards.length} cards
                             </div>
-                            <div className="flex items-center gap-4">
-                                <div className="text-xs text-foreground font-base">
-                                    Set ID: {setId}
-                                </div>
-                            </div>
                         </div>
 
                         {/* User Stats */}
