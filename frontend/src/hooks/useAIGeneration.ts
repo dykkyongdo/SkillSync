@@ -31,7 +31,7 @@ export function useAIGeneration() {
         setError(null);
 
         try {
-            console.log("Generating flashcards with AI for topic:", request.topic);
+            // Debug logging removed for production("Generating flashcards with AI for topic:", request.topic);
             
             const response = await api<Flashcard[]>(`/api/ai/flashcards/generate`, {
                 method: "POST",
@@ -41,7 +41,7 @@ export function useAIGeneration() {
                 }),
             });
 
-            console.log("Generated flashcards:", response);
+            // Debug logging removed for production("Generated flashcards:", response);
             return response;
 
         } catch (err) {
@@ -62,7 +62,7 @@ export function useAIGeneration() {
         setError(null);
 
         try {
-            console.log("Generating advanced flashcards with AI for topic:", request.topic);
+            // Debug logging removed for production("Generating advanced flashcards with AI for topic:", request.topic);
             
             const response = await api<Flashcard[]>(`/api/ai/flashcards/generate/advanced`, {
                 method: "POST",
@@ -72,7 +72,7 @@ export function useAIGeneration() {
                 }),
             });
 
-            console.log("Generated advanced flashcards:", response);
+            // Debug logging removed for production("Generated advanced flashcards:", response);
             return response;
 
         } catch (err) {
@@ -89,11 +89,11 @@ export function useAIGeneration() {
         setError(null);
 
         try {
-            console.log("Getting AI suggestions for topic:", topic);
+            // Debug logging removed for production("Getting AI suggestions for topic:", topic);
             
             const response = await api<AIGenerationResponse>(`/api/ai/flashcards/suggestions/${encodeURIComponent(topic)}`);
             
-            console.log("AI suggestions:", response);
+            // Debug logging removed for production("AI suggestions:", response);
             return response;
 
         } catch (err) {

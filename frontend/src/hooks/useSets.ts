@@ -10,7 +10,7 @@ export function useSets(groupId: string) {
     const load = useCallback(async () => {
         // Don't make API calls if groupId is empty or undefined
         if (!groupId || groupId === "undefined") {
-            console.log("useSets: Skipping load due to invalid groupId:", groupId);
+            // Debug logging removed for production
             setItems([]);
             setError(null);
             return;
@@ -18,7 +18,7 @@ export function useSets(groupId: string) {
         
         setError(null); 
         try {
-            console.log("useSets: Loading sets for groupId:", groupId);
+            // Debug logging removed for production
             const page = await api<Page<FlashcardSet>>(`/api/flashcard-sets/group/${groupId}?page=0&size=20`);
             setItems(page.content);
         } catch (e: unknown) { setError(e instanceof Error ? e.message : "An error occurred"); }

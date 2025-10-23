@@ -35,7 +35,7 @@ public class JwtTokenProvider {
         }
         this.key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
         log.info("JWT Token Provider initialized with secret length: {}", secret.length());
-        log.debug("JWT expiration: {} ms", expiration);
+        // Debug logging removed for production("JWT expiration: {} ms", expiration);
     }
 
     public String generateToken(User user) {                //Generates a signed JWT with email and role
@@ -53,7 +53,7 @@ public class JwtTokenProvider {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         }  catch (JwtException | IllegalArgumentException e) {
-            log.debug("JWT validation failed: {} - {}", e.getClass().getSimpleName(), e.getMessage());
+            // Debug logging removed for production("JWT validation failed: {} - {}", e.getClass().getSimpleName(), e.getMessage());
             return false;
         }
     }

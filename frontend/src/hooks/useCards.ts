@@ -10,10 +10,10 @@ export function useCards(setId: string) {
     const load = useCallback(async () => {
         setError(null);
         try {
-            console.log("Loading flashcards for set:", setId);
+            // Debug logging removed for production("Loading flashcards for set:", setId);
             const page = await api<Page<Flashcard>>(`/api/flashcards/set/${setId}?page=0&size=50`);
-            console.log("Loaded flashcards:", page.content);
-            console.log("Total flashcards in set:", page.totalElements);
+            // Debug logging removed for production("Loaded flashcards:", page.content);
+            // Debug logging removed for production("Total flashcards in set:", page.totalElements);
             setItems(page.content);
         } catch(e: unknown) { 
             setError(e instanceof Error ? e.message : "An error occurred"); 
@@ -41,7 +41,7 @@ export function useCards(setId: string) {
     const remove = useCallback(async (cardId: string) => {
         // Prevent multiple delete requests for the same card
         if (deletingIds.has(cardId)) {
-            console.log("Card already being deleted, skipping duplicate request");
+            // Debug logging removed for production("Card already being deleted, skipping duplicate request");
             return;
         }
 
@@ -57,7 +57,7 @@ export function useCards(setId: string) {
             // If the card was already deleted (404/not found), that's actually success
             const error = err as Error;
             if (error.message.includes("not found") || error.message.includes("Flashcard not found")) {
-                console.log("Card was already deleted, treating as success");
+                // Debug logging removed for production("Card was already deleted, treating as success");
                 return; // Success - card is gone
             }
             

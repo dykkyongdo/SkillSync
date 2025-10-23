@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://skillsync-database.c8fui4oca2gt.us-east-1.rds.amazonaws.com:5432/postgres
     username: postgres
-    password: aOmELuxe7YyGnpQ5hRcR
+    password: ${DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
@@ -19,7 +19,7 @@ spring:
 # JWT Configuration
 jwt:
   secret: ${JWT_SECRET:your-super-secret-jwt-key-change-this-in-production}
-  expiration: ${JWT_EXPIRATION:604800000} # 7 days in milliseconds
+  expiration: ${JWT_EXPIRATION:3600000} # 1 hour in milliseconds
 
 # Server Configuration
 server:

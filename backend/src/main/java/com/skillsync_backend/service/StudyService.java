@@ -68,15 +68,11 @@ public class StudyService {
         var dueProgress = progressRepo
                 .findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(user.getId(), setId, now);
 
-        System.out.println("=== STUDY DEBUG START ===");
-        System.out.println("User: " + email + " (ID: " + user.getId() + ")");
-        System.out.println("Set ID: " + setId);
-        System.out.println("Limit: " + limit);
-        System.out.println("Found " + dueProgress.size() + " existing due progress records");
+        // Debug logging removed for production
 
         // Always ensure we have progress records for all cards in the set
         var allCards = cardRepo.findBySetId(setId, PageRequest.of(0, 100));
-        System.out.println("Total cards in set: " + allCards.getTotalElements());
+        // Debug logging removed for production("Total cards in set: " + allCards.getTotalElements());
         
         // Create progress records for any missing cards
         for (var card : allCards.getContent()) {
@@ -93,12 +89,12 @@ public class StudyService {
                             .mastered(false)
                             .nextDueAt(now.minusSeconds(1)) // due immediately
                             .build());
-                    System.out.println("Created progress for card " + card.getId());
+                    // Debug logging removed for production("Created progress for card " + card.getId());
                 } catch (Exception e) {
                     System.err.println("Failed to create progress for card " + card.getId() + ": " + e.getMessage());
                     // If it's a unique constraint violation, the progress already exists
                     if (e.getMessage().contains("Unique index or primary key violation")) {
-                        System.out.println("Progress already exists for card " + card.getId() + " (constraint violation)");
+                        // Debug logging removed for production("Progress already exists for card " + card.getId() + " (constraint violation)");
                     }
                 }
             }
@@ -108,15 +104,15 @@ public class StudyService {
         // Re-fetch due progress after ensuring all cards have progress records
         dueProgress = progressRepo
                 .findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(user.getId(), setId, now);
-        System.out.println("After ensuring progress records, found " + dueProgress.size() + " due cards");
+        // Debug logging removed for production("After ensuring progress records, found " + dueProgress.size() + " due cards");
         
         // Debug: Check all progress records for this set
         var allUserProgress = progressRepo.findByUser_IdAndFlashcard_Set_Id(user.getId(), setId);
-        System.out.println("User has " + allUserProgress.size() + " total progress records for this set");
+        // Debug logging removed for production("User has " + allUserProgress.size() + " total progress records for this set");
         
         // Debug: Check next due dates
         for (var progress : allUserProgress) {
-            System.out.println("Card " + progress.getFlashcard().getId() + " next due: " + progress.getNextDueAt() + " (now: " + now + ")");
+            // Debug logging removed for production("Card " + progress.getFlashcard().getId() + " next due: " + progress.getNextDueAt() + " (now: " + now + ")");
         }
         
         // If we have very few due cards, expand the search to include cards due soon
@@ -125,12 +121,12 @@ public class StudyService {
             var soonDueProgress = progressRepo
                     .findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(user.getId(), setId, soonDue);
             
-            System.out.println("Expanded search found " + soonDueProgress.size() + " cards due within 1 hour");
+            // Debug logging removed for production("Expanded search found " + soonDueProgress.size() + " cards due within 1 hour");
             
             // Use the expanded list if it has more cards
             if (soonDueProgress.size() > dueProgress.size()) {
                 dueProgress = soonDueProgress;
-                System.out.println("Using expanded due cards list");
+                // Debug logging removed for production("Using expanded due cards list");
             }
         }
         
@@ -140,13 +136,13 @@ public class StudyService {
             var seedPage = cardRepo.findBySetId(setId, PageRequest.of(0, size));
             var seedCards = seedPage.getContent();
 
-            System.out.println("Found " + seedCards.size() + " cards in set " + setId + " for user " + user.getId());
-            System.out.println("Total cards in set: " + seedPage.getTotalElements());
+            // Debug logging removed for production("Found " + seedCards.size() + " cards in set " + setId + " for user " + user.getId());
+            // Debug logging removed for production("Total cards in set: " + seedPage.getTotalElements());
             
             // Log each card for debugging
             for (int i = 0; i < seedCards.size(); i++) {
                 var card = seedCards.get(i);
-                System.out.println("Card " + (i + 1) + ": " + card.getId() + " - " + card.getQuestion().substring(0, Math.min(50, card.getQuestion().length())) + "...");
+                // Debug logging removed for production("Card " + (i + 1) + ": " + card.getId() + " - " + card.getQuestion().substring(0, Math.min(50, card.getQuestion().length())) + "...");
             }
 
             int createdCount = 0;
@@ -165,35 +161,35 @@ public class StudyService {
                                 .mastered(false)
                                 .nextDueAt(now.minusSeconds(1)) // due immediately
                                 .build());
-                        System.out.println("Created progress for card " + fc.getId() + " with nextDueAt " + newProgress.getNextDueAt());
+                        // Debug logging removed for production("Created progress for card " + fc.getId() + " with nextDueAt " + newProgress.getNextDueAt());
                         createdCount++;
                     } catch (Exception e) {
                         System.err.println("Failed to create progress for card " + fc.getId() + ": " + e.getMessage());
                         // If it's a unique constraint violation, the progress already exists
                         if (e.getMessage().contains("Unique index or primary key violation")) {
-                            System.out.println("Progress already exists for card " + fc.getId() + " (constraint violation)");
+                            // Debug logging removed for production("Progress already exists for card " + fc.getId() + " (constraint violation)");
                             existingCount++;
                         } else {
                             e.printStackTrace();
                         }
                     }
                 } else {
-                    System.out.println("Progress already exists for card " + fc.getId());
+                    // Debug logging removed for production("Progress already exists for card " + fc.getId());
                     existingCount++;
                 }
             }
-            System.out.println("Seeding complete: " + createdCount + " created, " + existingCount + " already existed");
+            // Debug logging removed for production("Seeding complete: " + createdCount + " created, " + existingCount + " already existed");
             progressRepo.flush();
 
             // re-fetch after seeding
             dueProgress = progressRepo
                     .findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(user.getId(), setId, now);
             
-            System.out.println("After seeding, found " + dueProgress.size() + " due cards");
+            // Debug logging removed for production("After seeding, found " + dueProgress.size() + " due cards");
             
             // If we still don't have enough due cards, force create them
             if (dueProgress.size() < Math.min(seedCards.size(), limit)) {
-                System.out.println("Not enough due cards after seeding, force creating progress for all cards...");
+                // Debug logging removed for production("Not enough due cards after seeding, force creating progress for all cards...");
                 for (Flashcard fc : seedCards) {
                     try {
                         // Delete existing progress if any and flush immediately
@@ -214,7 +210,7 @@ public class StudyService {
                                 .mastered(false)
                                 .nextDueAt(now.minusSeconds(1))
                                 .build());
-                        System.out.println("Force created progress for card " + fc.getId());
+                        // Debug logging removed for production("Force created progress for card " + fc.getId());
                     } catch (Exception e) {
                         System.err.println("Failed to force create progress for card " + fc.getId() + ": " + e.getMessage());
                     }
@@ -224,16 +220,16 @@ public class StudyService {
                 // Re-fetch one more time
                 dueProgress = progressRepo
                         .findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(user.getId(), setId, now);
-                System.out.println("After force seeding, found " + dueProgress.size() + " due cards");
+                // Debug logging removed for production("After force seeding, found " + dueProgress.size() + " due cards");
             }
         } else {
             // Check if there are any progress records at all for this user and set
             var existingProgress = progressRepo.findByUser_IdAndFlashcard_Set_Id(user.getId(), setId);
-            System.out.println("User has " + existingProgress.size() + " total progress records for this set");
+            // Debug logging removed for production("User has " + existingProgress.size() + " total progress records for this set");
             
             // If we have progress records but none are due, let's make some due
             if (existingProgress.size() > 0 && dueProgress.isEmpty()) {
-                System.out.println("Making some cards due for immediate study...");
+                // Debug logging removed for production("Making some cards due for immediate study...");
                 var cardsToMakeDue = existingProgress.stream()
                         .limit(limit)
                         .toList();
@@ -241,13 +237,13 @@ public class StudyService {
                 for (var progress : cardsToMakeDue) {
                     progress.setNextDueAt(now.minusSeconds(1));
                     progressRepo.save(progress);
-                    System.out.println("Made card " + progress.getFlashcard().getId() + " due for immediate study");
+                    // Debug logging removed for production("Made card " + progress.getFlashcard().getId() + " due for immediate study");
                 }
                 
                 // Re-fetch due progress
                 dueProgress = progressRepo
                         .findByUser_IdAndFlashcard_Set_IdAndNextDueAtLessThanEqualOrderByNextDueAtAsc(user.getId(), setId, now);
-                System.out.println("After making cards due, found " + dueProgress.size() + " due cards");
+                // Debug logging removed for production("After making cards due, found " + dueProgress.size() + " due cards");
             }
         }
 
@@ -325,8 +321,8 @@ public class StudyService {
                 })
                 .toList();
         
-        System.out.println("Returning " + result.size() + " due cards (limit: " + limit + ")");
-        System.out.println("=== STUDY DEBUG END ===");
+        // Debug logging removed for production("Returning " + result.size() + " due cards (limit: " + limit + ")");
+        // Debug logging removed for production
         return result;
     }
 
@@ -598,11 +594,11 @@ public class StudyService {
         int correctLevel = (user.getXp() / 500) + 1;
         if (user.getXp() == 0) correctLevel = 1; // Special case for 0 XP
         
-        System.out.println("DEBUG - Correcting level: XP=" + user.getXp() + ", Current Level=" + user.getLevel() + ", Correct Level=" + correctLevel);
+        // Debug logging removed for production
         
         if (user.getLevel() != correctLevel) {
             user.setLevel(correctLevel);
-            System.out.println("DEBUG - Level corrected from " + (correctLevel - 1) + " to " + correctLevel);
+            // Debug logging removed for production("DEBUG - Level corrected from " + (correctLevel - 1) + " to " + correctLevel);
         }
     }
 
@@ -690,7 +686,7 @@ public class StudyService {
             userRepo.save(user);
             
             // Debug logging
-            System.out.println("DEBUG - User XP: " + user.getXp() + ", Level: " + user.getLevel());
+            // Debug logging removed for production("DEBUG - User XP: " + user.getXp() + ", Level: " + user.getLevel());
             
             // Calculate level progress
             // Level 1: 0-499 XP (needs 500 XP to reach Level 2)
@@ -704,7 +700,7 @@ public class StudyService {
                 (int) ((double) progressInLevel / (nextLevelXp - currentLevelXp) * 100) : 100;
             
             // Debug logging
-            System.out.println("DEBUG - Current Level: " + currentLevel + ", Current Level XP: " + currentLevelXp + 
+            // Debug logging removed for production("DEBUG - Current Level: " + currentLevel + ", Current Level XP: " + currentLevelXp + 
                              ", Next Level XP: " + nextLevelXp + ", Progress in Level: " + progressInLevel + 
                              ", XP Needed: " + xpNeededForNextLevel);
             

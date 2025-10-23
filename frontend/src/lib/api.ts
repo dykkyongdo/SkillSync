@@ -11,10 +11,7 @@ export const API_BASE = shouldUseProxy
 
 // Debug logging
 if (typeof window !== "undefined") {
-    console.log("API_BASE:", API_BASE);
-    console.log("NEXT_PUBLIC_API_BASE:", process.env.NEXT_PUBLIC_API_BASE);
-    console.log("isProduction:", isProduction);
-    console.log("isVercel:", isVercel);
+    // Debug logging removed for production
 }
 
 function toUrl(path: string) {
@@ -29,7 +26,7 @@ function toUrl(path: string) {
     // Otherwise, prepend API_BASE with /
     const url = `${API_BASE}/${path}`;
     if (typeof window !== "undefined") {
-        console.log("toUrl:", path, "->", url);
+        // Debug logging removed for production
     }
     return url;
 }

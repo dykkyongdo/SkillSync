@@ -154,7 +154,7 @@ function LoginForm() {
                     type="button"
                     variant="neutral"
                     className="w-full h-11 font-medium"
-                    onClick={() => alert("Google login TODO")}
+                    onClick={() => {/* Google login not implemented */}}
                 >
                     Login with Google
                 </Button>

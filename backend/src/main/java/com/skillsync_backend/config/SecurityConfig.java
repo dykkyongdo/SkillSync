@@ -31,7 +31,7 @@ public class SecurityConfig {
     @PostConstruct
     public void init() {
         log.info("SecurityConfig initialized");
-        log.debug("JwtAuthFilter injected: {}", jwtAuthFilter != null);
+        // Debug logging removed for production
     }
 
     @Bean
@@ -48,19 +48,29 @@ public class SecurityConfig {
                 // Headers configuration
                 .headers(headers -> headers
                         .frameOptions(frameOptions -> frameOptions
-                                .sameOrigin()  // Allow frames from same origin (for H2 console)
+                                .deny()  // Deny frames for security
+                        )
+                        .contentTypeOptions(contentTypeOptions -> contentTypeOptions
+                                .disable()  // Prevent MIME type sniffing
+                        )
+                        .httpStrictTransportSecurity(hstsConfig -> hstsConfig
+                                .maxAgeInSeconds(31536000)  // 1 year
+                                .includeSubdomains(true)
+                        )
+                        .referrerPolicy(referrerPolicy -> referrerPolicy
+                                .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
                         )
                 )
 
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
-                        // Swagger / OpenAPI
-                        .requestMatchers("/v3/api-docs").permitAll()      // <-- root JSON (this is the one you’re missing)
-                        .requestMatchers("/v3/api-docs/**").permitAll()   // swagger-config & groups
-                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
-                        // H2 Console (for development)
-                        .requestMatchers("/h2-console/**").permitAll()
+                        // Swagger / OpenAPI - DISABLED IN PRODUCTION
+                        // .requestMatchers("/v3/api-docs").permitAll()      // <-- root JSON (this is the one you're missing)
+                        // .requestMatchers("/v3/api-docs/**").permitAll()   // swagger-config & groups
+                        // .requestMatchers("/swagger-ui.html", "/swagger-ui/**").permitAll()
+                        // H2 Console - DISABLED IN PRODUCTION
+                        // .requestMatchers("/h2-console/**").permitAll()
 
                         // Everything else
                         .anyRequest().authenticated()

@@ -44,16 +44,16 @@ export default function DynamicBreadcrumb() {
   useEffect(() => {
     const fetchGroupIdFromSet = async () => {
       if (pathname.startsWith("/study/") && setId && !groupId) {
-        console.log("Breadcrumb: Fetching groupId for study page");
+        // Debug logging removed for production("Breadcrumb: Fetching groupId for study page");
         try {
           const flashcardSet = await api<{ groupId: string }>(`/api/flashcard-sets/${setId}`, {
             skipAuthRedirect: true
           });
-          console.log("Breadcrumb: Successfully fetched groupId:", flashcardSet.groupId);
+          // Debug logging removed for production("Breadcrumb: Successfully fetched groupId:", flashcardSet.groupId);
           setFetchedGroupId(flashcardSet.groupId);
-        } catch (error) {
+        } catch (_error) {
           // Silently fail - breadcrumb will work without groupId
-          console.warn("Breadcrumb: Could not fetch groupId:", error);
+          // Debug logging removed for production("Breadcrumb: Could not fetch groupId:", error);
         }
       }
     };

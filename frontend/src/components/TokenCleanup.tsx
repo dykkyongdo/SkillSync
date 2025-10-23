@@ -9,7 +9,7 @@ export default function TokenCleanup() {
     const handleClearToken = () => {
         clearExpiredToken();
         logout();
-        console.log("Token cleared. Please refresh the page or navigate to login.");
+        // Debug logging removed for production
     };
 
     return (

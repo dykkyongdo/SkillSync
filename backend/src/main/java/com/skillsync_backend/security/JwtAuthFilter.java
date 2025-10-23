@@ -36,37 +36,36 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @PostConstruct
     public void init() {
         log.info("JwtAuthFilter initialized");
-        log.debug("JwtTokenProvider injected: {}", jwtTokenProvider != null);
-        log.debug("UserService injected: {}", userService != null);
+        // Debug logging removed for production
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) throws ServletException, IOException {
 
-        log.debug("Processing JWT authentication for URI: {} {}", request.getMethod(), request.getRequestURI());
+        // Debug logging removed for production("Processing JWT authentication for URI: {} {}", request.getMethod(), request.getRequestURI());
         String header = request.getHeader("Authorization");             //Read the "Authorization" header from the incoming HTTP request
-        log.debug("Authorization header present: {}", header != null);
+        // Debug logging removed for production("Authorization header present: {}", header != null);
 
         if (header != null && header.startsWith("Bearer ")) {               //Check if it starts with "Bearer", indicating a JWT is present
             String token = header.substring(7);                   //Extract token by removing "Bearer " prefix 7 chars
-            log.debug("Token extracted, length: {}", token.length());
+            // Debug logging removed for production("Token extracted, length: {}", token.length());
 
             try {
                 if (jwtTokenProvider.validateToken(token)) {
-                    log.debug("Token validation successful");
+                    // Debug logging removed for production("Token validation successful");
 
                     String email = jwtTokenProvider.getEmailFromToken(token);
-                    log.debug("Email extracted from token: {}", email);
+                    // Debug logging removed for production("Email extracted from token: {}", email);
 
                     if (email != null) {
                         UserDetails userDetails = userService.loadUserByUsername(email);
-                        log.debug("User loaded successfully: {}", userDetails.getUsername());
+                        // Debug logging removed for production("User loaded successfully: {}", userDetails.getUsername());
 
                         UsernamePasswordAuthenticationToken authToken =
                                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
                         SecurityContextHolder.getContext().setAuthentication(authToken);
-                        log.debug("Authentication set in SecurityContext");
+                        // Debug logging removed for production("Authentication set in SecurityContext");
                     }
                 } else {
                     log.warn("Token validation failed - clearing authentication");
@@ -77,10 +76,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.clearContext();
             }
         } else {
-            log.debug("No Bearer token found in Authorization header");
+            // Debug logging removed for production("No Bearer token found in Authorization header");
         }
 
-        log.debug("JWT authentication filter completed");
+        // Debug logging removed for production("JWT authentication filter completed");
         filterChain.doFilter(request, response);
     }
 }
