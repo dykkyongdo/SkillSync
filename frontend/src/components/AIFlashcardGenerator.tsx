@@ -199,7 +199,7 @@ export function AIFlashcardGenerator({
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="rounded-base border-2 border-border  bg-secondary-background">
-                  {[3, 5, 8, 10, 15, 20].map((n) => (
+                  {[3, 5, 8, 10].map((n) => (
                     <SelectItem key={n} value={String(n)}>
                       {n}
                     </SelectItem>
