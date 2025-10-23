@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = 'http://skill-sync-backend-env.eba-ma6u2vbm.us-east-1.elasticbeanstalk.com';
+const BACKEND_URL = 'https://skill-sync-backend-env.eba-ma6u2vbm.us-east-1.elasticbeanstalk.com';
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   try {
