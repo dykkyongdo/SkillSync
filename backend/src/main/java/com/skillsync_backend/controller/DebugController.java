@@ -1,6 +1,7 @@
 package com.skillsync_backend.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,10 +19,18 @@ public class DebugController {
 
     @Autowired
     private DataSource dataSource;
+    
+    @Autowired
+    private Environment environment;
 
     @GetMapping("/db-test")
     public ResponseEntity<Map<String, Object>> testDatabase() {
         Map<String, Object> result = new HashMap<>();
+        
+        // Check active profiles
+        String[] activeProfiles = environment.getActiveProfiles();
+        result.put("activeProfiles", activeProfiles);
+        result.put("springProfilesActive", environment.getProperty("spring.profiles.active"));
         
         try (Connection connection = dataSource.getConnection()) {
             result.put("status", "success");
