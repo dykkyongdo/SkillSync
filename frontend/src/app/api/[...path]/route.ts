@@ -10,9 +10,10 @@ async function fetchWithFallback(url: string, options: RequestInit): Promise<Res
     return response;
   } catch (error) {
     console.warn('HTTPS failed, falling back to HTTP:', error);
-    // Fallback to HTTP
+    // Fallback to HTTP with fresh options (remove aborted signal)
     const httpUrl = url.replace('https://', 'http://');
-    return fetch(httpUrl, options);
+    const { signal: _, ...httpOptions } = options;
+    return fetch(httpUrl, httpOptions);
   }
 }
 
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     // Security: Add timeout and size limits
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
 
     const response = await fetchWithFallback(`${BACKEND_URL_HTTPS}/api/${path}`, {
       method: 'POST',
