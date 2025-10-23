@@ -696,8 +696,8 @@ public class StudyService {
             // Level 1: 0-499 XP (needs 500 XP to reach Level 2)
             // Level 2: 500-999 XP (needs 1000 XP to reach Level 3)
             int currentLevel = user.getLevel();
-            int currentLevelXp = currentLevel * 500;  // XP threshold for current level
-            int nextLevelXp = (currentLevel + 1) * 500;  // XP threshold for next level
+            int currentLevelXp = (currentLevel - 1) * 500;  // XP threshold for current level (Level 1 = 0, Level 2 = 500)
+            int nextLevelXp = currentLevel * 500;  // XP threshold for next level (Level 2 = 500, Level 3 = 1000)
             int progressInLevel = Math.max(0, user.getXp() - currentLevelXp);
             int xpNeededForNextLevel = Math.max(0, nextLevelXp - user.getXp());
             int progressPercentage = nextLevelXp > currentLevelXp ? 
