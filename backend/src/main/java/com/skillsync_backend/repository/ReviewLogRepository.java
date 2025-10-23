@@ -16,14 +16,6 @@ public interface ReviewLogRepository extends JpaRepository<ReviewLog, UUID> {
     """)
     int sumXpForUserBetween(UUID userId, Instant from, Instant to);
 
-    @Query("""
-        select r.user.id, coalesce(sum(r.xpAwarded),0)
-        from ReviewLog r
-        where r.group.id = :groupId and r.reviewedAt >= :from and r.reviewedAt < :to
-        group by r.user.id
-        order by 2 desc
-      """)
-    List<Object[]> leaderboardForGroup(UUID groupId, Instant from, Instant to);
 
     void deleteAllByGroup_Id(UUID groupId);
 
