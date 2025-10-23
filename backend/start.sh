@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Set environment variables
-export JWT_SECRET="mySecretKey123456789012345678901234567890"
+export JWT_SECRET="${JWT_SECRET}"
 export JWT_EXPIRATION="86400000"
 export SPRING_DATASOURCE_USERNAME="postgres"
 export SPRING_DATASOURCE_PASSWORD="password"
