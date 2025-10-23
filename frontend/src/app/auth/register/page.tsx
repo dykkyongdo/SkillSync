@@ -170,7 +170,7 @@ function RegisterForm() {
 
                 <Button
                     type="button"
-                    variant="outline"
+                    variant="neutral"
                     className="w-full h-11 font-medium"
                     onClick={createTestAccount}
                     disabled={loading}
