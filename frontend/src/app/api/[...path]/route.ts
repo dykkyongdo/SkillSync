@@ -26,7 +26,10 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
 
     // Security: Add timeout and size limits
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    // Longer timeout for AI generation requests
+    const isAIGeneration = path.includes('ai/flashcards/generate');
+    const timeoutMs = isAIGeneration ? 60000 : 10000; // 60s for AI, 10s for others
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
     const response = await fetch(`${BACKEND_URL_HTTP}/api/${path}`, {
       method: 'POST',
