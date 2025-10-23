@@ -2,7 +2,7 @@ spring:
   datasource:
     url: jdbc:postgresql://skillsync-database.c8fui4oca2gt.us-east-1.rds.amazonaws.com:5432/postgres
     username: postgres
-    password: ${DB_PASSWORD}
+    password: ${RDS_PASSWORD}
     driver-class-name: org.postgresql.Driver
   jpa:
     hibernate:
