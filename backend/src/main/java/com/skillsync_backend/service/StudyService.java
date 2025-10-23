@@ -699,10 +699,7 @@ public class StudyService {
             int progressPercentage = nextLevelXp > currentLevelXp ? 
                 (int) ((double) progressInLevel / (nextLevelXp - currentLevelXp) * 100) : 100;
             
-            // Debug logging
-            // Debug logging removed for production("DEBUG - Current Level: " + currentLevel + ", Current Level XP: " + currentLevelXp + 
-                             ", Next Level XP: " + nextLevelXp + ", Progress in Level: " + progressInLevel + 
-                             ", XP Needed: " + xpNeededForNextLevel);
+            // Debug logging removed for production
             
             stats.put("progressInLevel", progressInLevel);
             stats.put("xpNeededForNextLevel", xpNeededForNextLevel);

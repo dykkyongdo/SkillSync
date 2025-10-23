@@ -48,7 +48,7 @@ public class RateLimitingConfig implements WebMvcConfigurer {
             
             // Check if limit exceeded
             if (rateLimitInfo.count.get() >= MAX_REQUESTS) {
-                response.setStatus(HttpServletResponse.SC_TOO_MANY_REQUESTS);
+                response.setStatus(429); // Too Many Requests
                 response.setHeader("Retry-After", String.valueOf(TIME_WINDOW_MINUTES * 60));
                 return false;
             }

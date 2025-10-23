@@ -55,7 +55,6 @@ public class SecurityConfig {
                         )
                         .httpStrictTransportSecurity(hstsConfig -> hstsConfig
                                 .maxAgeInSeconds(31536000)  // 1 year
-                                .includeSubdomains(true)
                         )
                         .referrerPolicy(referrerPolicy -> referrerPolicy
                                 .policy(org.springframework.security.web.header.writers.ReferrerPolicyHeaderWriter.ReferrerPolicy.STRICT_ORIGIN_WHEN_CROSS_ORIGIN)
