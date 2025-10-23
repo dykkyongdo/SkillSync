@@ -2,8 +2,11 @@
 const isProduction = process.env.NODE_ENV === 'production';
 const isVercel = typeof window !== 'undefined' && window.location.hostname.includes('vercel.app');
 
-export const API_BASE = isProduction && isVercel 
-    ? "" // Use relative URLs in production on Vercel (will go through our proxy)
+// Force proxy usage on Vercel by ignoring environment variable
+const shouldUseProxy = isProduction && isVercel;
+
+export const API_BASE = shouldUseProxy
+    ? "" // Always use relative URLs in production on Vercel (will go through our proxy)
     : (process.env.NEXT_PUBLIC_API_BASE || "http://localhost:8080").replace(/\/$/, "");
 
 // Debug logging
