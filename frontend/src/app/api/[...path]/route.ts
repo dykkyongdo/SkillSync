@@ -1,6 +1,20 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const BACKEND_URL = 'http://skill-sync-backend-env.eba-ma6u2vbm.us-east-1.elasticbeanstalk.com';
+const BACKEND_URL_HTTPS = 'https://skill-sync-backend-env.eba-ma6u2vbm.us-east-1.elasticbeanstalk.com';
+
+async function fetchWithFallback(url: string, options: RequestInit): Promise<Response> {
+  try {
+    // Try HTTPS first
+    const httpsUrl = url.replace('http://', 'https://');
+    const response = await fetch(httpsUrl, options);
+    return response;
+  } catch (error) {
+    console.warn('HTTPS failed, falling back to HTTP:', error);
+    // Fallback to HTTP
+    const httpUrl = url.replace('https://', 'http://');
+    return fetch(httpUrl, options);
+  }
+}
 
 export async function POST(request: NextRequest, { params }: { params: Promise<{ path: string[] }> }) {
   try {
@@ -27,7 +41,7 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-    const response = await fetch(`${BACKEND_URL}/api/${path}`, {
+    const response = await fetchWithFallback(`${BACKEND_URL_HTTPS}/api/${path}`, {
       method: 'POST',
       headers,
       body,
@@ -71,7 +85,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
     
-    const response = await fetch(`${BACKEND_URL}/api/${path}${searchParams ? `?${searchParams}` : ''}`, {
+    const response = await fetchWithFallback(`${BACKEND_URL_HTTPS}/api/${path}${searchParams ? `?${searchParams}` : ''}`, {
       method: 'GET',
       headers: {
         'Authorization': request.headers.get('authorization') || '',
@@ -123,7 +137,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
 
-    const response = await fetch(`${BACKEND_URL}/api/${path}`, {
+    const response = await fetchWithFallback(`${BACKEND_URL_HTTPS}/api/${path}`, {
       method: 'DELETE',
       headers,
       signal: controller.signal,
