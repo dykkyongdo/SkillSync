@@ -231,7 +231,7 @@ export default function StudyPage() {
     }
 
     const currentCard = cards[currentCardIndex];
-    const progress = ((currentCardIndex + 1) / cards.length) * 100;
+    const progress = (currentCardIndex / cards.length) * 100;
 
     return (
         <RequireAuth>
@@ -308,7 +308,7 @@ export default function StudyPage() {
                                 <div className="flex justify-between text-sm mb-2 font-base">
                                     <span className="text-foreground">Level {stats.level} Progress</span>
                                     <span className="text-foreground">
-                                        {stats.xp}/{stats.progressInLevel + stats.xpNeededForNextLevel} XP
+                                        {stats.progressInLevel}/{stats.progressInLevel + stats.xpNeededForNextLevel} XP
                                     </span>
                                 </div>
                                 <Progress value={stats.progressPercentage} className="h-2" />

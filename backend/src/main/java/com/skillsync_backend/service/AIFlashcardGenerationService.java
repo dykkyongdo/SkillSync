@@ -50,7 +50,7 @@ public class AIFlashcardGenerationService {
         for (int attempt = 1; attempt <= maxRetries; attempt++) {
             try {
                 String prompt = buildPrompt(topic, count, difficulty);
-                String response = callOpenAI(prompt);
+                String response = callOpenAI(prompt, count);
                 return parseResponse(response, setId);
             } catch (Exception e) {
                 log.warn("Attempt {} failed for topic: {} - {}", attempt, topic, e.getMessage());
@@ -130,7 +130,7 @@ public class AIFlashcardGenerationService {
     /**
      * Call OpenAI API
      */
-    private String callOpenAI(String prompt) {
+    private String callOpenAI(String prompt, int cardCount) {
         if (openaiApiKey == null || openaiApiKey.isEmpty()) {
             log.warn("OpenAI API key not configured, using fallback generation");
             throw new RuntimeException("OpenAI API key not configured");
@@ -146,7 +146,9 @@ public class AIFlashcardGenerationService {
             requestBody.put("messages", Arrays.asList(
                 Map.of("role", "user", "content", prompt)
             ));
-            requestBody.put("max_tokens", 2000);
+            // Increase max_tokens based on card count to handle larger generations
+            int maxTokens = Math.max(2000, cardCount * 200 + 1000); // Base 1000 + 200 per card
+            requestBody.put("max_tokens", maxTokens);
             requestBody.put("temperature", 0.7);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
@@ -159,11 +161,13 @@ public class AIFlashcardGenerationService {
             
             return (String) message.get("content");
         } catch (Exception e) {
-            log.error("Error calling OpenAI API: {}", e.getMessage());
+            log.error("Error calling OpenAI API: {}", e.getMessage(), e);
             if (e.getMessage().contains("timeout") || e.getMessage().contains("Connection")) {
                 throw new RuntimeException("OpenAI API timeout or connection error: " + e.getMessage());
             } else if (e.getMessage().contains("rate limit") || e.getMessage().contains("429")) {
                 throw new RuntimeException("OpenAI API rate limit exceeded: " + e.getMessage());
+            } else if (e.getMessage().contains("context_length_exceeded") || e.getMessage().contains("maximum context length")) {
+                throw new RuntimeException("OpenAI API context length exceeded: " + e.getMessage());
             } else {
                 throw new RuntimeException("OpenAI API error: " + e.getMessage());
             }
@@ -318,7 +322,7 @@ public class AIFlashcardGenerationService {
 
         try {
             String prompt = buildOptionsPrompt(question, answer, topic);
-            String response = callOpenAI(prompt);
+            String response = callOpenAI(prompt, 4); // Default count for options
             return parseOptionsResponse(response);
         } catch (Exception e) {
             log.error("Error generating options for question: {}", question, e);
@@ -407,7 +411,7 @@ public class AIFlashcardGenerationService {
 
         try {
             String prompt = buildAdvancedPrompt(topic, count, difficulty, specificAspects, questionType);
-            String response = callOpenAI(prompt);
+            String response = callOpenAI(prompt, count);
             return parseResponse(response, setId);
         } catch (Exception e) {
             log.error("Error generating advanced flashcards for topic: {}", topic, e);
