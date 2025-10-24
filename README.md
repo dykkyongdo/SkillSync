@@ -1,11 +1,9 @@
 # SkillSync Study Platform
 
-**English** | **Français** | [Live Demo](https://skillsync-study.vercel.app/)
+**English** | [**Français**](./README-FR.md) | [Live Demo](https://skillsync-study.vercel.app/)
 
-> **Note:** Previous commit e26c0ef message updated to professional format
 > 
 > **Additional Documentation:**
-> - [French README](./README-FR.md) - Documentation complète en français
 > - [Frontend README](./frontend/README.md) - Frontend-specific setup and development guide
 > - [Deployment Guide](./DEPLOYMENT.md) - Step-by-step deployment instructions
 > - [Sentry Setup](./SENTRY_SETUP.md) - Error monitoring configuration
