@@ -233,16 +233,6 @@ NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 2. Set environment variables
 3. Auto-deploys on push
 
-## Troubleshooting
-
-### Common Windows Issues
-- **"mvnw is not recognized"** - Use `mvnw.cmd` instead of `./mvnw`
-- **"Permission denied"** - Run Command Prompt as Administrator
-- **"Java not found"** - Ensure JAVA_HOME is set correctly
-
-### Common macOS/Linux Issues
-- **"Permission denied"** - Run `chmod +x mvnw` and `chmod +x start.sh`
-- **"Java not found"** - Install Java 17+ and set JAVA_HOME
 
 ## Contributing
 
