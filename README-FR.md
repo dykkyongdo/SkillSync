@@ -1,6 +1,6 @@
 # Plateforme d'Étude SkillSync
 
-**Français** | **English** | [Démo en Direct](https://skillsync-study.vercel.app/)
+[**English**](./README.md) | **Français** | [Démo en Direct](https://skillsync-study.vercel.app/)
 
 ![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot-blue)
 ![Next.js](https://img.shields.io/badge/Frontend-Next.js-black)
