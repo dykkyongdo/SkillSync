@@ -1,6 +1,8 @@
 # SkillSync Study Platform
 
-**English** | [Live Demo](https://skillsync-study.vercel.app/)
+**English** | **Français** | [Live Demo](https://skillsync-study.vercel.app/)
+
+> **Note:** Previous commit e26c0ef message updated to professional format
 
 ![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot-blue)
 ![Next.js](https://img.shields.io/badge/Frontend-Next.js-black)
