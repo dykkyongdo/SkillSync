@@ -1,30 +1,69 @@
-# 🧠 SkillSync
+# SkillSync Study Platform
 
-A flashcard app with AI-powered generation and spaced repetition. Built with Spring Boot + Next.js for learning and studying.
+**English** | [Live Demo](https://skillsync-study.vercel.app/)
 
 ![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot-blue)
 ![Next.js](https://img.shields.io/badge/Frontend-Next.js-black)
 ![PostgreSQL](https://img.shields.io/badge/Database-PostgreSQL-blue)
 ![AWS](https://img.shields.io/badge/Deployed%20on-AWS-orange)
+![Sentry](https://img.shields.io/badge/Monitoring-Sentry-purple)
 
-## What it does
+Check out the live version here: [SkillSync Study Platform](https://skillsync-study.vercel.app/).
 
-- **AI Flashcard Generation** - Ask AI to create flashcards on any topic
-- **Study System** - Spaced repetition with XP and levels
-- **Groups** - Study with friends and share flashcard sets
-- **Progress Tracking** - See your learning progress and stats
-- **Modern UI** - Clean design with dark/light mode
+## Introduction
 
-## Tech Stack
+SkillSync is a modern, AI-powered flashcard application designed for collaborative learning and spaced repetition. The project combines Spring Boot backend with Next.js frontend, featuring intelligent content generation and comprehensive progress tracking. Built with a focus on user experience and modern web technologies.
 
-**Backend:** Spring Boot, PostgreSQL, JWT auth, OpenAI API
-**Frontend:** Next.js, TypeScript, Tailwind CSS, Radix UI
-**Deployment:** AWS Elastic Beanstalk + Vercel
-**Monitoring:** Sentry for error tracking
+## Key Features
 
-## Quick Start
+**AI-Powered Generation**: Leverage OpenAI's GPT models to automatically generate flashcards on any topic with intelligent question-answer pairs.
 
-### Backend
+**Spaced Repetition System**: Implement intelligent study scheduling based on performance metrics, optimizing long-term retention.
+
+**Group Learning**: Create and join study groups for collaborative learning experiences with shared flashcard sets.
+
+**Progress Tracking**: Comprehensive XP system with levels, streaks, and detailed analytics to gamify the learning process.
+
+**Modern UI/UX**: Responsive design with dark/light mode support, built with Radix UI components and Tailwind CSS.
+
+**Real-time Monitoring**: Sentry integration for error tracking, performance monitoring, and user behavior analysis.
+
+**Authentication & Security**: JWT-based authentication with Spring Security, rate limiting, and input validation.
+
+**Cloud Deployment**: Production-ready deployment on AWS Elastic Beanstalk and Vercel with automated CI/CD.
+
+## Technologies Used
+
+**Backend:**
+- Spring Boot 3.3.5
+- PostgreSQL with JPA/Hibernate
+- Spring Security with JWT
+- OpenAI API Integration
+- Sentry for monitoring
+
+**Frontend:**
+- Next.js 15.5.4 with TypeScript
+- Radix UI components
+- Tailwind CSS for styling
+- React Query for state management
+- Sentry for client-side monitoring
+
+**Infrastructure:**
+- AWS RDS PostgreSQL
+- AWS Elastic Beanstalk
+- Vercel for frontend hosting
+- Sentry for error tracking
+
+## Getting Started
+
+Clone the repository and install the dependencies:
+
+```bash
+git clone https://github.com/your-username/SkillSync.git
+cd SkillSync
+```
+
+### Backend Setup
 ```bash
 cd backend
 cp env.example .env
@@ -32,7 +71,7 @@ cp env.example .env
 ./mvnw spring-boot:run
 ```
 
-### Frontend
+### Frontend Setup
 ```bash
 cd frontend
 npm install
@@ -41,68 +80,71 @@ cp .env.example .env.local
 npm run dev
 ```
 
-## Features
+### Build for Production
+```bash
+# Backend
+cd backend
+./mvnw clean package -DskipTests
 
-### Core Stuff
-- User registration/login with JWT
-- Create and manage flashcard sets
-- AI generates flashcards using OpenAI
-- Study with spaced repetition algorithm
-- XP system with levels
-- Join/create study groups
-- Share flashcard sets with groups
+# Frontend
+cd frontend
+npm run build
+```
 
-### Technical Stuff
-- RESTful APIs with Spring Boot
-- PostgreSQL database with JPA
-- Real-time error monitoring with Sentry
-- Rate limiting and security
-- Responsive design
-- TypeScript for type safety
+### Running Tests
+```bash
+# Backend tests
+cd backend
+./mvnw test
 
-## API Endpoints
+# Frontend tests
+cd frontend
+npm test
+```
 
-**Auth:**
-- `POST /api/auth/register` - Sign up
-- `POST /api/auth/login` - Login
-- `POST /api/auth/test-account` - Demo account
+## API Documentation
 
-**Flashcards:**
-- `GET /api/sets` - Your flashcard sets
-- `POST /api/sets` - Create new set
-- `PUT /api/sets/{id}` - Update set
-- `DELETE /api/sets/{id}` - Delete set
+**Authentication Endpoints:**
+- `POST /api/auth/register` - User registration
+- `POST /api/auth/login` - User login
+- `POST /api/auth/test-account` - Create demo account
+
+**Flashcard Management:**
+- `GET /api/sets` - Get user's flashcard sets
+- `POST /api/sets` - Create new flashcard set
+- `PUT /api/sets/{id}` - Update flashcard set
+- `DELETE /api/sets/{id}` - Delete flashcard set
 
 **AI Generation:**
-- `POST /api/ai/flashcards/generate` - Generate flashcards
+- `POST /api/ai/flashcards/generate` - Generate flashcards using AI
 
-**Study:**
-- `GET /api/sets/{id}/study/due` - Get cards to study
+**Study System:**
+- `GET /api/sets/{id}/study/due` - Get flashcards due for review
 - `POST /api/sets/{id}/study/review` - Submit study results
 
-**Groups:**
-- `GET /api/groups` - Your groups
-- `POST /api/groups` - Create group
+**Group Features:**
+- `GET /api/groups` - Get user's groups
+- `POST /api/groups` - Create new group
 - `POST /api/groups/{id}/join` - Join group
 
 ## Environment Variables
 
 ### Backend (.env)
 ```env
-# Database
+# Database Configuration
 DB_HOST=localhost
 DB_PORT=5432
 DB_NAME=skill_sync
 DB_USERNAME=postgres
 DB_PASSWORD=your_password
 
-# JWT
+# JWT Configuration
 JWT_SECRET=your-secret-key
 
-# OpenAI
+# OpenAI Configuration
 OPENAI_API_KEY=your-openai-key
 
-# Sentry (optional)
+# Sentry Configuration (Optional)
 SENTRY_DSN=your-sentry-dsn
 SENTRY_AUTH_TOKEN=your-sentry-token
 ```
@@ -125,39 +167,10 @@ NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 2. Set environment variables
 3. Auto-deploys on push
 
-## Testing
+## Contributing
 
-**Backend test endpoint:**
-```bash
-curl http://your-backend-url/api/debug/test-error
-```
+Contributions are welcome! Feel free to open a pull request.
 
-**Frontend:** Add `<SentryTestButton />` to any page temporarily
+## License
 
-## Monitoring
-
-- **Sentry** - Error tracking and performance
-- **AWS CloudWatch** - Backend logs
-- **Vercel Analytics** - Frontend metrics
-
-## What I Learned
-
-- Full-stack development with Spring Boot + Next.js
-- JWT authentication and security
-- AI integration with OpenAI API
-- Database design and optimization
-- Cloud deployment on AWS
-- Error monitoring and debugging
-- TypeScript and modern React patterns
-
-## Future Ideas
-
-- Mobile app
-- More AI features
-- Better analytics
-- Offline mode
-- Social features
-
----
-
-Built as a learning project to practice full-stack development and modern web technologies.
+This project is licensed under the MIT License - see the LICENSE file for details.
