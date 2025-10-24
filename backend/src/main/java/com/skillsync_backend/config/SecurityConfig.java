@@ -84,13 +84,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
 
-        cfg.setAllowedOriginPatterns(List.of(
-            "http://localhost:3000", 
-            "http://localhost:3001", 
-            "http://127.0.0.1:3000", 
-            "http://127.0.0.1:3001",
-            "https://*.vercel.app"
-        ));
+        cfg.setAllowedOriginPatterns(List.of("http://localhost:3000", "http://localhost:3001", "http://127.0.0.1:3000", "http://127.0.0.1:3001"));
         cfg.setAllowedMethods(List.of("GET","POST","PUT","PATCH","DELETE","OPTIONS"));
         cfg.setAllowedHeaders(List.of("Authorization","Content-Type"));
         cfg.setAllowCredentials(true);
