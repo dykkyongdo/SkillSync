@@ -170,7 +170,3 @@ NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 ## Contributing
 
 Contributions are welcome! Feel free to open a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
