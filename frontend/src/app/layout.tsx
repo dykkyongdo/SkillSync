@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Providers from "./providers";
 import Navbar from "@/components/Navbar"
+import { ErrorBoundary } from "@/components/ErrorBoundary"
 import { DM_Sans } from "next/font/google"
 import "./globals.css";
 
@@ -21,10 +22,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${dmSans.variable} bg-background text-foreground`}>
       <body className="min-h-screen" suppressHydrationWarning={true}>
-        <Providers>
-          <Navbar />
-          {children}
-        </Providers>
+        <ErrorBoundary>
+          <Providers>
+            <Navbar />
+            {children}
+          </Providers>
+        </ErrorBoundary>
       </body>
     </html>
   );

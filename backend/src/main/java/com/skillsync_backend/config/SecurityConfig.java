@@ -55,6 +55,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/auth/**").permitAll()
+                        // Debug endpoints for testing Sentry
+                        .requestMatchers("/api/debug/**").permitAll()
                         // Swagger / OpenAPI - TEMPORARILY ENABLED FOR DEBUGGING
                         .requestMatchers("/v3/api-docs").permitAll()      // <-- root JSON (this is the one you're missing)
                         .requestMatchers("/v3/api-docs/**").permitAll()   // swagger-config & groups

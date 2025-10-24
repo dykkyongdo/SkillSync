@@ -38,3 +38,15 @@ logging:
     com.skillsync: INFO
     org.springframework.security: WARN
     org.hibernate.SQL: WARN
+
+# Sentry Configuration for Error Monitoring
+sentry:
+  dsn: ${SENTRY_DSN:}
+  environment: production
+  traces-sample-rate: 0.1  # 10% of requests for performance monitoring
+  debug: false
+  # Add data like request headers and IP for users
+  send-default-pii: true
+  # Enable sending logs to Sentry
+  logs:
+    enabled: true

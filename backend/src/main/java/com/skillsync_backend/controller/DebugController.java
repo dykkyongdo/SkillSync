@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import io.sentry.Sentry;
 
 import javax.sql.DataSource;
 import java.sql.Connection;
@@ -43,5 +44,21 @@ public class DebugController {
         }
         
         return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/test-error")
+    public ResponseEntity<Map<String, Object>> testError() {
+        try {
+            throw new Exception("This is a test error for Sentry monitoring.");
+        } catch (Exception e) {
+            // Send error to Sentry
+            Sentry.captureException(e);
+            
+            Map<String, Object> result = new HashMap<>();
+            result.put("status", "error");
+            result.put("message", "Test error sent to Sentry");
+            result.put("error", e.getMessage());
+            return ResponseEntity.ok(result);
+        }
     }
 }
