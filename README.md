@@ -24,6 +24,8 @@ SkillSync is a modern, AI-powered flashcard application designed for collaborati
 
 **Language Support:** This project supports both English and French languages. Additional documentation is available in multiple languages.
 
+**Cross-Platform Support:** This project works on Windows, macOS, and Linux with platform-specific setup instructions.
+
 ## Key Features
 
 **AI-Powered Generation**: Leverage OpenAI's GPT models to automatically generate flashcards on any topic with intelligent question-answer pairs.
@@ -74,6 +76,24 @@ cd SkillSync
 ```
 
 ### Backend Setup
+
+**For Windows:**
+```cmd
+cd backend
+copy env.example .env
+REM Edit .env with your database and API keys
+start.bat
+```
+
+**For macOS/Linux:**
+```bash
+cd backend
+cp env.example .env
+# Edit .env with your database and API keys
+./start.sh
+```
+
+**Manual Setup (All Platforms):**
 ```bash
 cd backend
 cp env.example .env
@@ -91,24 +111,42 @@ npm run dev
 ```
 
 ### Build for Production
+
+**For Windows:**
+```cmd
+cd backend
+mvnw.cmd clean package -DskipTests
+
+cd ..\frontend
+npm run build
+```
+
+**For macOS/Linux:**
 ```bash
-# Backend
 cd backend
 ./mvnw clean package -DskipTests
 
-# Frontend
-cd frontend
+cd ../frontend
 npm run build
 ```
 
 ### Running Tests
+
+**For Windows:**
+```cmd
+cd backend
+mvnw.cmd test
+
+cd ..\frontend
+npm test
+```
+
+**For macOS/Linux:**
 ```bash
-# Backend tests
 cd backend
 ./mvnw test
 
-# Frontend tests
-cd frontend
+cd ../frontend
 npm test
 ```
 
@@ -165,10 +203,28 @@ NEXT_PUBLIC_API_BASE=http://localhost:8080
 NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 ```
 
+## Platform-Specific Setup
+
+### Windows Requirements
+- **Java 17+** - Download from [Oracle](https://www.oracle.com/java/technologies/downloads/) or [OpenJDK](https://adoptium.net/)
+- **Node.js 18+** - Download from [nodejs.org](https://nodejs.org/)
+- **Git** - Download from [git-scm.com](https://git-scm.com/)
+- **PostgreSQL** - Download from [postgresql.org](https://www.postgresql.org/download/windows/)
+
+### macOS Requirements
+- **Java 17+** - Install via Homebrew: `brew install openjdk@17`
+- **Node.js 18+** - Install via Homebrew: `brew install node`
+- **PostgreSQL** - Install via Homebrew: `brew install postgresql`
+
+### Linux Requirements
+- **Java 17+** - Install via package manager
+- **Node.js 18+** - Install via package manager or [NodeSource](https://github.com/nodesource/distributions)
+- **PostgreSQL** - Install via package manager
+
 ## Deployment
 
 ### Backend (AWS Elastic Beanstalk)
-1. Build: `./mvnw clean package -DskipTests`
+1. Build: `./mvnw clean package -DskipTests` (Unix) or `mvnw.cmd clean package -DskipTests` (Windows)
 2. Upload `target/backend-0.0.1-SNAPSHOT.jar` to EB
 3. Set environment variables in EB console
 
@@ -176,6 +232,17 @@ NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
 1. Connect GitHub repo to Vercel
 2. Set environment variables
 3. Auto-deploys on push
+
+## Troubleshooting
+
+### Common Windows Issues
+- **"mvnw is not recognized"** - Use `mvnw.cmd` instead of `./mvnw`
+- **"Permission denied"** - Run Command Prompt as Administrator
+- **"Java not found"** - Ensure JAVA_HOME is set correctly
+
+### Common macOS/Linux Issues
+- **"Permission denied"** - Run `chmod +x mvnw` and `chmod +x start.sh`
+- **"Java not found"** - Install Java 17+ and set JAVA_HOME
 
 ## Contributing
 
