@@ -3,6 +3,9 @@
 **English** | **Français** | [Live Demo](https://skillsync-study.vercel.app/)
 
 > **Note:** Previous commit e26c0ef message updated to professional format
+> 
+> **📚 Additional Documentation:**
+> - [Frontend README](./frontend/README.md) - Frontend-specific setup and development guide
 
 ![Spring Boot](https://img.shields.io/badge/Backend-Spring%20Boot-blue)
 ![Next.js](https://img.shields.io/badge/Frontend-Next.js-black)
@@ -15,6 +18,8 @@ Check out the live version here: [SkillSync Study Platform](https://skillsync-st
 ## Introduction
 
 SkillSync is a modern, AI-powered flashcard application designed for collaborative learning and spaced repetition. The project combines Spring Boot backend with Next.js frontend, featuring intelligent content generation and comprehensive progress tracking. Built with a focus on user experience and modern web technologies.
+
+**🌍 Language Support:** This project supports both English and French languages. Additional documentation is available in multiple languages.
 
 ## Key Features
 
