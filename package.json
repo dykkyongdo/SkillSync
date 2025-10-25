@@ -6,7 +6,14 @@
   "scripts": {
     "build": "cd frontend && npm run build",
     "dev": "cd frontend && npm run dev",
-    "start": "cd frontend && npm run start"
+    "start": "cd frontend && npm run start",
+    "test": "cd frontend && npm run test",
+    "test:watch": "cd frontend && npm run test:watch",
+    "test:coverage": "cd frontend && npm run test:coverage",
+    "test:e2e": "cd frontend && npm run test:e2e",
+    "cypress:open": "cd frontend && npm run cypress:open",
+    "backend:test": "cd backend && mvn test",
+    "backend:test:coverage": "cd backend && mvn test jacoco:report"
   },
   "workspaces": [
     "frontend"
