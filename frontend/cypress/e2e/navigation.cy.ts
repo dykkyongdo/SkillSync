@@ -109,7 +109,7 @@ describe('SkillSync E2E Tests', () => {
     })
 
     it('should be keyboard navigable', () => {
-      cy.get('body').tab()
+      cy.get('body').type('{tab}')
       cy.focused().should('exist')
     })
   })
