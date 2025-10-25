@@ -4,13 +4,13 @@ import Navbar from '@/components/Navbar'
 
 // Mock Next.js modules
 jest.mock('next/link', () => {
-  return function MockLink({ children, href, ...props }: any) {
+  return function MockLink({ children, href, ...props }: { children: React.ReactNode; href: string; [key: string]: unknown }) {
     return <a href={href} {...props}>{children}</a>
   }
 })
 
 jest.mock('next/image', () => {
-  return function MockImage({ src, alt, ...props }: any) {
+  return function MockImage({ src, alt, ...props }: { src: string; alt: string; [key: string]: unknown }) {
     return <img src={src} alt={alt} {...props} />
   }
 })

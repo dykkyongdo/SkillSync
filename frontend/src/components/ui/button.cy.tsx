@@ -22,6 +22,7 @@ describe('Button Component (Cypress)', () => {
     
     cy.get('button').click()
     cy.then(() => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       expect(onClick).to.have.been.called
     })
   })

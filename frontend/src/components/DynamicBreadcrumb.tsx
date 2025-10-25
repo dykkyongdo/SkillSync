@@ -51,9 +51,9 @@ export default function DynamicBreadcrumb() {
           });
           // Debug logging removed for production("Breadcrumb: Successfully fetched groupId:", flashcardSet.groupId);
           setFetchedGroupId(flashcardSet.groupId);
-        } catch (_error) {
+        } catch {
           // Silently fail - breadcrumb will work without groupId
-          // Debug logging removed for production("Breadcrumb: Could not fetch groupId:", error);
+          // Debug logging removed for production("Breadcrumb: Could not fetch groupId");
         }
       }
     };
