@@ -69,7 +69,9 @@ describe('SkillSync E2E Tests', () => {
       cy.get('button[aria-label="Toggle theme"]').click()
       
       // Check if theme has changed (this depends on your theme implementation)
-      cy.get('html').should('have.class', 'dark').or('not.have.class', 'dark')
+      cy.get('html').should('satisfy', ($html) => {
+        return $html.hasClass('dark') || !$html.hasClass('dark')
+      })
     })
   })
 
