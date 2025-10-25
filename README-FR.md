@@ -104,6 +104,42 @@ cd frontend
 npm test
 ```
 
+## Framework de Tests
+
+SkillSync inclut une configuration de tests complète avec des capacités de tests unitaires et end-to-end :
+
+### Tests Frontend
+- **Jest** : Framework de tests unitaires avec React Testing Library
+- **Cypress** : Tests end-to-end pour les flux utilisateur
+- **Couverture** : Rapports de couverture de code avec seuils
+
+### Tests Backend
+- **JUnit 5** : Framework de tests unitaires
+- **Spring Boot Test** : Tests d'intégration
+- **Testcontainers** : Tests d'intégration de base de données avec PostgreSQL
+- **Mockito** : Framework de simulation pour les tests isolés
+- **JaCoCo** : Rapports de couverture de code
+
+### Commandes de Tests Rapides
+```bash
+# Exécuter tous les tests frontend
+npm test
+
+# Exécuter les tests frontend avec couverture
+npm run test:coverage
+
+# Exécuter les tests E2E
+npm run test:e2e
+
+# Exécuter les tests backend
+cd backend && mvn test
+
+# Exécuter les tests backend avec couverture
+cd backend && mvn test jacoco:report
+```
+
+Pour des informations détaillées sur les tests, consultez notre [Guide de Tests](./TESTING.md).
+
 ## Documentation API
 
 **Points de Terminaison d'Authentification :**
@@ -177,4 +213,5 @@ Les contributions sont les bienvenues ! N'hésitez pas à ouvrir une pull reques
 
 **Documentation Supplémentaire :**
 - [README Principal](./README.md) - Documentation complète en anglais
+- [Guide de Tests](./TESTING.md) - Configuration complète des tests et meilleures pratiques
 - [README Frontend](./frontend/README.md) - Guide de configuration et développement frontend

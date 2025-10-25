@@ -5,6 +5,7 @@
 > 
 > **Additional Documentation:**
 > - [Frontend README](./frontend/README.md) - Frontend-specific setup and development guide
+> - [Testing Guide](./TESTING.md) - Comprehensive testing setup and best practices
 > - [Deployment Guide](./DEPLOYMENT.md) - Step-by-step deployment instructions
 > - [Sentry Setup](./SENTRY_SETUP.md) - Error monitoring configuration
 > - [Backend Help](./backend/HELP.md) - Backend development assistance
@@ -149,6 +150,42 @@ cd backend
 cd ../frontend
 npm test
 ```
+
+## Testing Framework
+
+SkillSync includes a comprehensive testing setup with both unit and end-to-end testing capabilities:
+
+### Frontend Testing
+- **Jest**: Unit testing framework with React Testing Library
+- **Cypress**: End-to-end testing for user workflows
+- **Coverage**: Code coverage reporting with thresholds
+
+### Backend Testing
+- **JUnit 5**: Unit testing framework
+- **Spring Boot Test**: Integration testing
+- **Testcontainers**: Database integration tests with PostgreSQL
+- **Mockito**: Mocking framework for isolated testing
+- **JaCoCo**: Code coverage reporting
+
+### Quick Test Commands
+```bash
+# Run all frontend tests
+npm test
+
+# Run frontend tests with coverage
+npm run test:coverage
+
+# Run E2E tests
+npm run test:e2e
+
+# Run backend tests
+cd backend && mvn test
+
+# Run backend tests with coverage
+cd backend && mvn test jacoco:report
+```
+
+For detailed testing information, see our [Testing Guide](./TESTING.md).
 
 ## API Documentation
 
